@@ -1,9 +1,21 @@
+import textwrap
+
 class Backend(object):
     """Partially implementing base class"""
     def __init__(self):
         self._message_queue=[]
     def push_message(self,message):
         self._message_queue.append(message)
+    def slow_push_message(self,message):
+        for i in textwrap.wrap(text,60):
+            self.push_message(i)
+    def slow_ask_question(self,message):
+        trailer=text[len(text.rstrip()):]
+        wrap=textwrap.wrap(text,60)
+        for i in wrap[:-1]:
+            self.push_message(i)
+        self.dump_messages() #Hopefully not needed.
+        return self.ask_question(wrap[-1]+trailer)
     #
     @staticmethod
     def works_p():
