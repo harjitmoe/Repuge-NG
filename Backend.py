@@ -6,10 +6,10 @@ class Backend(object):
         self._message_queue=[]
     def push_message(self,message):
         self._message_queue.append(message)
-    def slow_push_message(self,message):
+    def slow_push_message(self,text):
         for i in textwrap.wrap(text,60):
             self.push_message(i)
-    def slow_ask_question(self,message):
+    def slow_ask_question(self,text):
         trailer=text[len(text.rstrip()):]
         wrap=textwrap.wrap(text,60)
         for i in wrap[:-1]:

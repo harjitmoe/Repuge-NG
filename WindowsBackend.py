@@ -10,7 +10,7 @@ class WindowsBackend(ConsoleBackend):
         self.point[:]=x,y
         self._conio_gotoxy(x,y)
     def set_window_title(self,title):
-        self._conio_settitle(bytes(text))
+        self._conio_settitle(bytes(title))
     def get_key_event(self):
         self.dump_messages()
         return self._conio_getkey()

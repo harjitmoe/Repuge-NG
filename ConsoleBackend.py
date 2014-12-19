@@ -21,7 +21,8 @@ class ConsoleBackend(Backend):
     def dump_messages(self):
         if self._message_queue:
             while self._message_queue[1:]:
-                self._put_to_message_area(self._message_queue.pop(0)+" -- More -- ",1)
+                line=self._message_queue.pop(0)
+                self._put_to_message_area(line+" -- More -- ",1,line,0)
             self._put_to_message_area(self._message_queue.pop(),0)
     def ask_question(self,s):
         self.dump_messages()
@@ -33,7 +34,10 @@ class ConsoleBackend(Backend):
         raise NotImplementedError,"should be implemented by subclass"
     def _get_tile_character(self,tile_id):
         return getattr(self._tiles_class,tile_id)
-    def _put_to_message_area(self,s,ask):
+    def _put_to_message_area(self,s,ask,s2=None,re_echo_input=1):
+        """The backend behind all putting to the message area, for ask or say."""
+        if s2==None:
+            s2=s #idea is that s2 does not contain -- More -- where applicable
         self._messages_visible.pop(0)
         old_point=self.point[:]
         returndat=None
@@ -45,7 +49,9 @@ class ConsoleBackend(Backend):
             self.goto_point(0,21)
             self._reset_terminal()
             returndat=raw_input(s)
-            s=s+returndat
+            s=s2
+            if re_echo_input:
+                s=s+returndat
         while len(s)<79:
             s+=" "
         self._messages_visible.append(s)
