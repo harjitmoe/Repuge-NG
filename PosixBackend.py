@@ -1,4 +1,4 @@
-import sys,termios
+import sys
 from ConsoleBackend import ConsoleBackend
 from PosixTiles import PosixTiles
 from compat3k import *
@@ -10,6 +10,13 @@ class PosixBackend(ConsoleBackend):
         super(PosixBackend,self).__init__(*a,**kw)
         #Because this is Linux it behooveth thee (thou?) to clear the screen first
         print("\x1b[2J")
+    @staticmethod
+    def works_p():
+        try:
+            import termios,os
+            return os.name=="posix"
+        except ImportError:
+            return 0
     def _engage_message_formatting(self):
         sys.stderr.write("\x1b[1;37m")
     def _end_message_formatting(self):
@@ -22,6 +29,7 @@ class PosixBackend(ConsoleBackend):
     def set_window_title(self,title):
         sys.stderr.write("\x1b]0;%s\x1b\\"%title)
     def get_key_event(self):
+        self.dump_messages()
         #self._plotcache={} #Get rid of the misechoed keystrokes
         s=self._getch()
         #outputtext(`s`)
@@ -52,6 +60,7 @@ class PosixBackend(ConsoleBackend):
         self.goto_point(*pt)
     #
     def _getch(self,reset_afterwards=0): #avoid misechoed keystrokes between checks
+        import termios
         attrs=termios.tcgetattr(0);
         termios.tcsetattr(0,termios.TCSADRAIN,attrs[:3]+[attrs[3]&(~termios.ICANON)&(~termios.ECHO)]+attrs[4:])
         termios.tcdrain(0)
@@ -60,6 +69,7 @@ class PosixBackend(ConsoleBackend):
             termios.tcsetattr(0,termios.TCSADRAIN,attrs)
         return char
     def _reset_terminal(self):
+        import termios
         attrs=termios.tcgetattr(0);
         termios.tcsetattr(0,termios.TCSADRAIN,attrs[:3]+[attrs[3]|termios.ICANON|termios.ECHO]+attrs[4:])
         termios.tcdrain(0)

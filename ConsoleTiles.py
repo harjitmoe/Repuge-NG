@@ -1,20 +1,19 @@
 class ConsoleTiles(object):
-    #STATIC CLASS.  NO INSTANCES.
     @classmethod
     def __new__(cls,*a,**kw):
         raise TypeError,"attempt to create instance of static class"
     space=" "
     vwall="|"
     hwall="-"
-    wall_corner_nw="-", #In true Rogue style
-    wall_corner_ne="-", #In true Rogue style
-    wall_corner_sw="-", #In true Rogue style
-    wall_corner_se="-", #In true Rogue style
-    wall_TeeJnc_up="-", #In true continuation of Rogue style
-    wall_TeeJnc_dn="-", #In true continuation of Rogue style
-    wall_TeeJnc_rt="|", #In true continuation of Rogue style
-    wall_TeeJnc_lt="|", #In true continuation of Rogue style
-    wall_cross="-", #In true continuation of Rogue style
+    wall_corner_nw="-" #In true Rogue style
+    wall_corner_ne="-" #In true Rogue style
+    wall_corner_sw="-" #In true Rogue style
+    wall_corner_se="-" #In true Rogue style
+    wall_TeeJnc_up="-" #In true continuation of Rogue style
+    wall_TeeJnc_dn="-" #In true continuation of Rogue style
+    wall_TeeJnc_rt="|" #In true continuation of Rogue style
+    wall_TeeJnc_lt="|" #In true continuation of Rogue style
+    wall_cross="-" #In true continuation of Rogue style
     vfeature=":"
     hfeature="="
     #Levels of floor

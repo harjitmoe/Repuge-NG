@@ -12,7 +12,7 @@ class WindowsBackend(ConsoleBackend):
     def set_window_title(self,title):
         self._conio_settitle(bytes(text))
     def get_key_event(self):
+        self.dump_messages()
         return self._conio_getkey()
     def _plot_character(self,y,x,c):
-        self._conio_puttext(y,x,y,x,bytes(c+"\x07"))
-
+        self._conio_puttext(x,y,x,y,bytes(c+"\x07"))

@@ -3,8 +3,11 @@ class Backend(object):
     def __init__(self):
         self._message_queue=[]
     def push_message(self,message):
-        self._message_queue.append(m)
+        self._message_queue.append(message)
     #
+    @staticmethod
+    def works_p():
+        return 0 #Base class, no it doesn't "work"
     def dump_messages(self):
         raise NotImplementedError,"should be implemented by subclass"
     def ask_question(self,question):

@@ -21,8 +21,8 @@ class ConsoleBackend(Backend):
     def dump_messages(self):
         if self._message_queue:
             while self._message_queue[1:]:
-                self._put_to_message_area(self,self._message_queue.pop(0)+" -- More -- ",1)
-            self._put_to_message_area(self,self._message_queue.pop(),0)
+                self._put_to_message_area(self._message_queue.pop(0)+" -- More -- ",1)
+            self._put_to_message_area(self._message_queue.pop(),0)
     def ask_question(self,s):
         self.dump_messages()
         return self._put_to_message_area(s,1)
