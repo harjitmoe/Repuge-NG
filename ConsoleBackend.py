@@ -31,7 +31,7 @@ class ConsoleBackend(Backend):
         return self._plot_character(y,x,self._tiles_class.get_tile_character(tile_id))
     #
     def _plot_character(self,y,x,c):
-        raise NotImplementedError,"should be implemented by subclass"
+        raise NotImplementedError("should be implemented by subclass")
     def _put_to_message_area(self,s,ask,s2=None,re_echo_input=1):
         """The backend behind all putting to the message area, for ask or say.
 

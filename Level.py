@@ -92,5 +92,5 @@ class Level(object):
         self.redraw()
     #
     def run(self):
-        raise NotImplementedError,"should be implemented by level subclass"
+        raise NotImplementedError("should be implemented by level subclass")
     #

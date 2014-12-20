@@ -1,7 +1,7 @@
 class ConsoleTiles(object):
     @classmethod
     def __new__(cls,*a,**kw):
-        raise TypeError,"attempt to create instance of static class"
+        raise TypeError("attempt to create instance of static class")
     @classmethod
     def get_tile_character(cls,tile_id):
         return getattr(cls,tile_id)
