@@ -103,7 +103,7 @@ class BasicCollectoGame(Level):
             exp="1e+1"
             while _nan==_nan:
                 exp+="0"
-                #Sign bit would seem to distinguish bedween "indeterminable"
+                #Sign bit would seem to distinguish between "indeterminable"
                 #and "quiet not-a-number".  Eh?  How many NaNs does one need?
                 _nan=-(float(exp)/float(exp))
             return _nan
@@ -123,7 +123,9 @@ class BasicCollectoGame(Level):
                     self.backend.push_message("right")
                     return True
             else:
-                n=random.randrange(100)
+                #Note: ALL PRE-NG COLLECTO VERSIONS had a 1/400 chance of failing 
+                #on each try with "empty range for randrange()"
+                n=random.randrange(1,100)
                 m=random.randrange(n)
                 ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"=")
                 if int(ri)!=n-m:

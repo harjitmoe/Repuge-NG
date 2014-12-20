@@ -28,16 +28,26 @@ class ConsoleBackend(Backend):
         self.dump_messages()
         return self._put_to_message_area(s,1)
     def plot_tile(self,y,x,tile_id):
-        return self._plot_character(y,x,self._get_tile_character(tile_id))
+        return self._plot_character(y,x,self._tiles_class.get_tile_character(tile_id))
     #
     def _plot_character(self,y,x,c):
         raise NotImplementedError,"should be implemented by subclass"
-    def _get_tile_character(self,tile_id):
-        return getattr(self._tiles_class,tile_id)
     def _put_to_message_area(self,s,ask,s2=None,re_echo_input=1):
-        """The backend behind all putting to the message area, for ask or say."""
+        """The backend behind all putting to the message area, for ask or say.
+
+        Arguments:
+        - s: The string to output.
+        - ask: Boolean, should user input be collected?
+        - s2: String for in-place change of question after user input collected.
+          This should ONLY be used for removing -- More -- prompts and the like, 
+          which should not be kept around in the message log.
+        - re_echo_input: Boolean, should the user input be reechoed?  Keep as 1
+          unless the user is supposed to acknowlege receipt of the message with
+          Return but not actually supposed to input aught (e.g. More prompt).
+        """
         if s2==None:
-            s2=s #idea is that s2 does not contain -- More -- where applicable
+            s2=s
+        self._engage_message_formatting()
         self._messages_visible.pop(0)
         old_point=self.point[:]
         returndat=None
@@ -56,10 +66,9 @@ class ConsoleBackend(Backend):
             s+=" "
         self._messages_visible.append(s)
         self.goto_point(0,19)
-        if not ask: self._engage_message_formatting()
         for i in self._messages_visible:
             self._output_text(i+"\n")
-        if not ask: self._end_message_formatting()
+        self._end_message_formatting()
         self.goto_point(*old_point)
         return returndat
     

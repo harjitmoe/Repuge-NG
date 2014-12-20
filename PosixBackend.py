@@ -30,15 +30,11 @@ class PosixBackend(ConsoleBackend):
         sys.stderr.write("\x1b]0;%s\x1b\\"%title)
     def get_key_event(self):
         self.dump_messages()
-        #self._plotcache={} #Get rid of the misechoed keystrokes
         s=self._getch()
-        #outputtext(`s`)
         if s=="\x1b":
             s=self._getch()
-            #outputtext(`s`)
             if s=="[":
                 s=self._getch()
-                #outputtext(`s`)
                 if s=="A":
                     s="up"
                 elif s=="B":
@@ -50,14 +46,14 @@ class PosixBackend(ConsoleBackend):
             #XXX else undefined behaviour (in practice just skipping the \x1b)
         return s
     def _plot_character(self,y,x,c):
-        if ((y,x) not in plotcache) or (plotcache[(y,x)]!=c):
+        if ((y,x) not in self._plotcache) or (self._plotcache[(y,x)]!=c):
             sys.stderr.write("\x1B[?25l") #hide cursor, ? means extension, and that's a lowercase L
             sys.stderr.write("\x1B[%d;%dH%s"%(y+1,x+1,c))
             sys.stderr.write("\x1B[m") #reset colour
             sys.stderr.write("\x1B[?25h") #show cursor, ? means extension
             sys.stderr.flush()
-            plotcache[(y,x)]=c
-        self.goto_point(*pt)
+            self._plotcache[(y,x)]=c
+        self.goto_point(*self.point)
     #
     def _getch(self,reset_afterwards=0): #avoid misechoed keystrokes between checks
         import termios
@@ -73,3 +69,4 @@ class PosixBackend(ConsoleBackend):
         attrs=termios.tcgetattr(0);
         termios.tcsetattr(0,termios.TCSADRAIN,attrs[:3]+[attrs[3]|termios.ICANON|termios.ECHO]+attrs[4:])
         termios.tcdrain(0)
+
