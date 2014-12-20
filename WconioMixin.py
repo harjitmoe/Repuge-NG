@@ -1,3 +1,4 @@
+#Stuff which might not be present on system is to be imported in methods.
 from compat3k import *
 
 class WconioMixin(object):
