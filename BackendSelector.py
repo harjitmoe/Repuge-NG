@@ -3,7 +3,7 @@ from PosixBackend import PosixBackend
 from WconioWindowsBackend import WconioWindowsBackend
 
 class BackendSelector(object):
-    @classmethod
+    @staticmethod
     def __new__(cls,*a,**kw):
         raise TypeError("attempt to create instance of static class")
     dispatcher={"nt":[WconioWindowsBackend],"posix":[PosixBackend]}

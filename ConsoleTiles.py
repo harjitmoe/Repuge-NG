@@ -1,5 +1,5 @@
 class ConsoleTiles(object):
-    @classmethod
+    @staticmethod
     def __new__(cls,*a,**kw):
         raise TypeError("attempt to create instance of static class")
     @classmethod

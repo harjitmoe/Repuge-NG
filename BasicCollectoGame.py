@@ -1,5 +1,6 @@
 import sys,random,time
 from Level import Level
+from MultilevelStorage import MultilevelStorage
 
 NUMBERSIZE=15 #Cannot be bigger than 17
 
@@ -10,6 +11,7 @@ class BasicCollectoGame(Level):
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature"}
     
     def run(self):
+        self.score=MultilevelStorage("collecto_score")
         self.backend.set_window_title("Repuge Collecto")
         myscore=0
         mymoves=0
@@ -89,6 +91,13 @@ class BasicCollectoGame(Level):
                         self.backend.goto_point(*pt[::-1])
                     else:
                         self.backend.push_message("You try to climb but can't")
+                elif nxtstat=="ingredient": #ie Staircase
+                    self.set_index_objgrid((),*pt)
+                    pt=targit
+                    self.set_index_objgrid(("user",None),*pt)
+                    backend.gotopt(*pt[::-1])
+                    self.backend.push_message("You find a staircase (use Return (enter) to decend).")
+                    #readmap.ENABLE_SHADOWTRACING=0 #View from the stairs?
                 elif nxtstat=="space":
                     self.backend.push_message("You decide not to jump into the abyss")
                 else:
