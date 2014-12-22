@@ -5,14 +5,18 @@ from MultilevelStorage import MultilevelStorage
 NUMBERSIZE=15 #Cannot be bigger than 17
 
 class BasicCollectoGame(Level):
-    coded_grid="g"+("o"*NUMBERSIZE)+"G\n"+("d"+("."*NUMBERSIZE)+"d\n")*NUMBERSIZE+"j"+("o"*NUMBERSIZE)+"J"
+    coded_grid=None
     #More than one symbol per type can be defined: these
     # can then be distinguished in the run code
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature"}
+    title_window="Repuge Collecto"
     
+    def readmap(self):
+        self.coded_grid="g"+("o"*NUMBERSIZE)+"G\n"+("d"+("."*NUMBERSIZE)+"d\n")*NUMBERSIZE+"j"+("o"*NUMBERSIZE)+"J"
+        super(BasicCollectoGame,self).readmap()
     def run(self):
         self.score=MultilevelStorage("collecto_score")
-        self.backend.set_window_title("Repuge Collecto")
+        self.backend.set_window_title(self.title_window)
         myscore=0
         mymoves=0
         f=open("log.txt","w")
