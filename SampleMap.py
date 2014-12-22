@@ -1,4 +1,3 @@
-from utility import *
 from Level import Level
 
 class SampleMap(Level):
@@ -24,10 +23,10 @@ jooooooooooooJ"""
             self.redraw()
             e=self.backend.get_key_event()
             if e in ("down","up","left","right","8","4","6","2"):
-                if e in ("down","2"): targit=(pt[0]+1,pt[1])
-                if e in ("right","6"):targit=(pt[0],pt[1]+1)
-                if e in ("up","8"):   targit=(pt[0]-1,pt[1])
-                if e in ("left","4"): targit=(pt[0],pt[1]-1)
+                if e in ("down","2"): targit=(pt[0],pt[1]+1)
+                if e in ("right","6"):targit=(pt[0]+1,pt[1])
+                if e in ("up","8"):   targit=(pt[0],pt[1]-1)
+                if e in ("left","4"): targit=(pt[0]-1,pt[1])
                 floorlevel=type(0)(self.get_index_grid(*pt)[0][5:]) #XXX kludge/fragile/assumes
                 curstat=self.get_index_grid(*pt)[0]
                 nxtstat=self.get_index_grid(*targit)[0]

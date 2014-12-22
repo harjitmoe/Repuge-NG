@@ -6,7 +6,7 @@ class Level(object):
     """Base class of a level.
     
     Notable attributes and methods:
-    - run() - normally the level entrypoint.  Takes not args but self.
+    - run() - normally the level entrypoint.  Takes no args but self.
     - grid - list of lists of type-tuples for main level.
       A type-tuple is a tuple (type, extra_data) where extra_data is
       data internally used by the level code r.e. the status and 
@@ -36,11 +36,11 @@ class Level(object):
         self.run()
     def _gengrid(self,x,y):
         grid=[]
-        for i in range(y):
-            row=[]
+        for i in range(x):
+            file=[] #row (x), file (y), stack (z)
             for j in range(x):
-                row.append([])
-            grid.append(row)
+                file.append([])
+            grid.append(file)
         return grid
     def readmap(self):
         """Creates self.grid and self.objgrid.
@@ -50,12 +50,13 @@ class Level(object):
         
         Coded grid format:
         
-        - self.list_of_symbols is set to a character-to-tilename mapping.
-        - self.coded_grid is set to a multiline string coding the map 
+        - self.list_of_symbols is set to a character-to-tilename 
+          mapping, maximum width 50 tiles, maximum height 19 tiles.
+        - self.coded_grid is set to a multi-line string coding the map 
           using these symbols.
         
         The code characters used are included in the grid as extra data.
-        So internally different e.g. "vfeature"s can be coded with 
+        So multiple internally different e.g. vfeature can be coded with 
         different characters and detected as different by the level code.
         
         This default behaviour may be overridden by subclasses.  General
@@ -70,15 +71,18 @@ class Level(object):
         for row in self.coded_grid.split("\n"):
             colno=0
             for col in row:
-                self.grid[rowno][colno]=self.list_of_symbols[col],col
+                self.grid[colno][rowno]=self.list_of_symbols[col],col
                 colno+=1
             while len(row)<50:
-                self.grid[rowno][len(row)]=("space"," ")
+                self.grid[len(row)][rowno]=("space"," ")
                 row+=" "
             rowno+=1
-        for i in range(19-len(self.coded_grid.split("\n"))):
-            self.grid[18-i]=[("space","")]*50
-        #return self.grid,self.objgrid,self.run
+        ##I forget the point of this.
+        ##In any case, with the new standardisation measures on what is 
+        ##x and what is y, it cuts a swathe through the display and model.
+        ##So no.
+        #for i in range(19-len(self.coded_grid.split("\n"))):
+        #    self.grid[18-i]=[("space","")]*50
     def redraw(self):
         """Draw the map (grid and objgrid).
         
@@ -97,42 +101,41 @@ class Level(object):
         
         Unless you are a shadowtracer, you probably don't want to override 
         this."""
-        #A much older version, from before the introduction of shadowtracing, for now.
-        rowno=0
-        for row,row2 in zip(self.grid,self.objgrid):
-            colno=0
-            for col,col2 in zip(row,row2):
+        colno=0
+        for col,col2 in zip(self.grid,self.objgrid):
+            rowno=0
+            for row,row2 in zip(col,col2):
                 #print rowno,colno,col
-                if col2:
-                    self.backend.plot_tile(rowno,colno,col2[0])
-                elif col:
-                    self.backend.plot_tile(rowno,colno,col[0])
-                colno+=1
-            rowno+=1
+                if row2:
+                    self.backend.plot_tile(colno,rowno,row2[0])
+                elif row:
+                    self.backend.plot_tile(colno,rowno,row[0])
+                rowno+=1
+            colno+=1
     #
-    def get_index_grid(self,a,b):
-        return self.grid[a][b]
-    def get_index_objgrid(self,a,b):
-        return self.objgrid[a][b]
-    def set_index_grid(self,v,a,b):
-        self.grid[a][b]=v
-    def set_index_objgrid(self,v,a,b):
-        self.objgrid[a][b]=v
+    def get_index_grid(self,x,y):
+        return self.grid[x][y]
+    def get_index_objgrid(self,x,y):
+        return self.objgrid[x][y]
+    def set_index_grid(self,v,x,y):
+        self.grid[x][y]=v
+    def set_index_objgrid(self,v,x,y):
+        self.objgrid[x][y]=v
     #
     def followline_user(self,delay,points):
         """Move the user visibly down a list of points."""
         import time
         for i in points[:-1]:
-            self.set_index_objgrid(("user",None),*i[::-1])
+            self.set_index_objgrid(("user",None),*i)
             pt=i[::-1]
-            self.backend.goto_point(*pt[::-1])
+            self.backend.goto_point(*pt)
             self.redraw()
             time.sleep(delay)
-            self.set_index_objgrid((),*i[::-1])
+            self.set_index_objgrid((),*i)
         i=points[-1]
-        self.set_index_objgrid(("user",None),*i[::-1])
+        self.set_index_objgrid(("user",None),*i)
         pt=i[::-1]
-        self.backend.goto_point(*pt[::-1])
+        self.backend.goto_point(*pt)
         self.redraw()
         return pt
     def followline(self,delay,points,typeo):
@@ -140,11 +143,11 @@ class Level(object):
         (typeo should be the type tuple of the object)."""
         import time
         for i in points[:-1]:
-            self.set_index_objgrid(typeo,*i[::-1])
+            self.set_index_objgrid(typeo,*i)
             self.redraw()
             time.sleep(delay)
-            self.set_index_objgrid((),*i[::-1])
-        self.set_index_objgrid(typeo,*points[-1][::-1])
+            self.set_index_objgrid((),*i)
+        self.set_index_objgrid(typeo,*points[-1])
         self.redraw()
     def move_user(self,pt1,pt2):
         """Move the user from pt1 to pt2.
@@ -153,9 +156,10 @@ class Level(object):
         """
         self.set_index_objgrid((),*pt1)
         self.set_index_objgrid(("user",None),*pt2)
-        self.backend.goto_point(*pt2[::-1])
+        self.backend.goto_point(*pt2)
         self.redraw()
     #
     def run(self):
+        """Standard level entry point.  Should be overriden by subclass."""
         raise NotImplementedError("should be implemented by level subclass")
     #
