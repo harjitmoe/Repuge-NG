@@ -33,7 +33,10 @@ class Backend(object):
     def slow_ask_question(self,text):
         """Like ask_question(...), but wrap to 60 chars.
         
-        Blatantly not thread-safe."""
+        Blatantly not thread-safe.
+        
+        May need to be overridden if questions cannot be asked in message
+        area."""
         trailer=text[len(text.rstrip()):]
         wrap=textwrap.wrap(text,60)
         for i in wrap[:-1]:
@@ -50,17 +53,24 @@ class Backend(object):
         this as it is called automatically upon user interaction."""
         raise NotImplementedError("should be implemented by subclass")
     def ask_question(self,question):
+        """Ask the user a question, preferably in the message area.
+        
+        Implementations should call dump_messages() first."""
         raise NotImplementedError("should be implemented by subclass")
     def goto_point(self,x,y):
         """Move the user cursor/focus to coords (x,y)."""
         raise NotImplementedError("should be implemented by subclass")
     def set_window_title(self,title):
-        """Sets the window title.  As you would expect."""
-        #Might not be implement*able* in all cases.
-        #Exception should be caught by level module.
-        raise NotImplementedError
+        """Sets the window title.  As you would expect.
+        
+        Might not be implement*able* in all cases.  If not, leave 
+        unimplemented.  NotImplementedError should be caught by the level 
+        module."""
+        raise NotImplementedError("no means to set window title")
     def get_key_event(self):
-        """Return a keyboard event in WConio.getkey style."""
+        """Return a keyboard event in WConio.getkey style.
+        
+        Implementations should call dump_messages() first."""
         raise NotImplementedError("should be implemented by subclass")
     def plot_tile(self,y,x,tile_id):
         """Plot a tile at a point."""

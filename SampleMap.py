@@ -40,7 +40,7 @@ jooooooooooooJ"""
                         self.set_index_objgrid((),*pt)
                         pt=targit
                         self.set_index_objgrid(("user",None),*pt)
-                        self.backend.goto_point(*pt[::-1])
+                        self.backend.goto_point(*pt)
                     else:
                         self.backend.push_message("You try to climb but can't")
                 elif self.get_index_grid(*targit)[1]==":":

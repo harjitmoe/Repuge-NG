@@ -25,7 +25,7 @@ class PosixBackend(ConsoleBackend):
         sys.stderr.write("\x1b[1;37m")
     def goto_point(self,x,y):
         self.point[:]=x,y
-        sys.stderr.write("\x1B[%d;%dH"%(x+1,y+1))
+        sys.stderr.write("\x1B[%d;%dH"%(y+1,x+1))
     def set_window_title(self,title):
         sys.stderr.write("\x1b]0;%s\x1b\\"%title)
     def get_key_event(self):

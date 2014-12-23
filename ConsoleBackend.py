@@ -27,10 +27,10 @@ class ConsoleBackend(Backend):
     def ask_question(self,s):
         self.dump_messages()
         return self._put_to_message_area(s,1)
-    def plot_tile(self,y,x,tile_id):
-        return self._plot_character(y,x,self._tiles_class.get_tile_character(tile_id))
+    def plot_tile(self,x,y,tile_id):
+        return self._plot_character(x,y,self._tiles_class.get_tile_character(tile_id))
     #
-    def _plot_character(self,y,x,c):
+    def _plot_character(self,x,y,c):
         raise NotImplementedError("should be implemented by subclass")
     def _put_to_message_area(self,s,ask,s2=None,re_echo_input=1):
         """The backend behind all putting to the message area, for ask or say.
@@ -52,11 +52,11 @@ class ConsoleBackend(Backend):
         old_point=self.point[:]
         returndat=None
         if ask:
-            self.goto_point(19,0)
+            self.goto_point(0,19)
             for i in self._messages_visible:
                 self._output_text(i+"\n")
             self._output_text(" "*79+"\n")
-            self.goto_point(21,0)
+            self.goto_point(0,21)
             self._reset_terminal()
             returndat=raw_input(s)
             s=s2
@@ -65,7 +65,7 @@ class ConsoleBackend(Backend):
         while len(s)<79:
             s+=" "
         self._messages_visible.append(s)
-        self.goto_point(19,0)
+        self.goto_point(0,19)
         for i in self._messages_visible:
             self._output_text(i+"\n")
         self._end_message_formatting()

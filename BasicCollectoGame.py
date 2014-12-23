@@ -16,7 +16,10 @@ class BasicCollectoGame(Level):
         super(BasicCollectoGame,self).readmap()
     def run(self):
         self.score=MultilevelStorage("collecto_score")
-        self.backend.set_window_title(self.title_window)
+        try:
+            self.backend.set_window_title(self.title_window)
+        except NotImplementedError:
+            pass
         myscore=0
         mymoves=0
         f=open("log.txt","w")
@@ -49,9 +52,10 @@ class BasicCollectoGame(Level):
             self.redraw()
             e=self.backend.get_key_event()
             if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
-                #Does not go through to Python otherwise meaning UNIX main terminals
+                #Does not go through to Python otherwise, meaning that Linux main terminals
                 #are rendered otherwise out of order until someone kills Collecto
                 #from a different terminal or over SSH (or rlogin).
+                #This is relevent if someone is running this on an RPi.
                 raise KeyboardInterrupt #^c, ^d or ^z pressed
             elif e in ("down","up","left","right","8","4","6","2"):
                 if e in ("down","2"): targit=(pt[0],pt[1]+1)
@@ -92,14 +96,14 @@ class BasicCollectoGame(Level):
                         self.set_index_objgrid((),*pt)
                         pt=targit
                         self.set_index_objgrid(("user",None),*pt)
-                        self.backend.goto_point(*pt[::-1])
+                        self.backend.goto_point(*pt)
                     else:
                         self.backend.push_message("You try to climb but can't")
                 elif nxtstat=="ingredient": #ie Staircase
                     self.set_index_objgrid((),*pt)
                     pt=targit
                     self.set_index_objgrid(("user",None),*pt)
-                    backend.gotopt(*pt[::-1])
+                    backend.gotopt(*pt)
                     self.backend.push_message("You find a staircase (use Return (enter) to decend).")
                     #readmap.ENABLE_SHADOWTRACING=0 #View from the stairs?
                 elif nxtstat=="space":
