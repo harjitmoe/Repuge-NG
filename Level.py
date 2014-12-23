@@ -40,6 +40,7 @@ class Level(object):
             self.backend.set_window_title(self.title_window)
         except NotImplementedError:
             pass
+        #Start the event loop
         self.run()
     def _gengrid(self,x,y):
         grid=[]

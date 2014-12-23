@@ -13,13 +13,13 @@ class BasicCollectoGame(Level):
     starting_pt=(1,1)
     
     def readmap(self):
-        #Generate base grid
-        self.coded_grid="g"+("o"*NUMBERSIZE)+"G\n"+("d"+("."*NUMBERSIZE)+"d\n")*NUMBERSIZE+"j"+("o"*NUMBERSIZE)+"J"
-        super(BasicCollectoGame,self).readmap()
         #Initialise scoring storage
         self.score=MultilevelStorage("collecto_score")
         self.score.myscore=0
         self.score.mymoves=0
+        #Generate base grid
+        self.coded_grid="g"+("o"*NUMBERSIZE)+"G\n"+("d"+("."*NUMBERSIZE)+"d\n")*NUMBERSIZE+"j"+("o"*NUMBERSIZE)+"J"
+        super(BasicCollectoGame,self).readmap()
         #Put beans in unique locations
         beanpoints=[]
         blockpoints=[]
