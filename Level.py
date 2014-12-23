@@ -20,18 +20,25 @@ class Level(object):
       objects per square.  So a list of objects with their coords?
       Or a set???
     """
-    def __init__(self):
+    def __init__(self,backend=None):
         """Initialise the instance (this will run upon creation).
         
         By default: obtain a backend, initialise the grids, set the 
         player on self.starting_pt, draw the map, set window title to
         self.title_window and execute the run() method.
         
+        A backend can be passed in as an argument, which is used for
+        multi-level games (so as not to require a new window for each
+        level).
+        
         Could be overridden by subclasses, but do remember to obtain a 
         self.backend by some means before trying to output anything.
         More recommended is to override run() and/or readmap().
         """
-        self.backend=BackendSelector.get_backend()
+        if backend:
+            self.backend=backend
+        else:
+            self.backend=BackendSelector.get_backend()
         self.readmap()
         self.redraw()
         self.move_user(self.starting_pt)

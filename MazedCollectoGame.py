@@ -51,8 +51,7 @@ class MazedCollectoGame(BasicCollectoGame):
         self.coded_grid+=("d"+(".d"*(NUMBERSIZE-1))+".d\n")
         self.coded_grid+="j"+("o^"*(NUMBERSIZE-1))+"oJ"
         super(BasicCollectoGame,self).readmap()
-        #Remove walls to form maze, changing type of surrounding junction cells
-        #as required
+        #Remove walls to form maze, changing type of surrounding junction cells as required
         bwalls=self.genmaze()
         for y,x in bwalls: 
             self.grid[x][y]=("floor1",".")
@@ -64,9 +63,9 @@ class MazedCollectoGame(BasicCollectoGame):
                 self.grid[x-1][y]=("wall_corner_se","+")
             elif self.grid[x-1][y][0]=="wall_TeeJnc_dn":
                 self.grid[x-1][y]=("wall_corner_ne","+")
-            elif self.grid[x-1][y]==("wall_corner_nw","+"): #DO this time need to check subclass symbol
-                self.grid[x-1][y]=("vwall","+")
             elif self.grid[x-1][y]==("wall_corner_sw","+"): #DO this time need to check subclass symbol
+                self.grid[x-1][y]=("vwall","+")
+            elif self.grid[x-1][y]==("wall_corner_nw","+"): #DO this time need to check subclass symbol
                 self.grid[x-1][y]=("vwall","+")
             if self.grid[x+1][y][0]=="wall_cross":
                 self.grid[x+1][y]=("wall_TeeJnc_rt","+")
@@ -82,29 +81,47 @@ class MazedCollectoGame(BasicCollectoGame):
                 self.grid[x+1][y]=("vwall","+")
             #
             if self.grid[x][y-1][0]=="wall_cross":
-                self.grid[x][y-1]=("wall_TeeJnc_lt","+")
-            elif self.grid[x][y-1][0]=="wall_TeeJnc_rt":
-                self.grid[x][y-1]=("vwall","+")
-            elif self.grid[x][y-1][0]=="wall_TeeJnc_up":
-                self.grid[x][y-1]=("wall_corner_se","+")
+                self.grid[x][y-1]=("wall_TeeJnc_up","+")
             elif self.grid[x][y-1][0]=="wall_TeeJnc_dn":
-                self.grid[x][y-1]=("wall_corner_ne","+")
-            elif self.grid[x][y-1]==("wall_corner_sw","+"): #DO this time need to check subclass symbol
-                self.grid[x][y-1]=("vwall","+")
+                self.grid[x][y-1]=("hwall","+")
+            elif self.grid[x][y-1][0]=="wall_TeeJnc_lt":
+                self.grid[x][y-1]=("wall_corner_se","+")
+            elif self.grid[x][y-1][0]=="wall_TeeJnc_rt":
+                self.grid[x][y-1]=("wall_corner_sw","+")
+            elif self.grid[x][y-1]==("wall_corner_ne","+"): #DO this time need to check subclass symbol
+                self.grid[x][y-1]=("hwall","+")
             elif self.grid[x][y-1]==("wall_corner_nw","+"): #DO this time need to check subclass symbol
-                self.grid[x][y-1]=("vwall","+")
+                self.grid[x][y-1]=("hwall","+")
             if self.grid[x][y+1][0]=="wall_cross":
-                self.grid[x][y+1]=("wall_TeeJnc_rt","+")
-            elif self.grid[x][y+1][0]=="wall_TeeJnc_lt":
-                self.grid[x][y+1]=("vwall","+")
+                self.grid[x][y+1]=("wall_TeeJnc_dn","+")
             elif self.grid[x][y+1][0]=="wall_TeeJnc_up":
-                self.grid[x][y+1]=("wall_corner_sw","+")
-            elif self.grid[x][y+1][0]=="wall_TeeJnc_dn":
+                self.grid[x][y+1]=("hwall","+")
+            elif self.grid[x][y+1][0]=="wall_TeeJnc_lt":
+                self.grid[x][y+1]=("wall_corner_ne","+")
+            elif self.grid[x][y+1][0]=="wall_TeeJnc_rt":
                 self.grid[x][y+1]=("wall_corner_nw","+")
             elif self.grid[x][y+1]==("wall_corner_se","+"): #DO this time need to check subclass symbol
-                self.grid[x][y+1]=("vwall","+")
-            elif self.grid[x][y+1]==("wall_corner_ne","+"): #DO this time need to check subclass symbol
-                self.grid[x][y+1]=("vwall","+")
+                self.grid[x][y+1]=("hwall","+")
+            elif self.grid[x][y+1]==("wall_corner_sw","+"): #DO this time need to check subclass symbol
+                self.grid[x][y+1]=("hwall","+")
+        #Put beans in unique locations
+        beanpoints=[]
+        for junk in range(NUMBERSIZE):#range must not be larger than NUMBERSIZE squared minus 1.  Final "bean" is actually the down staircase.
+            while 1:
+                x=random.randrange(1,NUMBERSIZE)*2+1 #Yes, *2)+1 OUTSIDE the brackets (and not *(2+1) which is *3)
+                y=random.randrange(1,NUMBERSIZE)*2+1 #Yes, *2)+1 OUTSIDE the brackets (and not *(2+1) which is *3)
+                if (x,y) not in beanpoints:
+                    beanpoints.append((x,y))
+                    break
+        for x,y in beanpoints[:-1]:
+            self.objgrid[x][y]=("bean","'")
+        x,y=beanpoints[-1]
+        self.grid[x][y]=("ingredient","%") #I did not think the selections through well...
+    
+    def handle_command(self,e):
+        if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="ingredient": #ie Staircase
+            #Regen the dungeon.
+            MazedCollectoGame()
 #
 if __name__=="__main__":
-    MazedCollectoGame()
+    l=MazedCollectoGame()

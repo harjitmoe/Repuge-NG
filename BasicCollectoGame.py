@@ -15,8 +15,8 @@ class BasicCollectoGame(Level):
     def readmap(self):
         #Initialise scoring storage
         self.score=MultilevelStorage("collecto_score")
-        self.score.myscore=0
-        self.score.mymoves=0
+        self.score.initialise_property("myscore",0)
+        self.score.initialise_property("mymoves",0)
         #Generate base grid
         self.coded_grid="g"+("o"*NUMBERSIZE)+"G\n"+("d"+("."*NUMBERSIZE)+"d\n")*NUMBERSIZE+"j"+("o"*NUMBERSIZE)+"J"
         super(BasicCollectoGame,self).readmap()
@@ -80,7 +80,7 @@ class BasicCollectoGame(Level):
                 self.backend.push_message("You try to climb but can't")
                 return 0
         elif nxtstat=="ingredient": #ie Staircase
-            self.backend.push_message("You find a staircase (use Return (enter) to decend).")
+            self.backend.push_message("You find a staircase (use Return (enter) to descend).")
             return 1
         elif nxtstat=="space":
             self.backend.push_message("You decide not to jump into the abyss")
