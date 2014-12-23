@@ -25,7 +25,7 @@ class PosixBackend(ConsoleBackend):
         sys.stderr.write("\x1b[1;37m")
     def goto_point(self,x,y):
         self.point[:]=x,y
-        sys.stderr.write("\x1B[%d;%dH"%(y+1,x+1))
+        sys.stderr.write("\x1B[%d;%dH"%(x+1,y+1))
     def set_window_title(self,title):
         sys.stderr.write("\x1b]0;%s\x1b\\"%title)
     def get_key_event(self):
@@ -45,14 +45,14 @@ class PosixBackend(ConsoleBackend):
                     s="left"
             #XXX else undefined behaviour (in practice just skipping the \x1b)
         return s
-    def _plot_character(self,y,x,c):
-        if ((y,x) not in self._plotcache) or (self._plotcache[(y,x)]!=c):
+    def _plot_character(self,x,y,c):
+        if ((x,y) not in self._plotcache) or (self._plotcache[(x,y)]!=c):
             sys.stderr.write("\x1B[?25l") #hide cursor, ? means extension, and that's a lowercase L
             sys.stderr.write("\x1B[%d;%dH%s"%(y+1,x+1,c))
             sys.stderr.write("\x1B[m") #reset colour
             sys.stderr.write("\x1B[?25h") #show cursor, ? means extension
             sys.stderr.flush()
-            self._plotcache[(y,x)]=c
+            self._plotcache[(x,y)]=c
         self.goto_point(*self.point)
     #
     def _getch(self,reset_afterwards=0): #avoid misechoed keystrokes between checks
