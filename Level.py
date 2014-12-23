@@ -23,16 +23,23 @@ class Level(object):
     def __init__(self):
         """Initialise the instance (this will run upon creation).
         
-        By default: obtain a backend, initialise the grids, draw the 
-        map and execute the run() method.
+        By default: obtain a backend, initialise the grids, set the 
+        player on self.starting_pt, draw the map, set window title to
+        self.title_window and execute the run() method.
         
-        Could be overriden by subclasses, but do remember to obtain a 
+        Could be overridden by subclasses, but do remember to obtain a 
         self.backend by some means before trying to output anything.
         More recommended is to override run() and/or readmap().
         """
         self.backend=BackendSelector.get_backend()
         self.readmap()
         self.redraw()
+        self.move_user(self.starting_pt)
+        #Attempt to set title
+        try:
+            self.backend.set_window_title(self.title_window)
+        except NotImplementedError:
+            pass
         self.run()
     def _gengrid(self,x,y):
         grid=[]
@@ -149,17 +156,51 @@ class Level(object):
             self.set_index_objgrid((),*i)
         self.set_index_objgrid(typeo,*points[-1])
         self.redraw()
-    def move_user(self,pt1,pt2):
-        """Move the user from pt1 to pt2.
-        
-        XXX location should be kept track of by the class!
+    def move_user(self,pt):
+        """Move the user to pt.
         """
-        self.set_index_objgrid((),*pt1)
-        self.set_index_objgrid(("user",None),*pt2)
-        self.backend.goto_point(*pt2)
+        if hasattr(self,"pt"): #i.e. not first run
+            self.set_index_objgrid((),*self.pt)
+        self.set_index_objgrid(("user",None),*pt)
+        self.backend.goto_point(*pt)
+        self.pt=pt
         self.redraw()
     #
     def run(self):
-        """Standard level entry point.  Should be overriden by subclass."""
-        raise NotImplementedError("should be implemented by level subclass")
+        """Level entry point.  May be overridden by subclass.
+        
+        Default behaviour is an event loop.  Movement is passed to handle_move(...).
+        """
+        while 1:
+            self.redraw()
+            e=self.backend.get_key_event()
+            if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
+                #Does not go through to Python otherwise, meaning that Linux main terminals
+                #are rendered otherwise out of order until someone kills Collecto
+                #from a different terminal or over SSH (or rlogin).
+                #This is relevent if someone is running this on an RPi.
+                raise KeyboardInterrupt #^c, ^d or ^z pressed
+            elif e in ("down","up","left","right","8","4","6","2"):
+                if e in ("down","2"): target=(self.pt[0],self.pt[1]+1)
+                if e in ("right","6"):target=(self.pt[0]+1,self.pt[1])
+                if e in ("up","8"):   target=(self.pt[0],self.pt[1]-1)
+                if e in ("left","4"): target=(self.pt[0]-1,self.pt[1])
+                if self.handle_move(target):
+                    self.move_user(target)
+            else:
+                self.handle_command(e)
+    #
+    def handle_move(self,dest):
+        """Handle a move command by the user. --> True to go ahead or False 
+        to block the move.
+        
+        Default does nothing.  May be overridden by level subclass."""
+        return 0
+    #
+    def handle_command(self,key_event):
+        """Handle a command by the user.  This is not by default called on 
+        move commands.
+        
+        Default does nothing.  May be overridden by level subclass."""
+        return 0
     #
