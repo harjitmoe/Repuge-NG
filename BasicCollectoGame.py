@@ -1,6 +1,6 @@
 import sys,random,time
-from Level import Level
-from MultilevelStorage import MultilevelStorage
+from repugeng.Level import Level
+from repugeng.MultilevelStorage import MultilevelStorage
 
 NUMBERSIZE=15 #Cannot be bigger than 17
 

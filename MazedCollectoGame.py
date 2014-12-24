@@ -1,6 +1,6 @@
 import sys,random,time
-from Level import Level
-from MultilevelStorage import MultilevelStorage
+from repugeng.Level import Level
+from repugeng.MultilevelStorage import MultilevelStorage
 from BasicCollectoGame import BasicCollectoGame
 
 NUMBERSIZE=8 #Cannot be bigger than 8

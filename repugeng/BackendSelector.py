@@ -1,6 +1,6 @@
 import os
-from PosixBackend import PosixBackend
-from WconioWindowsBackend import WconioWindowsBackend
+from repugeng.PosixBackend import PosixBackend
+from repugeng.WconioWindowsBackend import WconioWindowsBackend
 
 class BackendSelector(object):
     @staticmethod

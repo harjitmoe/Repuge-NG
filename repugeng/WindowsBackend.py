@@ -1,6 +1,6 @@
 import sys
-from ConsoleBackend import ConsoleBackend
-from WindowsTiles import WindowsTiles
+from repugeng.ConsoleBackend import ConsoleBackend
+from repugeng.WindowsTiles import WindowsTiles
 from compat3k import *
 
 class WindowsBackend(ConsoleBackend):

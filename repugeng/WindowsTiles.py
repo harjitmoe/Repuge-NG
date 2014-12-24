@@ -1,4 +1,4 @@
-from ConsoleTiles import ConsoleTiles
+from repugeng.ConsoleTiles import ConsoleTiles
 class WindowsTiles(ConsoleTiles):
     #STATIC CLASS.  NO INSTANCES.
     vwall="\xb3"

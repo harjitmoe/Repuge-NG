@@ -1,5 +1,5 @@
 import time
-from BackendSelector import BackendSelector
+from repugeng.BackendSelector import BackendSelector
 #n.b. put shadowtracer, when introduced, elsewhere (mixin?).
 
 class Level(object):
@@ -31,6 +31,10 @@ class Level(object):
         multi-level games (so as not to require a new window for each
         level).
         
+        If starting_pt==None, skip that bit (level is expected to have
+        an intro cutscene where the player character only appears 
+        partway into it.
+        
         Could be overridden by subclasses, but do remember to obtain a 
         self.backend by some means before trying to output anything.
         More recommended is to override run() and/or readmap().
@@ -41,7 +45,8 @@ class Level(object):
             self.backend=BackendSelector.get_backend()
         self.readmap()
         self.redraw()
-        self.move_user(self.starting_pt)
+        if self.starting_pt!=None:
+            self.move_user(self.starting_pt)
         #Attempt to set title
         try:
             self.backend.set_window_title(self.title_window)
@@ -53,7 +58,7 @@ class Level(object):
         grid=[]
         for i in range(x):
             file=[] #row (x), file (y), stack (z)
-            for j in range(x):
+            for j in range(y):
                 file.append([])
             grid.append(file)
         return grid
@@ -179,6 +184,7 @@ class Level(object):
         
         Default behaviour is an event loop.  Movement is passed to handle_move(...).
         """
+        self.initial_cutscene()
         while 1:
             self.redraw()
             e=self.backend.get_key_event()
@@ -202,8 +208,8 @@ class Level(object):
         """Handle a move command by the user. --> True to go ahead or False 
         to block the move.
         
-        Default does nothing.  May be overridden by level subclass."""
-        return 0
+        Default allows free reign.  May be overridden by level subclass."""
+        return 1
     #
     def handle_command(self,key_event):
         """Handle a command by the user.  This is not by default called on 
@@ -211,4 +217,8 @@ class Level(object):
         
         Default does nothing.  May be overridden by level subclass."""
         return 0
+    #
+    def initial_cutscene(self):
+        """Hook called by default implementation of run() before the event loop"""
+        pass
     #

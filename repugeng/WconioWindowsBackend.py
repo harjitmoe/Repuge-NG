@@ -1,5 +1,5 @@
-from WindowsBackend import WindowsBackend
-from WconioMixin import WconioMixin
+from repugeng.WindowsBackend import WindowsBackend
+from repugeng.WconioMixin import WconioMixin
 
 class WconioWindowsBackend(WindowsBackend,WconioMixin):
     @staticmethod

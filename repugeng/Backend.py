@@ -1,8 +1,8 @@
 import textwrap
 
 class Backend(object):
-    """The backend interface.  This is the core of Repuge-NG, although ideally
-    the level need not know about it (not so much in practice).
+    """The backend interface.  This is the core of Repuge-NG, and may 
+    sometimes be useful even if Level is not used.
     
     Do not create an instance directly.
     
@@ -24,25 +24,31 @@ class Backend(object):
         I previously called a "sequester") until next user interaction and 
         then output with a -- More -- prompt."""
         self._message_queue.append(message)
-    def slow_push_message(self,text):
+    def slow_push_message(self,text,prefix=""):
         """Like push_message(...), but wrap to 60 chars.
         
-        Blatantly not thread-safe."""
+        Blatantly not thread-safe.
+        
+        Optional "prefix" specifies a prefix to be added to each line
+        (adds to the 60 chars)."""
         for i in textwrap.wrap(text,60):
-            self.push_message(i)
-    def slow_ask_question(self,text):
+            self.push_message(prefix+i)
+    def slow_ask_question(self,text,prefix=""):
         """Like ask_question(...), but wrap to 60 chars.
         
         Blatantly not thread-safe.
         
         May need to be overridden if questions cannot be asked in message
-        area."""
+        area.
+        
+        Optional "prefix" specifies a prefix to be added to each line
+        (adds to the 60 chars)."""
         trailer=text[len(text.rstrip()):]
         wrap=textwrap.wrap(text,60)
         for i in wrap[:-1]:
-            self.push_message(i)
+            self.push_message(prefix+i)
         self.dump_messages() #Hopefully not needed.
-        return self.ask_question(wrap[-1]+trailer)
+        return self.ask_question(prefix+wrap[-1]+trailer)
     #
     @staticmethod
     def works_p():

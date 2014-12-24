@@ -1,6 +1,6 @@
 import sys
-from ConsoleBackend import ConsoleBackend
-from PosixTiles import PosixTiles
+from repugeng.ConsoleBackend import ConsoleBackend
+from repugeng.PosixTiles import PosixTiles
 from compat3k import *
 
 class PosixBackend(ConsoleBackend):

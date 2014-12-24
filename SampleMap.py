@@ -1,4 +1,4 @@
-from Level import Level
+from repugeng.Level import Level
 
 class SampleMap(Level):
     coded_grid="""\

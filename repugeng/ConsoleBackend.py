@@ -1,6 +1,6 @@
 import sys
-from Backend import Backend
-from ConsoleTiles import ConsoleTiles
+from repugeng.Backend import Backend
+from repugeng.ConsoleTiles import ConsoleTiles
 from compat3k import *
 
 class ConsoleBackend(Backend):
