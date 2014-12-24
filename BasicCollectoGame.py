@@ -1,3 +1,21 @@
+"""Initial proposal (***note that this is not entirely followed*** (yet)):
+
+- There is a universe, the player has to run around the universe (bird's-eye-view) collecting objects, which are inserted at random. A certain undecided number of objects are in the initial universe. 
+
+- They will then be asked a random addition, subtraction, multiplication and division, the trickiness depending on the value of the object. 
+
+- They will also be time-limited, with the more valuable objects having shorter time limits. 
+
+- If they succeed, their score will be increased by the value of the object and it will vanish and another object will appear somewhere random, keeping the object count constant. 
+
+- If they time out their score will stay the same, the object will not vanish and they will be able to pick it up again but the question will be different. 
+
+- If they get it wrong, their score will be decreased by a certain undecided fraction of the object's value, it will vanish and another object will appear in a random location. 
+
+- This is intended to help people practise their mental mathematics, and thus improve one's mathematical speed and ability. 
+
+- This is aimed at people revising for SATs, GCSEs, A-levels... I will probably have to pick one (GCSE probably as it may be useful to me as well as others) but if I can find the time I might add multiple levels.
+"""
 import sys,random,time
 from repugeng.Level import Level
 from repugeng.MultilevelStorage import MultilevelStorage

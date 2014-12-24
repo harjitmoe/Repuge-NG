@@ -1,11 +1,9 @@
 """
 Repuge-NG: Real educational/entertainment programs use game engines - Next Generation.
 
-The original aim was to produce a framework in which an educational game could be 
-written in Python, as a response to an extracurricular challenge at School.  That 
-proved fairly abortive, but I kept the codebase.
+The original aim of REPUGE was to produce a framework in which an educational game could be written in Python, as a response to an extracurricular challenge at School.  That project proved abortive, but I kept the codebase - both for the framework and the project.
 
-My proposal for my entry contained the following summary of the original generation (REPUGE):
+My proposal for my entry contained the following summary of the original framework (REPUGE):
 
     On first hearing of this task, I had been playing NetHack (a dungeon-crawling game with a terminal interface) in both GUI and terminal interfaces, and it occurred to me that the GUI is the hardest part of the design (for me, anyway) and would be simpler if I created a simple Python-based framework to do the GUI in (for then) a Windows console. 
     
@@ -13,7 +11,7 @@ My proposal for my entry contained the following summary of the original generat
     
     I called it REPUGE, for Real Educational Programs Use Game Engines.
 
-For that project, see BasicCollectoGame.py amongst the example material.
+For the overall project, see BasicCollectoGame.py in the example material.
 
 This project, Repuge-NG, was an aim to refactor the loosely functional REPUGE code, where the meanings of x and y were not consistent across the API, into a tightly object-oriented framework which allows programs to be written which are actually readable.  Given that the event loop code seemed to be more-or-less the same across everything, I integrated it into the framework (it can be overridden by the level, though).
 

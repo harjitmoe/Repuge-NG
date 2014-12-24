@@ -13,12 +13,6 @@ class Level(object):
       identity of the feature.  (Whereas type is just the tile type).
     - objgrid - like grid, but for objects placed upon the map rather
       than constituting part of it, e.g. a collectable.
-    
-    To do:
-    - The objgrid system really needs to be deprecated with the user
-      kept track of as with other single objects, and with multiple 
-      objects per square.  So a list of objects with their coords?
-      Or a set???
     """
     def __init__(self,backend=None):
         """Initialise the instance (this will run upon creation).
@@ -160,7 +154,7 @@ class Level(object):
         return pt
     def followline(self,delay,points,typeo):
         """Move a non-user object visibly down a list of points.
-        (typeo should be the type tuple of the object)."""
+        (typeo should be the objgrid tuple of the object)."""
         import time
         for i in points[:-1]:
             self.set_index_objgrid(typeo,*i)
@@ -183,6 +177,7 @@ class Level(object):
         """Level entry point.  May be overridden by subclass.
         
         Default behaviour is an event loop.  Movement is passed to handle_move(...).
+        Other commands are passed to handle_command(...).
         """
         self.initial_cutscene()
         while 1:
@@ -208,14 +203,19 @@ class Level(object):
         """Handle a move command by the user. --> True to go ahead or False 
         to block the move.
         
-        Default allows free reign.  May be overridden by level subclass."""
-        return 1
+        Default allows no movement.  May be overridden by level subclass."""
+        return 0
     #
     def handle_command(self,key_event):
-        """Handle a command by the user.  This is not by default called on 
-        move commands.
+        r"""Handle a command by the user.  This is not called on move 
+        commands by default.
         
-        Default does nothing.  May be overridden by level subclass."""
+        Default does nothing.  May be overridden by level subclass.
+        
+        BE AWARE THAT the same key may sent a different event on different 
+        platforms/backends.  This much is not rigidly standardised between 
+        backends.  Play safe: test key_event.lower() against ("return",
+        "enter", "\r", "\n", "\r\n") for example."""
         return 0
     #
     def initial_cutscene(self):

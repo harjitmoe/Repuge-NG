@@ -1,3 +1,4 @@
+"""From my proposal: This is a newer terminal backend which runs on Python 2 for Linux with termios support. It switches to noncanonical nonechoing input using termios to allow arrowkey control and outputs using ANSI escapes. It has to output to ASCII rather than OEM, and its wall drawing is therefore much cruder, but it makes up for this by colouring the walls red."""
 import sys
 from repugeng.ConsoleBackend import ConsoleBackend
 from repugeng.PosixTiles import PosixTiles

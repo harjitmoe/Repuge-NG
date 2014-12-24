@@ -32,8 +32,11 @@ class ConsoleBackend(Backend):
     #
     def _plot_character(self,x,y,c):
         raise NotImplementedError("should be implemented by subclass")
-    def _put_to_message_area(self,s,ask,s2=None,re_echo_input=1):
-        """The backend behind all putting to the message area, for ask or say.
+    def _put_to_message_area(self,s,ask,s2=None,collect_input=1):
+        """The backend behind all putting to the console message area, 
+        for ask or say.
+        
+        Not thread safe.
 
         Arguments:
         - s: The string to output.
@@ -41,9 +44,9 @@ class ConsoleBackend(Backend):
         - s2: String for in-place change of question after user input collected.
           This should ONLY be used for removing -- More -- prompts and the like, 
           which should not be kept around in the message log.
-        - re_echo_input: Boolean, should the user input be reechoed?  Keep as 1
-          unless the user is supposed to acknowlege receipt of the message with
-          Return but not actually supposed to input aught (e.g. More prompt).
+        - collect_input: Boolean, should the user input be collected?  Keep as 1
+          unless the user is supposed to acknowledge receipt of the message with
+          Return but not actually supposed to input stuff (e.g. More prompt).
         """
         if s2==None:
             s2=s
@@ -58,10 +61,18 @@ class ConsoleBackend(Backend):
             self._output_text(" "*79+"\n")
             self.goto_point(0,21)
             self._reset_terminal()
-            returndat=raw_input(s)
-            s=s2
-            if re_echo_input:
+            if collect_input:
+                returndat=raw_input(s)
+                s=s2
                 s=s+returndat
+            else:
+                self._output_text(s)
+                #Wait for key event without triggering recursion.
+                #XXX kluge, not thread safe.
+                bkq,self._message_queue=self._message_queue,[]
+                self.get_key_event()
+                self._message_queue=bkq+self._message_queue
+                s=s2
         while len(s)<79:
             s+=" "
         self._messages_visible.append(s)
@@ -70,5 +81,6 @@ class ConsoleBackend(Backend):
             self._output_text(i+"\n")
         self._end_message_formatting()
         self.goto_point(*old_point)
-        return returndat
+        if collect_input:
+            return returndat
     
