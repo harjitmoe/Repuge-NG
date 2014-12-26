@@ -60,6 +60,8 @@ class BasicCollectoGame(Level):
             self.objgrid[x][y]=("bean","'")
         for x,y in blockpoints:
             self.grid[x][y]=("boulder","O")
+        #
+        self.nan=0
     def handle_move(self,target):
         floorlevel=type(0)(self.get_index_grid(*self.pt)[0][5:]) #XXX kludge/fragile/assumes
         curstat=self.get_index_grid(*self.pt)[0]
@@ -107,19 +109,19 @@ class BasicCollectoGame(Level):
             self.backend.push_message("You hit something")
             return 0
     #
-    def user_input_to_int(self,input,base=10,int=int):
+    def user_input_to_int(self,input,base=10):
         try:
             return int(input,base)
         except ValueError:
             self.backend.push_message("Wrong!  Hint: it's a number in figures.")
-            global _nan #Therefore only calc it once (while loop...)
             exp="1e+1"
-            while _nan==_nan:
+            #json.decode("nan") would work were I aiming at 2.7 only.
+            while self.nan==self.nan:
                 exp+="0"
                 #Sign bit would seem to distinguish between "indeterminable"
                 #and "quiet not-a-number".  Eh?  How many NaNs does one need?
-                _nan=-(float(exp)/float(exp))
-            return _nan
+                self.nan=-(float(exp)/float(exp))
+            return self.nan
     #
     def question_test(self,duration):
         do_sum=random.randrange(2)
@@ -129,7 +131,7 @@ class BasicCollectoGame(Level):
                 n=random.randrange(100)
                 m=random.randrange(100)
                 ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"=")
-                if int(ri)!=n+m:
+                if self.user_input_to_int(ri)!=n+m:
                     self.backend.push_message("wrong, it's "+str(n+m))
                     return False
                 else:
@@ -142,7 +144,7 @@ class BasicCollectoGame(Level):
                 n=random.randrange(1,100)
                 m=random.randrange(n)
                 ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"=")
-                if int(ri)!=n-m:
+                if self.user_input_to_int(ri)!=n-m:
                     self.backend.push_message("wrong, it's "+str(n-m))
                     return False
                 else:
@@ -153,7 +155,7 @@ class BasicCollectoGame(Level):
                 n=random.randrange(1,10)
                 m=random.randrange(1,10)
                 ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"=")
-                if int(ri)!=n*m:
+                if self.user_input_to_int(ri)!=n*m:
                     self.backend.push_message("wrong, it's "+str(n*m))
                     return False
                 else:
@@ -165,7 +167,7 @@ class BasicCollectoGame(Level):
                 m=random.randrange(1,5)
                 n*=m
                 ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"=")
-                if int(ri)!=n//m: #Integer division!
+                if self.user_input_to_int(ri)!=n//m: #Integer division!
                     self.backend.push_message("wrong, it's "+str(n//m)) #Integer division!
                     return False
                 else:

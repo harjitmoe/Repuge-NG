@@ -1,7 +1,7 @@
 import sys
 from repugeng.Backend import Backend
 from repugeng.ConsoleTiles import ConsoleTiles
-from compat3k import *
+from repugeng.compat3k import *
 
 class ConsoleBackend(Backend):
     """Partially implementing base class"""
@@ -12,6 +12,7 @@ class ConsoleBackend(Backend):
         super(ConsoleBackend,self).__init__(*a,**kw)
     def _output_text(self,i):
         sys.stderr.write(i)
+        sys.stderr.flush() #breaks on 3.1 on win32 otherwise
     def _engage_message_formatting(self):
         pass
     def _end_message_formatting(self):
@@ -61,11 +62,7 @@ class ConsoleBackend(Backend):
             self._output_text(" "*79+"\n")
             self.goto_point(0,21)
             self._reset_terminal()
-            if collect_input:
-                returndat=raw_input(s)
-                s=s2
-                s=s+returndat
-            else:
+            if (not collect_input):
                 self._output_text(s)
                 #Wait for key event without triggering recursion.
                 #XXX kluge, not thread safe.
@@ -73,6 +70,10 @@ class ConsoleBackend(Backend):
                 self.get_key_event()
                 self._message_queue=bkq+self._message_queue
                 s=s2
+            else:
+                returndat=raw_input(s)
+                s=s2
+                s=s+returndat
         while len(s)<79:
             s+=" "
         self._messages_visible.append(s)

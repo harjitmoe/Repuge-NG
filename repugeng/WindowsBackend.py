@@ -1,7 +1,7 @@
 import sys
 from repugeng.ConsoleBackend import ConsoleBackend
 from repugeng.WindowsTiles import WindowsTiles
-from compat3k import *
+from repugeng.compat3k import *
 
 class WindowsBackend(ConsoleBackend):
     """Partially implementing base class"""

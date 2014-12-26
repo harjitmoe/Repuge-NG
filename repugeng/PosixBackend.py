@@ -2,7 +2,7 @@
 import sys
 from repugeng.ConsoleBackend import ConsoleBackend
 from repugeng.PosixTiles import PosixTiles
-from compat3k import *
+from repugeng.compat3k import *
 
 class PosixBackend(ConsoleBackend):
     _tiles_class=PosixTiles
