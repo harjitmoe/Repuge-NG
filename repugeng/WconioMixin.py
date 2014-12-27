@@ -13,4 +13,7 @@ class WconioMixin(object):
     def _conio_puttext(self,a,b,c,d,t):
         import WConio
         WConio.puttext(a,b,c,d,t)
+    def _conio_textcolor(self,colour):
+        import WConio
+        WConio.textcolor(colour)
 

@@ -30,6 +30,17 @@ class BasicCollectoGame(Level):
     title_window="Repuge-NG Collecto: Basic Edition"
     starting_pt=(1,1)
     
+    def get_new_point(self):
+        if hasattr(self,"pt"):
+            userloc=[self.pt]
+        else:
+            userloc=[self.starting_pt]
+        while 1:
+            x=random.randrange(1,NUMBERSIZE)
+            y=random.randrange(1,NUMBERSIZE)
+            if (x,y) not in self.beanpoints+self.blockpoints+userloc:
+                return (x,y)
+    
     def readmap(self):
         #Initialise scoring storage
         self.score=MultilevelStorage("collecto_score")
@@ -39,31 +50,24 @@ class BasicCollectoGame(Level):
         self.coded_grid="g"+("o"*NUMBERSIZE)+"G\n"+("d"+("."*NUMBERSIZE)+"d\n")*NUMBERSIZE+"j"+("o"*NUMBERSIZE)+"J"
         super(BasicCollectoGame,self).readmap()
         #Put beans in unique locations
-        beanpoints=[]
-        blockpoints=[]
+        self.beanpoints=[]
+        self.blockpoints=[]
         for junk in range(NUMBERSIZE):#ranges total must not be larger than NUMBERSIZE squared minus 1.
-            while 1:
-                x=random.randrange(1,NUMBERSIZE)
-                y=random.randrange(1,NUMBERSIZE)
-                if (x,y) not in beanpoints+blockpoints:
-                    beanpoints.append((x,y))
-                    break
+            self.beanpoints.append(self.get_new_point())
         #ranges total must not be larger than NUMBERSIZE squared.
         for junk in range(1):#this range must not be larger than 2 (or 1 if no numberpad-with-numlock-on)
-            while 1:
-                x=random.randrange(1,NUMBERSIZE)
-                y=random.randrange(1,NUMBERSIZE)
-                if (x,y) not in beanpoints+blockpoints:
-                    blockpoints.append((x,y))
-                    break
-        for x,y in beanpoints:
+            self.blockpoints.append(self.get_new_point())
+        for x,y in self.beanpoints:
             self.objgrid[x][y]=("bean","'")
-        for x,y in blockpoints:
+        for x,y in self.blockpoints:
             self.grid[x][y]=("boulder","O")
         #
         self.nan=0
     def handle_move(self,target):
-        floorlevel=type(0)(self.get_index_grid(*self.pt)[0][5:]) #XXX kludge/fragile/assumes
+        try: #XXX kludge/fragile/assumes
+            floorlevel=type(0)(self.get_index_grid(*self.pt)[0][5:])
+        except ValueError:
+            floorlevel=1 #Needed or mazed subclass breaks
         curstat=self.get_index_grid(*self.pt)[0]
         nxtstat=self.get_index_grid(*target)[0]
         if self.get_index_objgrid(*target):
@@ -71,22 +75,20 @@ class BasicCollectoGame(Level):
                 duration=5+random.expovariate(0.2)
                 timr=time.time()
                 result=self.question_test(duration)
-                self.score.mymoves=self.score.mymoves+1
-                timr=time.time()-timr
-                if timr>duration:
-                    self.backend.push_message("OVERTIME")
-                    result=False
-                if result:
-                    self.score.myscore+=int((100.0/timr)+0.5)
-                    self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v2)"%(self.score.myscore/float(self.score.mymoves)))
-                self.set_index_objgrid((),*target)
-                while 1:
-                    #New location where there is not already something
-                    x=random.randrange(1,NUMBERSIZE)
-                    y=random.randrange(1,NUMBERSIZE)
-                    if not self.objgrid[x][y]:
-                        self.objgrid[x][y]=("bean","'")
-                        break
+                if result!=-1:
+                    self.score.mymoves=self.score.mymoves+1
+                    timr=time.time()-timr
+                    if timr>duration:
+                        self.backend.push_message("OVERTIME")
+                        result=False
+                    if result:
+                        self.score.myscore+=int((100.0/timr)+0.5)
+                        self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v2)"%(self.score.myscore/float(self.score.mymoves)))
+                    self.set_index_objgrid((),*target)
+                    self.beanpoints.remove(target)
+                    new_location=self.get_new_point()
+                    self.beanpoints.append(new_location)
+                    self.set_index_objgrid(("bean","'"),*new_location)
             return 0
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
@@ -109,19 +111,26 @@ class BasicCollectoGame(Level):
             self.backend.push_message("You hit something")
             return 0
     #
-    def user_input_to_int(self,input,base=10):
+    def user_input_to_int(self,input):
         try:
-            return int(input,base)
+            return int(input)
         except ValueError:
-            self.backend.push_message("Wrong!  Hint: it's a number in figures.")
-            exp="1e+1"
-            #json.decode("nan") would work were I aiming at 2.7 only.
-            while self.nan==self.nan:
-                exp+="0"
-                #Sign bit would seem to distinguish between "indeterminable"
-                #and "quiet not-a-number".  Eh?  How many NaNs does one need?
-                self.nan=-(float(exp)/float(exp))
-            return self.nan
+            try:
+                flt=float(input)
+                #Float comparison (never compare floats directly, see below)
+                if abs(float(int(flt))-flt)<0.0001:
+                    return int(flt)
+                else: #Not equal, so further float comparison not an issue
+                    return flt
+            except ValueError:
+                exp="1e+1"
+                #json.decode("nan") would work were I aiming at 2.7+ only.
+                while self.nan==self.nan:
+                    exp+="0"
+                    #Sign bit would seem to distinguish between "indeterminable"
+                    #and "quiet not-a-number".  Eh?  How many NaNs does one need?
+                    self.nan=-(float(exp)/float(exp))
+                return self.nan
     #
     def question_test(self,duration):
         do_sum=random.randrange(2)
@@ -130,8 +139,11 @@ class BasicCollectoGame(Level):
             if not do_arc:
                 n=random.randrange(100)
                 m=random.randrange(100)
-                ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"=")
-                if self.user_input_to_int(ri)!=n+m:
+                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"="))
+                if ri!=ri: #i.e. is NaN
+                    self.backend.push_message("I don't understand that answer (in figures, please).")
+                    return -1
+                elif ri!=n+m:
                     self.backend.push_message("wrong, it's "+str(n+m))
                     return False
                 else:
@@ -143,8 +155,11 @@ class BasicCollectoGame(Level):
                 #this NG version.
                 n=random.randrange(1,100)
                 m=random.randrange(n)
-                ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"=")
-                if self.user_input_to_int(ri)!=n-m:
+                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"="))
+                if ri!=ri: #i.e. is NaN
+                    self.backend.push_message("I don't understand that answer (in figures, please).")
+                    return -1
+                elif ri!=n-m:
                     self.backend.push_message("wrong, it's "+str(n-m))
                     return False
                 else:
@@ -154,20 +169,29 @@ class BasicCollectoGame(Level):
             if not do_arc:
                 n=random.randrange(1,10)
                 m=random.randrange(1,10)
-                ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"=")
-                if self.user_input_to_int(ri)!=n*m:
+                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"="))
+                if ri!=ri: #i.e. is NaN
+                    self.backend.push_message("I don't understand that answer (in figures, please).")
+                    return -1
+                elif ri!=n*m:
                     self.backend.push_message("wrong, it's "+str(n*m))
                     return False
                 else:
                     self.backend.push_message("right")
                     return True
             else:
-                #Integer division!  NOTE: DO NOT ADD FLOAT DIVISION.  UNREASONABLE TO COMPARE FLOATS.  LOOKUP WHY.  See also the "decimal" module.
+                #Integer division!  NOTE: DO NOT ADD FLOAT DIVISION.  
+                #UNREASONABLE TO COMPARE FLOATS.  LOOKUP WHY.
+                #Hint: try evaluating sum([0.0001]*50000)==5
+                #See also the "decimal" module.
                 n=random.randrange(20)
                 m=random.randrange(1,5)
                 n*=m
-                ri=self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"=")
-                if self.user_input_to_int(ri)!=n//m: #Integer division!
+                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"="))
+                if ri!=ri: #i.e. is NaN
+                    self.backend.push_message("I don't understand that answer (in figures, please).")
+                    return -1
+                elif ri!=n//m: #Integer division!
                     self.backend.push_message("wrong, it's "+str(n//m)) #Integer division!
                     return False
                 else:

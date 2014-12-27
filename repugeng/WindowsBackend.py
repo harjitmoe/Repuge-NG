@@ -15,4 +15,16 @@ class WindowsBackend(ConsoleBackend):
         self.dump_messages()
         return self._conio_getkey()
     def _plot_character(self,x,y,c):
-        self._conio_puttext(x,y,x,y,bytes(c+"\x07"))
+        if not hasattr(self,"_textcolor"):
+            self._textcolor=0x7
+        self._conio_puttext(x,y,x,y,bytes(c+chr(self._textcolor)))
+    def plot_tile(self,x,y,tile_id):
+        if ("wall" in tile_id) or (tile_id in ("vfeature","hfeature")):
+            self._textcolor=0x4
+        elif ("floor" in tile_id):
+            self._textcolor=0x8
+        else:
+            self._textcolor=0xF
+        super(WindowsBackend,self).plot_tile(x,y,tile_id)
+    def _engage_message_formatting(self):
+        self._conio_textcolor(0xF)
