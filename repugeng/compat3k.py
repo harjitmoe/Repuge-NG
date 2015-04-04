@@ -11,6 +11,6 @@ try:
 except NameError:
     def raw_input(x):
         #2x raw_input() is ironically less raw than 3k input()
-        return input(x).rstrip("\r")
+        return input(x).rstrip("\r\n")
 
 

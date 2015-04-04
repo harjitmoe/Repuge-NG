@@ -3,9 +3,10 @@
 #The first one I made (bar samplemap) and the most klu[d]ged yet.  Based on PC
 import sys, time
 from repugeng.Level import Level
+from repugeng.DumbFovLevel import DumbFovLevel
 from repugeng.MultilevelStorage import MultilevelStorage
 
-class PostSortingLevel(Level):
+class PostSortingLevel(DumbFovLevel):
     coded_grid="""\
               goooooooooooooooooG
               d####$$$$////,,,..jooG
@@ -30,6 +31,7 @@ joo...oooooooJd##d           d..*
     starting_pt=None
     title_window="Harry Potter"
     def initial_cutscene(self):
+        self.fov_status=0
         self.hpbeancount=MultilevelStorage("hpbeancount")
         self.hpbeancount.initialise_property("beans",0)
         self.points=points=[(4,6+5),(4,5+5),(5,4+5),(6,3+5),(7,3+5),(8,3+5),(9,3+5),(10,3+5),(11,3+5),(12,3+5),(13,3+5),(14,8),(15,8),(15,9),(15,10),(15,11),(15,12),(15,13),(15,14),(16,14),(17,14),(18,14),(19,14),(20,14),(21,14),(22,14),(23,14),(24,14),(25,14),(26,14),(27,14),(28,14),(29,14),(30,14),(30,13),(30,12),(30,11),(30,10),(30,9),(31,9),(32,9),(33,9),(34,9),(35,9)]
@@ -48,7 +50,8 @@ joo...oooooooJd##d           d..*
         self.set_index_objgrid(("dumbledore",None),13,7) #Dumbledore!
         ddchain=[(13,7),(13,8),(12,8),(11,8),(10,8),(9,8),(8,8),(7,8),(6,8)]
         pt=loza[0]
-        self.backend.goto_point(*pt)
+        self.move_user(pt)
+        self.fov_status=1
         loza.pop(0)
         self.redraw()
         time.sleep(0.1)

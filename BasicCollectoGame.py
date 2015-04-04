@@ -18,11 +18,12 @@
 """
 import sys,random,time
 from repugeng.Level import Level
+from repugeng.DumbFovLevel import DumbFovLevel
 from repugeng.MultilevelStorage import MultilevelStorage
 
 NUMBERSIZE=15 #Cannot be bigger than 17
 
-class BasicCollectoGame(Level):
+class BasicCollectoGame(DumbFovLevel):
     coded_grid=None
     #More than one symbol per type can be defined: these
     # can then be distinguished in the run code
@@ -72,7 +73,9 @@ class BasicCollectoGame(Level):
         nxtstat=self.get_index_grid(*target)[0]
         if self.get_index_objgrid(*target):
             if self.get_index_objgrid(*target)[0]=="bean":
-                duration=5+random.expovariate(0.2)
+                duration=random.normalvariate(15,5)
+                if duration<5:
+                    duration=5
                 timr=time.time()
                 result=self.question_test(duration)
                 if result!=-1:
@@ -83,7 +86,7 @@ class BasicCollectoGame(Level):
                         result=False
                     if result:
                         self.score.myscore+=int((100.0/timr)+0.5)
-                        self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v2)"%(self.score.myscore/float(self.score.mymoves)))
+                        self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.score.myscore/float(self.score.mymoves)))
                     self.set_index_objgrid((),*target)
                     self.beanpoints.remove(target)
                     new_location=self.get_new_point()
