@@ -64,7 +64,7 @@ class SimpleDungeonLevel(Level):
         for conditional,to,from_ in doors:
             if conditional:
                 while 1:
-                    block[from_[1]][from_[0]]="."
+                    block[int(from_[1])][int(from_[0])]="."
                     if from_[0]==to[0] and from_[1]==to[1]:
                         break
                     vector_angle=math.atan2(abs(from_[1]-to[1]),abs(from_[0]-to[0]))

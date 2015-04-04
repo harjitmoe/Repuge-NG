@@ -32,26 +32,26 @@ class DumbFovLevel(Level):
         if ret==-1 and passthrough_once and self.grid[x][y] and (not self.grid[x][y][0].startswith("floor")):
             #From a wall: the actual path to the player obviously includes the floor, not more wall.
             if ret==-1 and vector_angle>0:
-                n=self.grid[x][y-(  (y-self.pt[1])/abs(y-self.pt[1])  )]
+                n=self.grid[x][y-int(  (y-self.pt[1])/abs(y-self.pt[1])  )]
                 if n and n[0].startswith("floor"):
-                    ret=self._fov_check(x,y-(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
+                    ret=self._fov_check(x,y-int(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
             if ret==-1 and vector_angle<90:
-                n=self.grid[x-(  (x-self.pt[0])/abs(x-self.pt[0])  )][y]
+                n=self.grid[x-int(  (x-self.pt[0])/abs(x-self.pt[0])  )][y]
                 if n and n[0].startswith("floor"):
-                    ret=self._fov_check(x-(  (x-self.pt[0])/abs(x-self.pt[0])  ),y,False)
+                    ret=self._fov_check(x-int(  (x-self.pt[0])/abs(x-self.pt[0])  ),y,False)
             if ret==-1 and vector_angle>0 and vector_angle<90:
-                n=self.grid[x-(  (x-self.pt[0])/abs(x-self.pt[0])  )][y-(  (y-self.pt[1])/abs(y-self.pt[1])  )]
+                n=self.grid[x-int(  (x-self.pt[0])/abs(x-self.pt[0])  )][y-int(  (y-self.pt[1])/abs(y-self.pt[1])  )]
                 if n and n[0].startswith("floor"):
-                    ret=self._fov_check(x-(  (x-self.pt[0])/abs(x-self.pt[0])  ),y-(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
+                    ret=self._fov_check(x-int(  (x-self.pt[0])/abs(x-self.pt[0])  ),y-int(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
         if ret==-1 and vector_angle>=75:
             #Vertical is closest approximation for now
-            ret=self._fov_check(x,y-(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
+            ret=self._fov_check(x,y-int(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
         if ret==-1 and vector_angle>=15:
             #45deg is closest approximation for now
-            ret=self._fov_check(x-(  (x-self.pt[0])/abs(x-self.pt[0])  ),y-(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
+            ret=self._fov_check(x-int(  (x-self.pt[0])/abs(x-self.pt[0])  ),y-int(  (y-self.pt[1])/abs(y-self.pt[1])  ),False)
         if ret==-1:
             #Horizontal is closest approximation for now
-            ret=self._fov_check(x-(  (x-self.pt[0])/abs(x-self.pt[0])  ),y,False)
+            ret=self._fov_check(x-int(  (x-self.pt[0])/abs(x-self.pt[0])  ),y,False)
 
         if not passthrough_once:
             self._fov_cache[(x,y)]=ret
