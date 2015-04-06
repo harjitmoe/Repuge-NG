@@ -14,22 +14,11 @@ class MazedCollectoGame(BasicCollectoGame,MazeLevel):
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature","v":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","+":"wall_cross",}
     title_window="Repuge-NG Collecto: Maze Edition"
     
-    def get_new_point(self):
-        if hasattr(self,"pt"):
-            userloc=[self.pt]
-        else:
-            userloc=[self.starting_pt]
-        while 1:
-            x=random.randrange(1,NUMBERSIZE)*2+1 #Yes, *2)+1 OUTSIDE the brackets (and not *(2+1) which is *3)
-            y=random.randrange(1,NUMBERSIZE)*2+1 #Yes, *2)+1 OUTSIDE the brackets (and not *(2+1) which is *3)
-            if (x,y) not in self.beanpoints+userloc:
-                return (x,y)
-    
     def readmap(self):
         #Initialise scoring storage
         self.score=MultilevelStorage("collecto_score")
-        self.score.myscore=0
-        self.score.mymoves=0
+        self.score.initialise_property("myscore",0)
+        self.score.initialise_property("mymoves",0)
         #Generate maze
         MazeLevel.readmap(self,NUMBERSIZE)
         #Put beans in unique locations

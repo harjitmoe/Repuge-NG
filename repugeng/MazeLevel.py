@@ -5,7 +5,7 @@ class MazeLevel(Level):
     def genmaze(self,nsiz):
         """Return a list of wall co-ordinates to break in grid output to produce a maze.
         
-        This is a *modified* DFS sweep, modified in that leaf nodes can end up connected to geographically adjacent nodes, thus rendering the maze not necessarily acyclic (yet nonetheless fairly so).  I have decided that this is a feature, not a bug, and have decided not to fix that which is not broken."""
+        This is a *modified* DFS sweep, modified in that leaf nodes can sometimes end up connected to geographically adjacent nodes, thus rendering the maze not necessarily acyclic.  I have decided that this is a feature, not a bug, and have decided not to fix that which is not broken."""
         import random
         cells_traversed=[(0,0)]
         broken_walls=[] #The *output* of the traversal
@@ -91,3 +91,8 @@ class MazeLevel(Level):
                 self.grid[x][y+1]=("hwall","+")
             elif self.grid[x][y+1]==("wall_corner_sw","+"): #DO this time need to check subclass symbol
                 self.grid[x][y+1]=("hwall","+")
+        self.gamut=[]
+        xs=[(i*2)+1 for i in range(1,nsiz)]
+        for x in xs:
+            y=[(i*2)+1 for i in range(1,nsiz)]
+            self.gamut.extend(zip([x]*nsiz,y))

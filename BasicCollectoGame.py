@@ -18,12 +18,13 @@
 """
 import sys,random,time
 from repugeng.Level import Level
+from repugeng.RoomLevel import RoomLevel
 from repugeng.DumbFovLevel import DumbFovLevel
 from repugeng.MultilevelStorage import MultilevelStorage
 
 NUMBERSIZE=15 #Cannot be bigger than 17
 
-class BasicCollectoGame(DumbFovLevel):
+class BasicCollectoGame(DumbFovLevel,RoomLevel):
     coded_grid=None
     #More than one symbol per type can be defined: these
     # can then be distinguished in the run code
@@ -37,9 +38,8 @@ class BasicCollectoGame(DumbFovLevel):
         else:
             userloc=[self.starting_pt]
         while 1:
-            x=random.randrange(1,NUMBERSIZE)
-            y=random.randrange(1,NUMBERSIZE)
-            if (x,y) not in self.beanpoints+self.blockpoints+userloc:
+            (x,y)=random.choice(self.gamut)
+            if (x,y) not in self.beanpoints+userloc:
                 return (x,y)
     
     def readmap(self):
@@ -48,8 +48,7 @@ class BasicCollectoGame(DumbFovLevel):
         self.score.initialise_property("myscore",0)
         self.score.initialise_property("mymoves",0)
         #Generate base grid
-        self.coded_grid="g"+("o"*NUMBERSIZE)+"G\n"+("d"+("."*NUMBERSIZE)+"d\n")*NUMBERSIZE+"j"+("o"*NUMBERSIZE)+"J"
-        super(BasicCollectoGame,self).readmap()
+        RoomLevel.readmap(self,NUMBERSIZE)
         #Put beans in unique locations
         self.beanpoints=[]
         self.blockpoints=[]
