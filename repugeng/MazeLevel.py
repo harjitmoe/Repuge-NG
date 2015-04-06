@@ -2,7 +2,6 @@ from repugeng.PregenLevel import PregenLevel
 
 class MazeLevel(PregenLevel):
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature","v":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","+":"wall_cross",}
-    nsiz=8
     def genmaze(self,nsiz):
         """Return a list of wall co-ordinates to break in grid output to produce a maze.
         
@@ -32,8 +31,7 @@ class MazeLevel(PregenLevel):
                 broken_walls.append((x*2+1,noy+y+1))
         return broken_walls
     
-    def genmap(self):
-        nsiz=self.nsiz
+    def genmap(self,nsiz=8):
         #Generate a grid of walled cells, as a maze predecessor.
         self.coded_grid="g"+("ov"*(nsiz-1))+"oG\n"
         self.coded_grid+=("d"+(".d"*(nsiz)+"\n")+(">"+("o+"*(nsiz-1))+"o<\n"))*(nsiz-1)

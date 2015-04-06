@@ -58,10 +58,9 @@ class Level(object):
             grid.append(file)
         return grid
     def readmap(self):
-        """Creates self.grid and self.objgrid from coded grid.
-        
-        Default behaviour generates self.grid from coded grid format
-        and self.objgrid is generated empty.
+        """Generates self.grid from coded grid format.
+
+        Whereas self.objgrid is generated empty.
         
         Coded grid format:
         
@@ -72,10 +71,7 @@ class Level(object):
         
         The code characters used are included in the grid as extra data.
         So multiple internally different e.g. vfeature can be coded with 
-        different characters and detected as different by the level code.
-        
-        This default behaviour may be overridden by subclasses.  General
-        idea is that self.grid and self.objgrid are initialised."""
+        different characters and detected as different by the level code."""
         #Width 50 not 80 as 16x16 tiles are a conceivable backend and
         #my monitor's max res is 1024x768
         #Height 19 as this is the maximum height to avoid lxterminal 
@@ -99,7 +95,12 @@ class Level(object):
         #for i in range(19-len(self.coded_grid.split("\n"))):
         #    self.grid[18-i]=[("space","")]*50
     def initmap(self):
-        """Creates self.grid and self.objgrid."""
+        """Creates self.grid and self.objgrid.
+
+        By default, calls readmap().
+        
+        This default behaviour may be overridden by subclasses.  General
+        idea is that self.grid and self.objgrid are initialised."""
         self.readmap()
     def redraw(self):
         """Draw the map (grid and objgrid).

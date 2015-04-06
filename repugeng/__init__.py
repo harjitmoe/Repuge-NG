@@ -11,7 +11,7 @@ My proposal for my entry contained the following summary of the original framewo
     
     I called it REPUGE, for Real Educational Programs Use Game Engines.
 
-For the overall project, see BasicCollectoGame.py in the example material.
+For the overall project, see the Collecto program (now much improved) in the example material.
 
 This project, Repuge-NG, was an aim to refactor the loosely functional REPUGE code, where the meanings of x and y were not consistent across the API, into a tightly object-oriented framework which allows programs to be written which are actually readable.  Given that the event loop code seemed to be more-or-less the same across everything, I integrated it into the framework (it can be overridden by the level, though).
 
