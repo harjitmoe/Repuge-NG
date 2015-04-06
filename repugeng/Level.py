@@ -13,7 +13,8 @@ class Level(object):
       identity of the feature.  (Whereas type is just the tile type).
     - objgrid - like grid, but for objects placed upon the map rather
       than constituting part of it, e.g. a collectable.
-    - pt - location of user.
+    - starting_pt - sets the initial location of the user.
+    - pt - location of user at time of access.
     """
     def __init__(self,backend=None):
         """Initialise the instance (this will run upon creation).
@@ -106,17 +107,7 @@ class Level(object):
         """Draw the map (grid and objgrid).
         
         Presently this, by default, draws grid and (above it) objgrid at once
-        and draws the entire grid without attempting to trace visibility.  It
-        is therefore equivalent to the drawmap2(...) from older versions of the
-        previous generation, or to drawmap(...) with the FOV engine disabled
-        in later versions of the previous generation.  It is based on the 
-        former as I intend to discard the illegible mess which is the latter 
-        code and rewrite the FOV engine from scratch.
-        
-        drawmap(...) / drawmap2(...) was invoked through redraw() which, by 
-        means of pseudo-closures, passed in the relevant grids.  With this new
-        OOP generation, the latter is now redundant.  Hence drawmap() has now 
-        been merged into redraw().
+        and draws the entire grid.
         
         Unless you are a FOV engine, you probably don't want to override 
         this."""

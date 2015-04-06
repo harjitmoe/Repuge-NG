@@ -23,7 +23,6 @@ from repugeng.MultilevelStorage import MultilevelStorage
 class CollectoGameEngine(Level):
     coded_grid=None
     title_window="Repuge-NG Collecto: Basic Edition"
-    starting_pt=(1,1)
     _leveltypes=[]
     
     @classmethod
@@ -50,6 +49,7 @@ class CollectoGameEngine(Level):
         self.score.initialise_property("mymoves",0)
         #Generate map
         self.genmap()
+        self.starting_pt=random.choice(self.gamut)
         #Put beans in unique locations
         self.beanpoints=[]
         for junk in range(int(math.sqrt(len(self.gamut)))):

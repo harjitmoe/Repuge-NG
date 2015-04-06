@@ -107,5 +107,4 @@ class SimpleDungeonLevel(PregenLevel):
         self.coded_grid,self.gamut=self._add_blocks_y(self._add_blocks_x(self._make_block(0,1,1,0,roomyes[0]),self._make_block(0,1,0,1,roomyes[1]),self._make_block(0,0,1,1,roomyes[2])),self._add_blocks_x(self._make_block(1,1,0,0,roomyes[3]),self._make_block(0,1,0,1,roomyes[4]),self._make_block(1,0,0,1,roomyes[5])))
         self.gamut=list(self.gamut)
         self.readmap()
-        self.starting_pt=random.choice(self.gamut)
 
