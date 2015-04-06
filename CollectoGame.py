@@ -20,9 +20,9 @@ import sys,random,time,math
 from repugeng.Level import Level
 from repugeng.MultilevelStorage import MultilevelStorage
 
-class CollectoGameEngine(Level):
+class CollectoGame(Level):
     coded_grid=None
-    title_window="Repuge-NG Collecto: Basic Edition"
+    title_window="Repuge-NG Collecto"
     _leveltypes=[]
     
     @classmethod
@@ -201,11 +201,11 @@ class CollectoGameEngine(Level):
     def handle_command(self,e):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="ingredient": #ie Staircase
             #Regen the dungeon.
-            CollectoGameEngine.get_next_leveltype()() #yes, two ()
+            CollectoGame.get_next_leveltype()() #yes, two ()
 #
 if __name__=="__main__":
     import sys
-    sys.modules["CollectoGameEngine"]=sys.modules["__main__"] #oh, Python
+    sys.modules["CollectoGame"]=sys.modules["__main__"] #oh, Python
     import BasicCollectoGame,MazedCollectoGame,DungeonCollectoGame
-    CollectoGameEngine.get_next_leveltype()() #yes, two ()
+    CollectoGame.get_next_leveltype()() #yes, two ()
 
