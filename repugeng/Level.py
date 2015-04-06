@@ -32,13 +32,13 @@ class Level(object):
         
         Could be overridden by subclasses, but do remember to obtain a 
         self.backend by some means before trying to output anything.
-        More recommended is to override run() and/or readmap().
+        More recommended is to override run() and/or initmap().
         """
         if backend:
             self.backend=backend
         else:
             self.backend=BackendSelector.get_backend()
-        self.readmap()
+        self.initmap()
         self.redraw()
         if self.starting_pt!=None:
             self.move_user(self.starting_pt)
@@ -58,7 +58,7 @@ class Level(object):
             grid.append(file)
         return grid
     def readmap(self):
-        """Creates self.grid and self.objgrid.
+        """Creates self.grid and self.objgrid from coded grid.
         
         Default behaviour generates self.grid from coded grid format
         and self.objgrid is generated empty.
@@ -98,6 +98,9 @@ class Level(object):
         ##So no.
         #for i in range(19-len(self.coded_grid.split("\n"))):
         #    self.grid[18-i]=[("space","")]*50
+    def initmap(self):
+        """Creates self.grid and self.objgrid."""
+        self.readmap()
     def redraw(self):
         """Draw the map (grid and objgrid).
         

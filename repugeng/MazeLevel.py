@@ -1,7 +1,8 @@
-from repugeng.Level import Level
+from repugeng.PregenLevel import PregenLevel
 
-class MazeLevel(Level):
+class MazeLevel(PregenLevel):
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature","v":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","+":"wall_cross",}
+    nsiz=8
     def genmaze(self,nsiz):
         """Return a list of wall co-ordinates to break in grid output to produce a maze.
         
@@ -31,13 +32,14 @@ class MazeLevel(Level):
                 broken_walls.append((x*2+1,noy+y+1))
         return broken_walls
     
-    def readmap(self,nsiz=8):
+    def genmap(self):
+        nsiz=self.nsiz
         #Generate a grid of walled cells, as a maze predecessor.
         self.coded_grid="g"+("ov"*(nsiz-1))+"oG\n"
         self.coded_grid+=("d"+(".d"*(nsiz)+"\n")+(">"+("o+"*(nsiz-1))+"o<\n"))*(nsiz-1)
         self.coded_grid+=("d"+(".d"*(nsiz-1))+".d\n")
         self.coded_grid+="j"+("o^"*(nsiz-1))+"oJ"
-        Level.readmap(self)
+        self.readmap()
         #Remove walls to form maze, changing type of surrounding junction cells as required
         bwalls=self.genmaze(nsiz)
         for y,x in bwalls: 

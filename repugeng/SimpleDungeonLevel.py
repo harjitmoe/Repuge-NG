@@ -1,7 +1,7 @@
-from repugeng.Level import Level
+from repugeng.PregenLevel import PregenLevel
 import random,math
 
-class SimpleDungeonLevel(Level):
+class SimpleDungeonLevel(PregenLevel):
     """Level subclass for a simple rogue-like dungeon.
 
     Simple in that at will always contain rooms connected in a ring."""
@@ -100,12 +100,12 @@ class SimpleDungeonLevel(Level):
             for y in gamuty:
                 gamut.append((x,y))
         return block,tuple(gamut)
-    def readmap(self):
+    def genmap(self):
         roomyes=[True,True,True,True,True,True]
         for i in range(random.randrange(3)+1):
             roomyes[random.randrange(6)]=False
         self.coded_grid,self.gamut=self._add_blocks_y(self._add_blocks_x(self._make_block(0,1,1,0,roomyes[0]),self._make_block(0,1,0,1,roomyes[1]),self._make_block(0,0,1,1,roomyes[2])),self._add_blocks_x(self._make_block(1,1,0,0,roomyes[3]),self._make_block(0,1,0,1,roomyes[4]),self._make_block(1,0,0,1,roomyes[5])))
         self.gamut=list(self.gamut)
-        Level.readmap(self)
+        self.readmap()
         self.starting_pt=random.choice(self.gamut)
 

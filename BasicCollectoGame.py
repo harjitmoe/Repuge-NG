@@ -22,13 +22,9 @@ from repugeng.RoomLevel import RoomLevel
 from repugeng.DumbFovLevel import DumbFovLevel
 from repugeng.MultilevelStorage import MultilevelStorage
 
-NUMBERSIZE=15 #Cannot be bigger than 17
-
 class BasicCollectoGame(DumbFovLevel,RoomLevel):
+    nsiz=15 #Cannot be bigger than 17
     coded_grid=None
-    #More than one symbol per type can be defined: these
-    # can then be distinguished in the run code
-    list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature"}
     title_window="Repuge-NG Collecto: Basic Edition"
     starting_pt=(1,1)
     
@@ -41,28 +37,25 @@ class BasicCollectoGame(DumbFovLevel,RoomLevel):
             (x,y)=random.choice(self.gamut)
             if (x,y) not in self.beanpoints+userloc:
                 return (x,y)
-    
-    def readmap(self):
+
+    def initmap(self):
         #Initialise scoring storage
         self.score=MultilevelStorage("collecto_score")
         self.score.initialise_property("myscore",0)
         self.score.initialise_property("mymoves",0)
-        #Generate base grid
-        RoomLevel.readmap(self,NUMBERSIZE)
+        #Generate map
+        self.genmap()
         #Put beans in unique locations
         self.beanpoints=[]
-        self.blockpoints=[]
-        for junk in range(NUMBERSIZE):#ranges total must not be larger than NUMBERSIZE squared minus 1.
+        for junk in range(self.nsiz):#range must not be larger than self.nsiz squared minus 1.  Final "bean" is actually the down staircase.
             self.beanpoints.append(self.get_new_point())
-        #ranges total must not be larger than NUMBERSIZE squared.
-        for junk in range(1):#this range must not be larger than 2 (or 1 if no numberpad-with-numlock-on)
-            self.blockpoints.append(self.get_new_point())
-        for x,y in self.beanpoints:
+        for x,y in self.beanpoints[:-1]:
             self.objgrid[x][y]=("bean","'")
-        for x,y in self.blockpoints:
-            self.grid[x][y]=("boulder","O")
+        x,y=self.beanpoints[-1]
+        self.grid[x][y]=("ingredient","%") #I did not think the selections through well...
         #
         self.nan=0
+
     def handle_move(self,target):
         try: #XXX kludge/fragile/assumes
             floorlevel=type(0)(self.get_index_grid(*self.pt)[0][5:])
@@ -199,6 +192,11 @@ class BasicCollectoGame(DumbFovLevel,RoomLevel):
                 else:
                     self.backend.push_message("right")
                     return True
+    
+    def handle_command(self,e):
+        if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="ingredient": #ie Staircase
+            #Regen the dungeon.
+            self.__class__()
 #
 if __name__=="__main__":
     BasicCollectoGame()
