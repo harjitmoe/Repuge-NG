@@ -13,16 +13,5 @@ class WindowsTiles(ConsoleTiles):
     wall_TeeJnc_lt="\xb4"
     wall_cross="\xc5"
     user="\x01"
-    fred="\x02"
-    ron="\x02"
-    hermione="\x02"
-    quirrel="\x02"
-    crabbe="\x02"
-    goyle="\x02"
-    quirrel="\x02"
-    sprout="\x02"
-    snape="\x02"
-    filtch="\x02"
-    dumbledore="\x02"
-    extra="\x02"
-
+    #
+    _error_code=0

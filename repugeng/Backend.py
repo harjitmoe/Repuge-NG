@@ -81,3 +81,6 @@ class Backend(object):
     def plot_tile(self,y,x,tile_id):
         """Plot a tile at a point."""
         raise NotImplementedError("should be implemented by subclass")
+    def attach_expansion_pack(self,pack):
+        """Attach an expansion pack of tiles"""
+        raise NotImplementedError("should be implemented by subclass")

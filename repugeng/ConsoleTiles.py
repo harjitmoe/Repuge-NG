@@ -4,7 +4,19 @@ class ConsoleTiles(object):
         raise TypeError("attempt to create instance of static class")
     @classmethod
     def get_tile_character(cls,tile_id):
-        return getattr(cls,tile_id)
+        error_codes=("\xa8","\xbf")
+        if hasattr(cls,tile_id):
+            return getattr(cls,tile_id)
+        for cls2 in cls.expansion_packs:
+            tile=cls2.get_tile_character(tile_id)
+            if tile not in error_codes:
+                return tile
+        if hasattr(super(cls),"get_tile_character"):
+            return super(cls).get_tile_character(tile_id)
+        return error_codes[cls._error_code%len(error_codes)]
+    @classmethod
+    def attach_expansion_pack(cls,cls2):
+        cls.expansion_packs.append(cls2)
     space=" "
     vwall="|"
     hwall="-"
@@ -26,39 +38,9 @@ class ConsoleTiles(object):
     floor4="$"
     floor5="#"
     user="@"
-    fred="@"
-    ron="@"
-    hermione="@"
-    quirrel="@"
-    peeves="P"
-    malfoy="M"
-    crabbe="@"
-    goyle="@"
-    quirrel="@"
-    gnome="G"
-    flitwick="@"
-    snail="S"
-    tent="T"
-    tentacle="~"
-    sprout="@"
-    sprout="\x02"
-    bush="B"
-    needle="~"
-    chest="]"
-    cauldron=")"
-    doxy="D"
-    snare="s"
-    boulder="O"
-    snape="@"
-    ingredient="%"
-    filtch="@"
-    norris="&"
-    fluffyhead="+"
-    erised="}"
-    dumbledore="@"
-    bean="'"
-    card='"'
-    frog="f"
-    extra="@"
-    drink="!"
+    item="'"
+    staircase="%"
+    #
+    _error_code=1
+    expansion_packs=[]
 

@@ -16,8 +16,12 @@ class Level(object):
     - starting_pt - sets the initial location of the user.
     - pt - location of user at time of access.
     """
+    #Debugging settings, nothing to see here
     debug=0
     bug_report={}
+    debug_ghost=0
+    debug_fov_off=0
+    #
     def __init__(self,backend=None,debug_dummy=False):
         """Initialise the instance (this will run upon creation).
         
@@ -199,17 +203,34 @@ class Level(object):
                 if e in ("right","6"):target=(self.pt[0]+1,self.pt[1])
                 if e in ("up","8"):   target=(self.pt[0],self.pt[1]-1)
                 if e in ("left","4"): target=(self.pt[0]-1,self.pt[1])
-                if self.handle_move(target):
+                if self.debug_ghost or self.handle_move(target):
                     self.move_user(target)
             elif e=="#":
                 name="#"+self.backend.ask_question("#")
-                if name=="#debug":
+                if name in ("#debug","#debugon"):
                     self.debug=1
-                    import pickle,time
-                    f=open("bugreport.%010d.txt"%time.time(),"w")
-                    pickle.dump(self.bug_report,f)
-                    f.close()
-                self.handle_command(name)
+                elif self.debug:
+                    if name=="#debugoff":
+                        self.debug=0
+                    elif name in ("#ghost","#ghoston"):
+                        self.debug_ghost=1
+                    elif name=="#ghostoff":
+                        self.debug_ghost=0
+                    elif name in ("#fovoff","#fovoffon","#clairvoyant","#cranium","#allsight","#seeall"):
+                        self.debug_fov_off=1
+                    elif name in ("#fov","#fovon","#fovoffoff","clairvoyantoff","#craniumoff","#allsightoff","#seealloff"):
+                        self.debug_fov_off=0
+                    elif name.startswith("#passthrough "):
+                        self.handle_command(name.split(" ",1)[1])
+                    elif name in ("#bugreport","#report","#gurumeditation","#guru"):
+                        import pickle,time
+                        f=open("bugreport.%010d.txt"%time.time(),"w")
+                        pickle.dump(self.bug_report,f)
+                        f.close()
+                    else:
+                        self.handle_command(name)
+                else:
+                    self.handle_command(name)
             else:
                 self.handle_command(e)
     #

@@ -1,10 +1,14 @@
-"""From my proposal: I also produced some more advanced test material with no doors but with cutscenes and other people. [...] I have neither completed this nor plan to."""
+"""Not to be taken seriously, this is an attempted reimplementation of the opening of Electronic Arts' Harry Potter and the Philosopher's Stone.  This is not intended for release or completion.
+
+From my proposal: "I also produced some more advanced test material with no doors but with cutscenes and other people. [...] I have neither completed this nor plan to."
+"""
 
 #The first one I made (bar samplemap) and the most klu[d]ged yet.  Based on PC
 import sys, time
 from repugeng.Level import Level
 from repugeng.DumbFovLevel import DumbFovLevel
 from repugeng.MultilevelStorage import MultilevelStorage
+from repugeng.HarryPotterTiles import HarryPotterTiles
 
 class PostSortingLevel(DumbFovLevel):
     coded_grid="""\
@@ -31,6 +35,7 @@ joo...oooooooJd##d           d..*
     starting_pt=None
     title_window="Harry Potter"
     def initial_cutscene(self):
+        self.backend.attach_expansion_pack(HarryPotterTiles)
         self.fov_status=0
         self.hpbeancount=MultilevelStorage("hpbeancount")
         self.hpbeancount.initialise_property("beans",0)
@@ -141,7 +146,7 @@ joo...oooooooJd##d           d..*
             return 0
         elif self.get_index_objgrid(*target):
             if self.get_index_objgrid(*target)[0]=="dumbledore":
-                self.backend.push_message("DD: Now off to your lessons.")
+                self.backend.push_message("AD: Now off to your lessons.")
                 return 0
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])

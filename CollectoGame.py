@@ -55,9 +55,9 @@ class CollectoGame(Level):
         for junk in range(int(math.sqrt(len(self.gamut)))):
             self.beanpoints.append(self.get_new_point())
         for x,y in self.beanpoints[:-1]:
-            self.objgrid[x][y]=("bean","'")
+            self.objgrid[x][y]=("item","'")
         x,y=self.beanpoints[-1]
-        self.grid[x][y]=("ingredient","%") #I did not think the selections through well...
+        self.grid[x][y]=("staircase","%")
         #
         self.nan=0
 
@@ -69,7 +69,7 @@ class CollectoGame(Level):
         curstat=self.get_index_grid(*self.pt)[0]
         nxtstat=self.get_index_grid(*target)[0]
         if self.get_index_objgrid(*target):
-            if self.get_index_objgrid(*target)[0]=="bean":
+            if self.get_index_objgrid(*target)[0]=="item":
                 duration=random.normalvariate(15,5)
                 if duration<5:
                     duration=5
@@ -82,13 +82,17 @@ class CollectoGame(Level):
                         self.backend.push_message("OVERTIME")
                         result=False
                     if result:
-                        self.score.myscore+=int((100.0/timr)+0.5)
-                        self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.score.myscore/float(self.score.mymoves)))
+                        if self.debug:
+                            self.score.myscore=0
+                            self.backend.push_message("Debug mode is ON, nullifying score")
+                        else:
+                            self.score.myscore+=int((100.0/timr)+0.5)
+                            self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.score.myscore/float(self.score.mymoves)))
                     self.set_index_objgrid((),*target)
                     self.beanpoints.remove(target)
                     new_location=self.get_new_point()
                     self.beanpoints.append(new_location)
-                    self.set_index_objgrid(("bean","'"),*new_location)
+                    self.set_index_objgrid(("item","'"),*new_location)
             return 0
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
@@ -101,7 +105,7 @@ class CollectoGame(Level):
             else:
                 self.backend.push_message("You try to climb but can't")
                 return 0
-        elif nxtstat=="ingredient": #ie Staircase
+        elif nxtstat=="staircase":
             self.backend.push_message("You find a staircase (use Return (enter) to descend).")
             return 1
         elif nxtstat=="space":
@@ -199,7 +203,7 @@ class CollectoGame(Level):
                     return True
     
     def handle_command(self,e):
-        if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="ingredient": #ie Staircase
+        if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="staircase":
             #Regen the dungeon.
             CollectoGame.get_next_leveltype()() #yes, two ()
 #

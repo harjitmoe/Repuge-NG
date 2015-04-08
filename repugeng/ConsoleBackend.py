@@ -84,4 +84,5 @@ class ConsoleBackend(Backend):
         self.goto_point(*old_point)
         if collect_input:
             return returndat
-    
+    def attach_expansion_pack(self,pack):
+        self._tiles_class.attach_expansion_pack(pack)
