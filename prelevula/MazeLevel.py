@@ -1,11 +1,22 @@
 from repugeng.GeneratedLevel import GeneratedLevel
 
 class MazeLevel(GeneratedLevel):
+    """A level generator for a square maze.
+
+    This maze is generated using a *modified* DFS sweep, modified 
+    in that leaf nodes can sometimes end up connected to 
+    geographically adjacent nodes, thus rendering the maze not 
+    necessarily acyclic.
+    """
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature","v":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","+":"wall_cross",}
     def genmaze(self,nsiz):
         """Return a list of wall co-ordinates to break in grid output to produce a maze.
         
-        This is a *modified* DFS sweep, modified in that leaf nodes can sometimes end up connected to geographically adjacent nodes, thus rendering the maze not necessarily acyclic.  I have decided that this is a feature, not a bug, and have decided not to fix that which is not broken."""
+        This is a *modified* DFS sweep, modified in that leaf nodes 
+        can sometimes end up connected to geographically adjacent 
+        nodes, thus rendering the maze not necessarily acyclic.  I 
+        have decided that this is a feature, not a bug, and have 
+        decided not to fix that which is not broken."""
         import random
         cells_traversed=[(0,0)]
         broken_walls=[] #The *output* of the traversal

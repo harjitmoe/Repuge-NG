@@ -2,9 +2,10 @@ from repugeng.GeneratedLevel import GeneratedLevel
 import random,math
 
 class SimpleDungeonLevel(GeneratedLevel):
-    """Level subclass for a simple rogue-like dungeon.
+    """A level generator for a simple rogue-like dungeon.
 
-    Simple in that at will always contain rooms connected in a ring."""
+    Simple in that it will always contain rooms connected in a ring.
+    """
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature","v":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","+":"wall_cross",}
     def _add_blocks_x(self,block1r,block2r,block3r):
         block1,gamut1=block1r
