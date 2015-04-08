@@ -1,5 +1,7 @@
 import time
 from repugeng.BackendSelector import BackendSelector
+from repugeng.GridObject import GridObject
+from repugeng.PlayerObject import PlayerObject
 #n.b. put shadowtracer, when introduced, elsewhere (mixin?).
 
 class Level(object):
@@ -11,8 +13,7 @@ class Level(object):
       A type-tuple is a tuple (type, extra_data) where extra_data is
       data internally used by the level code r.e. the status and 
       identity of the feature.  (Whereas type is just the tile type).
-    - objgrid - like grid, but for objects placed upon the map rather
-      than constituting part of it, e.g. a collectable.
+    - objgrid - list of lists of lists of stacked GridObject.
     - starting_pt - sets the initial location of the user.
     - pt - location of user at time of access.
     """
@@ -46,21 +47,29 @@ class Level(object):
         debugging purposes only.
         """
         if not debug_dummy:
-            if backend:
-                self.backend=backend
-            else:
-                self.backend=BackendSelector.get_backend()
-            self.initmap()
-            self.redraw()
-            if self.starting_pt!=None:
-                self.move_user(self.starting_pt)
-            #Attempt to set title
+            self.bug_report[__name__]={}
             try:
-                self.backend.set_window_title(self.title_window)
-            except NotImplementedError:
-                pass
-            #Start the event loop
-            self.run()
+                if backend:
+                    self.backend=backend
+                else:
+                    self.backend=BackendSelector.get_backend()
+                self.initmap()
+                self.redraw()
+                if self.starting_pt!=None:
+                    self.move_user(self.starting_pt)
+                #Attempt to set title
+                try:
+                    self.backend.set_window_title(self.title_window)
+                except NotImplementedError:
+                    pass
+                #Start the event loop
+                self.run()
+            except Exception,e:
+                self.bug_report[__name__]["Exception"]=e
+                self.bug_report[__name__]["grid"]=self.grid
+                self.bug_report[__name__]["objgrid"]=self.objgrid
+                self._dump_report()
+                raise
     def _gengrid(self,x,y):
         grid=[]
         for i in range(x):
@@ -129,7 +138,7 @@ class Level(object):
             for row,row2 in zip(col,col2):
                 #print rowno,colno,col
                 if row2:
-                    self.backend.plot_tile(colno,rowno,row2[0])
+                    self.backend.plot_tile(colno,rowno,row2[-1].tile)
                 elif row:
                     self.backend.plot_tile(colno,rowno,row[0])
                 rowno+=1
@@ -137,46 +146,43 @@ class Level(object):
     #
     def get_index_grid(self,x,y):
         return self.grid[x][y]
-    def get_index_objgrid(self,x,y):
-        return self.objgrid[x][y]
     def set_index_grid(self,v,x,y):
         self.grid[x][y]=v
-    def set_index_objgrid(self,v,x,y):
-        self.objgrid[x][y]=v
     #
     def followline_user(self,delay,points):
         """Move the user visibly down a list of points."""
         import time
         for i in points[:-1]:
-            self.set_index_objgrid(("user",None),*i)
-            pt=i[::-1]
-            self.backend.goto_point(*pt)
+            if self.playerobj not in self.objgrid[i[0]][i[1]]:
+                self.objgrid[i[0]][i[1]].append(self.playerobj)
+            self.backend.goto_point(*i)
             self.redraw()
             time.sleep(delay)
-            self.set_index_objgrid((),*i)
+            self.objgrid[i[0]][i[1]].remove(self.playerobj)
         i=points[-1]
-        self.set_index_objgrid(("user",None),*i)
-        pt=i[::-1]
-        self.backend.goto_point(*pt)
+        self.objgrid[i[0]][i[1]].append(self.playerobj)
+        self.backend.goto_point(*i)
         self.redraw()
-        return pt
-    def followline(self,delay,points,typeo):
+        return i
+    def followline(self,delay,points,obj):
         """Move a non-user object visibly down a list of points.
-        (typeo should be the objgrid tuple of the object)."""
+        (obj should be the object)."""
         import time
         for i in points[:-1]:
-            self.set_index_objgrid(typeo,*i)
+            self.objgrid[i[0]][i[1]].append(obj)
             self.redraw()
             time.sleep(delay)
-            self.set_index_objgrid((),*i)
-        self.set_index_objgrid(typeo,*points[-1])
+            self.objgrid[i[0]][i[1]].remove(obj)
+        self.objgrid[points[-1][0]][points[-1][1]].append(obj)
         self.redraw()
     def move_user(self,pt):
         """Move the user to pt.
         """
         if hasattr(self,"pt"): #i.e. not first run
-            self.set_index_objgrid((),*self.pt)
-        self.set_index_objgrid(("user",None),*pt)
+            self.objgrid[self.pt[0]][self.pt[1]].remove(self.playerobj)
+        else:
+            self.playerobj=PlayerObject(self)
+        self.objgrid[pt[0]][pt[1]].append(self.playerobj)
         self.backend.goto_point(*pt)
         self.pt=pt
         self.redraw()
@@ -196,7 +202,7 @@ class Level(object):
                 #Does not go through to Python otherwise, meaning that Linux main terminals
                 #are rendered otherwise out of order until someone kills Collecto
                 #from a different terminal or over SSH (or rlogin).
-                #This is relevent if someone is running this on an RPi.
+                #This is relevant if someone is running this on an RPi.
                 raise KeyboardInterrupt #^c, ^d or ^z pressed
             elif e in ("down","up","left","right","8","4","6","2"):
                 if e in ("down","2"): target=(self.pt[0],self.pt[1]+1)
@@ -223,16 +229,24 @@ class Level(object):
                     elif name.startswith("#passthrough "):
                         self.handle_command(name.split(" ",1)[1])
                     elif name in ("#bugreport","#report","#gurumeditation","#guru"):
-                        import pickle,time
-                        f=open("bugreport.%010d.txt"%time.time(),"w")
-                        pickle.dump(self.bug_report,f)
-                        f.close()
+                        self._dump_report()
                     else:
                         self.handle_command(name)
                 else:
                     self.handle_command(name)
             else:
                 self.handle_command(e)
+            #Each creature gets a move:
+            for file in self.objgrid:
+                for stack in file:
+                    for obj in stack:
+                        obj.tick()
+    #
+    def _dump_report(self):
+        import pickle,time
+        f=open("bugreport.%010d.txt"%time.time(),"w")
+        pickle.dump(self.bug_report,f)
+        f.close()
     #
     def handle_move(self,dest):
         """Handle a move command by the user. --> True to go ahead or False 

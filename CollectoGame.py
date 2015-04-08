@@ -19,6 +19,7 @@
 import sys,random,time,math
 from repugeng.Level import Level
 from repugeng.MultilevelStorage import MultilevelStorage
+from repugeng.GridObject import GridObject
 
 class CollectoGame(Level):
     coded_grid=None
@@ -55,7 +56,7 @@ class CollectoGame(Level):
         for junk in range(int(math.sqrt(len(self.gamut)))):
             self.beanpoints.append(self.get_new_point())
         for x,y in self.beanpoints[:-1]:
-            self.objgrid[x][y]=("item","'")
+            self.objgrid[x][y].append(GridObject(self,"'","item"))
         x,y=self.beanpoints[-1]
         self.grid[x][y]=("staircase","%")
         #
@@ -66,34 +67,33 @@ class CollectoGame(Level):
             floorlevel=type(0)(self.get_index_grid(*self.pt)[0][5:])
         except ValueError:
             floorlevel=1 #Needed or mazed subclass breaks
-        curstat=self.get_index_grid(*self.pt)[0]
         nxtstat=self.get_index_grid(*target)[0]
-        if self.get_index_objgrid(*target):
-            if self.get_index_objgrid(*target)[0]=="item":
-                duration=random.normalvariate(15,5)
-                if duration<5:
-                    duration=5
-                timr=time.time()
-                result=self.question_test(duration)
-                if result!=-1:
-                    self.score.mymoves=self.score.mymoves+1
-                    timr=time.time()-timr
-                    if timr>duration:
-                        self.backend.push_message("OVERTIME")
-                        result=False
-                    if result:
-                        if self.debug:
-                            self.score.myscore=0
-                            self.backend.push_message("Debug mode is ON, nullifying score")
-                        else:
-                            self.score.myscore+=int((100.0/timr)+0.5)
-                            self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.score.myscore/float(self.score.mymoves)))
-                    self.set_index_objgrid((),*target)
-                    self.beanpoints.remove(target)
-                    new_location=self.get_new_point()
-                    self.beanpoints.append(new_location)
-                    self.set_index_objgrid(("item","'"),*new_location)
-            return 0
+        if self.objgrid[target[0]][target[1]]:
+            for obj in self.objgrid[target[0]][target[1]][:]:
+                if obj.tile=="item":
+                    duration=random.normalvariate(15,5)
+                    if duration<5:
+                        duration=5
+                    timr=time.time()
+                    result=self.question_test(duration)
+                    if result!=-1:
+                        self.score.mymoves=self.score.mymoves+1
+                        timr=time.time()-timr
+                        if timr>duration:
+                            self.backend.push_message("OVERTIME")
+                            result=False
+                        if result:
+                            if self.debug:
+                                self.score.myscore=0
+                                self.backend.push_message("Debug mode is ON, nullifying score")
+                            else:
+                                self.score.myscore+=int((100.0/timr)+0.5)
+                                self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.score.myscore/float(self.score.mymoves)))
+                        self.objgrid[target[0]][target[1]].remove(obj)
+                        self.beanpoints.remove(target)
+                        new_location=self.get_new_point()
+                        self.beanpoints.append(new_location)
+                        self.objgrid[new_location[0]][new_location[1]].append(obj)
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:

@@ -3,7 +3,7 @@ from repugeng.Level import Level
 class GeneratedLevel(Level):
     """Base class for a generated (rather than predefined) level.
     
-    Genral subclasses should override genmap().
+    General subclasses should override genmap().
     Levels may override initmap() and NOT readmap() or genmap().
     
     Notable attributes and methods, additional to that from Level:

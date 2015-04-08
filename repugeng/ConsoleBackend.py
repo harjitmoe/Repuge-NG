@@ -30,6 +30,8 @@ class ConsoleBackend(Backend):
         return self._put_to_message_area(s,1)
     def plot_tile(self,x,y,tile_id):
         return self._plot_character(x,y,self._tiles_class.get_tile_character(tile_id))
+    def attach_expansion_pack(self,pack):
+        self._tiles_class.attach_expansion_pack(pack)
     #
     def _plot_character(self,x,y,c):
         raise NotImplementedError("should be implemented by subclass")
@@ -84,5 +86,3 @@ class ConsoleBackend(Backend):
         self.goto_point(*old_point)
         if collect_input:
             return returndat
-    def attach_expansion_pack(self,pack):
-        self._tiles_class.attach_expansion_pack(pack)

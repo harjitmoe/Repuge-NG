@@ -66,7 +66,7 @@ class DumbFovLevel(Level):
                 #print colno,rowno,col
                 if self._fov_check(colno,rowno):
                     if row2:
-                        self.backend.plot_tile(colno,rowno,row2[0])
+                        self.backend.plot_tile(colno,rowno,row2[-1].tile)
                     elif row:
                         self.backend.plot_tile(colno,rowno,row[0])
                 else:
