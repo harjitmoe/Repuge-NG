@@ -9,7 +9,7 @@ class DumbFovLevel(Level):
     _fov_cache=None
     fov_status=1
     def _fov_check(self,x,y,passthrough_once=True):
-        if not self.fov_status:
+        if (not self.fov_status) or (self.debug):
             return True
         if not hasattr(self,"pt"):
             return True

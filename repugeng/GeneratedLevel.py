@@ -28,4 +28,4 @@ class GeneratedLevel(Level):
         Should not be overridden by level.
         
         *args, **kwargs: anything of interest to general subclass."""
-        raise NotImplementedError
+        raise NotImplementedError("should be implemented by subclass")

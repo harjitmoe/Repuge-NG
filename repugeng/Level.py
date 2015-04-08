@@ -16,6 +16,8 @@ class Level(object):
     - starting_pt - sets the initial location of the user.
     - pt - location of user at time of access.
     """
+    debug=0
+    bug_report={}
     def __init__(self,backend=None):
         """Initialise the instance (this will run upon creation).
         
@@ -180,6 +182,7 @@ class Level(object):
         while 1:
             self.redraw()
             e=self.backend.get_key_event()
+            #self.backend.push_message(e)
             if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
                 #Does not go through to Python otherwise, meaning that Linux main terminals
                 #are rendered otherwise out of order until someone kills Collecto
@@ -193,6 +196,15 @@ class Level(object):
                 if e in ("left","4"): target=(self.pt[0]-1,self.pt[1])
                 if self.handle_move(target):
                     self.move_user(target)
+            elif e=="#":
+                name="#"+self.backend.ask_question("#")
+                if name=="#debug":
+                    self.debug=1
+                    import pickle,time
+                    f=open("bugreport.%010d.txt"%time.time(),"w")
+                    pickle.dump(self.bug_report,f)
+                    f.close()
+                self.handle_command(name)
             else:
                 self.handle_command(e)
     #
