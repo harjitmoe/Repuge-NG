@@ -1,1 +1,5 @@
 *.pyc
+build/*
+dist/*
+*.zip
+setup_exe.py

@@ -1,6 +1,6 @@
-from repugeng.PregenLevel import PregenLevel
+from repugeng.GeneratedLevel import GeneratedLevel
 
-class MazeLevel(PregenLevel):
+class MazeLevel(GeneratedLevel):
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature","v":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","+":"wall_cross",}
     def genmaze(self,nsiz):
         """Return a list of wall co-ordinates to break in grid output to produce a maze.

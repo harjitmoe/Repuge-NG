@@ -1,4 +1,4 @@
-from repugenglevelgens.MazeLevel import MazeLevel
+from prelevula.MazeLevel import MazeLevel
 from repugeng.DumbFovLevel import DumbFovLevel
 from CollectoGame import CollectoGame
 

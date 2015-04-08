@@ -76,7 +76,8 @@ class Level(object):
         #Width 50 not 80 as 16x16 tiles are a conceivable backend and
         #my monitor's max res is 1024x768
         #Height 19 as this is the maximum height to avoid lxterminal 
-        #scrolling (thus shifting the viewport aaaargggggghhhh)
+        #scrolling (thus shifting the viewport aaaargggggghhhh)*
+        #*How I'd configured it dimension-wise when picking dimensions
         self.grid=self._gengrid(50,19)
         self.objgrid=self._gengrid(50,19)
         rowno=0

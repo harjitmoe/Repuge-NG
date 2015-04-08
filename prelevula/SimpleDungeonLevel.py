@@ -1,7 +1,7 @@
-from repugeng.PregenLevel import PregenLevel
+from repugeng.GeneratedLevel import GeneratedLevel
 import random,math
 
-class SimpleDungeonLevel(PregenLevel):
+class SimpleDungeonLevel(GeneratedLevel):
     """Level subclass for a simple rogue-like dungeon.
 
     Simple in that at will always contain rooms connected in a ring."""

@@ -105,10 +105,10 @@ class CollectoGame(Level):
             self.backend.push_message("You find a staircase (use Return (enter) to descend).")
             return 1
         elif nxtstat=="space":
-            self.backend.push_message("You decide not to jump into the abyss")
+            self.backend.push_message("You hit the tunnel wall.")
             return 0
         else:
-            self.backend.push_message("You hit something")
+            self.backend.push_message("You hit something.")
             return 0
     #
     def user_input_to_int(self,input):

@@ -1,7 +1,7 @@
 from repugeng.Level import Level
 
-class PregenLevel(Level):
-    """Base class for a pre-generated (rather than predefined) level.
+class GeneratedLevel(Level):
+    """Base class for a generated (rather than predefined) level.
     
     Genral subclasses should override genmap().
     Levels may override initmap() and NOT readmap() or genmap().
@@ -16,13 +16,13 @@ class PregenLevel(Level):
     gamut=None
     nsiz=0
     def initmap(self):
-        """Initialise map.  
+        """Initialise map.
 
         May be overridden by level.  Should not be overridden by 
         general subclass.  Should call genmap()."""
         self.genmap()
     def genmap(self,*args,**kwargs):
-        """Generate map.  
+        """Generate map.  (Creates self.grid and self.objgrid.)
 
         May call readmap().  Should be implemented by subclass.
         Should not be overridden by level.

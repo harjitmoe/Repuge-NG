@@ -1,4 +1,4 @@
-from repugenglevelgens.SimpleDungeonLevel import SimpleDungeonLevel
+from prelevula.SimpleDungeonLevel import SimpleDungeonLevel
 from repugeng.DumbFovLevel import DumbFovLevel
 from CollectoGame import CollectoGame
 

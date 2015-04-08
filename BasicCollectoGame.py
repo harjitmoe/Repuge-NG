@@ -1,4 +1,4 @@
-from repugenglevelgens.RoomLevel import RoomLevel
+from prelevula.RoomLevel import RoomLevel
 from repugeng.DumbFovLevel import DumbFovLevel
 from CollectoGame import CollectoGame
 
