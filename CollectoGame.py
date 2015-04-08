@@ -57,6 +57,7 @@ class CollectoGame(Level):
             self.beanpoints.append(self.get_new_point())
         for x,y in self.beanpoints[:-1]:
             self.objgrid[x][y].append(GridObject(self,"'","item"))
+            self.objgrid[x][y][-1].pt=(x,y)
         x,y=self.beanpoints[-1]
         self.grid[x][y]=("staircase","%")
         #
@@ -94,6 +95,7 @@ class CollectoGame(Level):
                         new_location=self.get_new_point()
                         self.beanpoints.append(new_location)
                         self.objgrid[new_location[0]][new_location[1]].append(obj)
+                        obj.pt=new_location
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:

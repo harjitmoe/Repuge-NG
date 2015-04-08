@@ -16,7 +16,8 @@ class ConsoleTiles(object):
         return error_codes[cls._error_code%len(error_codes)]
     @classmethod
     def attach_expansion_pack(cls,cls2):
-        cls.expansion_packs.append(cls2)
+        if cls2 not in cls.expansion_packs:
+            cls.expansion_packs.append(cls2)
     space=" "
     vwall="|"
     hwall="-"

@@ -23,6 +23,7 @@ class Level(object):
     debug_ghost=0
     debug_fov_off=0
     #
+    inventory=None
     def __init__(self,backend=None,debug_dummy=False):
         """Initialise the instance (this will run upon creation).
         
@@ -62,12 +63,15 @@ class Level(object):
                     self.backend.set_window_title(self.title_window)
                 except NotImplementedError:
                     pass
+                #Inventory, in case level uses this
+                self.inventory=[]
                 #Start the event loop
                 self.run()
             except Exception,e:
                 self.bug_report[__name__]["Exception"]=e
                 self.bug_report[__name__]["grid"]=self.grid
                 self.bug_report[__name__]["objgrid"]=self.objgrid
+                self.bug_report[__name__]["inventory"]=self.inventory
                 self._dump_report()
                 raise
     def _gengrid(self,x,y):
@@ -174,6 +178,7 @@ class Level(object):
             time.sleep(delay)
             self.objgrid[i[0]][i[1]].remove(obj)
         self.objgrid[points[-1][0]][points[-1][1]].append(obj)
+        obj.pt=points[-1]
         self.redraw()
     def move_user(self,pt):
         """Move the user to pt.
@@ -237,10 +242,8 @@ class Level(object):
             else:
                 self.handle_command(e)
             #Each creature gets a move:
-            for file in self.objgrid:
-                for stack in file:
-                    for obj in stack:
-                        obj.tick()
+            for obj in GridObject.all_objects:
+                obj.tick()
     #
     def _dump_report(self):
         import pickle,time
