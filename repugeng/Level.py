@@ -18,7 +18,7 @@ class Level(object):
     """
     debug=0
     bug_report={}
-    def __init__(self,backend=None):
+    def __init__(self,backend=None,debug_dummy=False):
         """Initialise the instance (this will run upon creation).
         
         By default: obtain a backend, initialise the grids, set the 
@@ -36,22 +36,27 @@ class Level(object):
         Could be overridden by subclasses, but do remember to obtain a 
         self.backend by some means before trying to output anything.
         More recommended is to override run() and/or initmap().
+        
+        The debug_dummy argument allows a Level object to be created 
+        without any of this initialisation step whatsoever, for 
+        debugging purposes only.
         """
-        if backend:
-            self.backend=backend
-        else:
-            self.backend=BackendSelector.get_backend()
-        self.initmap()
-        self.redraw()
-        if self.starting_pt!=None:
-            self.move_user(self.starting_pt)
-        #Attempt to set title
-        try:
-            self.backend.set_window_title(self.title_window)
-        except NotImplementedError:
-            pass
-        #Start the event loop
-        self.run()
+        if not debug_dummy:
+            if backend:
+                self.backend=backend
+            else:
+                self.backend=BackendSelector.get_backend()
+            self.initmap()
+            self.redraw()
+            if self.starting_pt!=None:
+                self.move_user(self.starting_pt)
+            #Attempt to set title
+            try:
+                self.backend.set_window_title(self.title_window)
+            except NotImplementedError:
+                pass
+            #Start the event loop
+            self.run()
     def _gengrid(self,x,y):
         grid=[]
         for i in range(x):

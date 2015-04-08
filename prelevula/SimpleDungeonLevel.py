@@ -19,8 +19,10 @@ class SimpleDungeonLevel(GeneratedLevel):
     def _add_blocks_y(self,block1,block2):
         b1h=block1[0].count("\n")+1
         return block1[0]+"\n"+block2[0],block1[1]+tuple((i[0],i[1]+b1h) for i in block2[1])
-    def _make_block(self,joint,joinr,joinb,joinl,room=True,brid=None):
+    def _make_block(self,joint,joinr,joinb,joinl,room=True,
         #brid: bug report id (should be a nonzero hashable or None for no bug report entry)
+        #*_override: debugging overrides
+            brid=None,xoffset_override=0,yoffset_override=0):
         max_width=16
         max_height=9
         xmiddle=8
@@ -38,8 +40,8 @@ class SimpleDungeonLevel(GeneratedLevel):
         height=iheight+2
         max_xoffset=max_width-width-1
         max_yoffset=max_height-height-1
-        xoffset=random.randint(1,max_xoffset)
-        yoffset=random.randint(1,max_yoffset)
+        xoffset=xoffset_override or random.randint(1,max_xoffset)
+        yoffset=yoffset_override or random.randint(1,max_yoffset)
         if brid:
             self.bug_report[__name__][brid]=[joint,joinr,joinb,joinl,room,iwidth,iheight,xoffset,yoffset]
         if room:
@@ -82,6 +84,18 @@ class SimpleDungeonLevel(GeneratedLevel):
             self.bug_report[__name__][brid].append(block)
         #
         block=[list(i) for i in block.split("\n")]
+        if not room:
+            #Fix for bug ID 1428490448.
+            #Corridors join to just outside room, not to doorways themselves 
+            # so as to avoid possible width-two doorways.
+            #Accordingly, junctions in corridor blocks can end up with the 
+            # two passages lacking any orthogonal connection.  With the 
+            # present lack of diagonal traversal, and the intent of never 
+            # making that critical, this is bad.
+            #Fix this by ensuring that there is always a corridor cell on the 
+            # site of the pseudo-room.
+            block[yoffset][xoffset]="."
+        #
         doors=[(joint,[xmiddle,0],[topdoor,yoffset-1]), (joinb,[xmiddle,max_height-1],[botdoor,yoffset+1+iheight+1]), (joinl,[0,ymiddle],[xoffset-1,leftdoor]), (joinr,[max_width-1,ymiddle],[xoffset+1+iwidth+1,rightdoor])]
         for conditional,to,from_ in doors:
             if conditional:
