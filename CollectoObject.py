@@ -7,12 +7,13 @@ class CollectoObject(GridObject):
     """
     tile="item"
     def tick(self):
-        for i in range(4):
-            type_=random.randrange(4)
+        for i in range(5):
+            type_=random.randrange(5)
             if type_==0: target=(self.pt[0],self.pt[1]+1)
             if type_==1: target=(self.pt[0]+1,self.pt[1])
             if type_==2: target=(self.pt[0],self.pt[1]-1)
             if type_==3: target=(self.pt[0]-1,self.pt[1])
+            if type_==4: target=(self.pt[0],self.pt[1])
             try: #XXX kludge/fragile/assumes
                 floorlevel=type(0)(self.level.get_index_grid(*self.pt)[0][5:])
             except ValueError:
@@ -32,7 +33,7 @@ class CollectoObject(GridObject):
                 if (newlevel-floorlevel)<=1:
                     break
             type_+=1
-            type_%=4
+            type_%=5
         else: #i.e. ran to completion with no break
             return #stuck, cannot move
         self.place(*target)
