@@ -67,7 +67,7 @@ class Level(object):
                 self.inventory=[]
                 #Start the event loop
                 self.run()
-            except Exception,e:
+            except Exception(e):
                 #Put the exception in: the program quits on exception and, 
                 #unless started from a shell such as cmd, the terminal 
                 #probably closes promptly leaving it inaccessible.
