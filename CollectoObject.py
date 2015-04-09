@@ -6,7 +6,10 @@ class CollectoObject(GridObject):
     """An collectone.
     """
     tile="item"
+    nan=65536
     def tick(self):
+        if self.nan==self.nan and hasattr(self.level,"nan"):
+            self.nan=self.level.nan
         for i in range(5):
             type_=random.randrange(5)
             if type_==0: target=(self.pt[0],self.pt[1]+1)
