@@ -68,6 +68,9 @@ class Level(object):
                 #Start the event loop
                 self.run()
             except Exception,e:
+                #Put the exception in: the program quits on exception and, 
+                #unless started from a shell such as cmd, the terminal 
+                #probably closes promptly leaving it inaccessible.
                 self.bug_report[__name__]["Exception"]=e
                 self.bug_report[__name__]["grid"]=self.grid
                 self.bug_report[__name__]["objgrid"]=self.objgrid

@@ -38,11 +38,14 @@ class CollectoObject(GridObject):
         self.place(*target)
     #
     def handle_contact(self):
+        self.level.bug_report[__name__]={}
         duration=random.normalvariate(15,5)
+        self.level.bug_report[__name__]["duration"]=duration
         if duration<5:
             duration=5
         timr=time.time()
         result=self.question_test(duration)
+        self.level.bug_report[__name__]["result"]=result
         if result!=-1:
             self.level.score.mymoves=self.level.score.mymoves+1
             timr=time.time()-timr
@@ -59,6 +62,7 @@ class CollectoObject(GridObject):
             self.place(*self.level.get_new_point())
     #
     def user_input_to_int(self,input):
+        self.level.bug_report[__name__]["input"]=input
         try:
             return int(input)
         except ValueError:
@@ -82,6 +86,8 @@ class CollectoObject(GridObject):
     def question_test(self,duration):
         do_sum=random.randrange(2)
         do_arc=random.randrange(2)
+        self.level.bug_report[__name__]["do_sum"]=do_sum
+        self.level.bug_report[__name__]["do_arc"]=do_arc
         if do_sum:
             if not do_arc:
                 n=random.randrange(100)
