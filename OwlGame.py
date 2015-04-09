@@ -30,8 +30,7 @@ class OwlGame(RoomLevel):
         #Place owl
         self.owl=OwlObject(self)
         x,y=self.get_new_point()
-        self.objgrid[x][y].append(self.owl)
-        self.owl.pt=(x,y)
+        self.owl.place(x,y)
 
     def handle_move(self,target):
         try: #XXX kludge/fragile/assumes

@@ -24,10 +24,15 @@ class OwlObject(GridObject):
                 floorlevel=1 #Needed or mazed subclass breaks
             nxtstat=self.level.get_index_grid(*target)[0]
             if self.level.objgrid[target[0]][target[1]]:
+                breakp=1
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if isinstance(obj,PlayerObject):
                         self.level.backend.push_message("Read, or the owl will eat you")
                         break
+                else:
+                    breakp=0
+                if breakp:
+                    break
             elif nxtstat.startswith("floor"):
                 newlevel=type(0)(nxtstat[5:])
                 if (newlevel-floorlevel)<=1:
@@ -36,7 +41,5 @@ class OwlObject(GridObject):
             type_%=4
         else: #i.e. ran to completion with no break
             return #stuck, cannot move
-        self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
-        self.level.objgrid[target[0]][target[1]].append(self)
-        self.pt=target
+        self.place(*target)
         self.level.redraw()

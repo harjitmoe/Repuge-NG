@@ -20,6 +20,7 @@ import sys,random,time,math
 from repugeng.Level import Level
 from repugeng.MultilevelStorage import MultilevelStorage
 from repugeng.GridObject import GridObject
+from CollectoObject import CollectoObject
 
 class CollectoGame(Level):
     coded_grid=None
@@ -34,14 +35,7 @@ class CollectoGame(Level):
         return random.choice(cls._leveltypes)
 
     def get_new_point(self):
-        if hasattr(self,"pt"):
-            userloc=[self.pt]
-        else:
-            userloc=[self.starting_pt]
-        while 1:
-            (x,y)=random.choice(self.gamut)
-            if (x,y) not in self.beanpoints+userloc:
-                return (x,y)
+        return random.choice(self.gamut)
 
     def initmap(self):
         #Initialise scoring storage
@@ -50,15 +44,11 @@ class CollectoGame(Level):
         self.score.initialise_property("mymoves",0)
         #Generate map
         self.genmap()
-        self.starting_pt=random.choice(self.gamut)
+        self.starting_pt=self.get_new_point()
         #Put beans in unique locations
-        self.beanpoints=[]
         for junk in range(int(math.sqrt(len(self.gamut)))):
-            self.beanpoints.append(self.get_new_point())
-        for x,y in self.beanpoints[:-1]:
-            self.objgrid[x][y].append(GridObject(self,"'","item"))
-            self.objgrid[x][y][-1].pt=(x,y)
-        x,y=self.beanpoints[-1]
+            CollectoObject(self).place(*self.get_new_point())
+        x,y=self.get_new_point()
         self.grid[x][y]=("staircase","%")
         #
         self.nan=0
@@ -71,31 +61,8 @@ class CollectoGame(Level):
         nxtstat=self.get_index_grid(*target)[0]
         if self.objgrid[target[0]][target[1]]:
             for obj in self.objgrid[target[0]][target[1]][:]:
-                if obj.tile=="item":
-                    duration=random.normalvariate(15,5)
-                    if duration<5:
-                        duration=5
-                    timr=time.time()
-                    result=self.question_test(duration)
-                    if result!=-1:
-                        self.score.mymoves=self.score.mymoves+1
-                        timr=time.time()-timr
-                        if timr>duration:
-                            self.backend.push_message("OVERTIME")
-                            result=False
-                        if result:
-                            if self.debug:
-                                self.score.myscore=0
-                                self.backend.push_message("Debug mode is ON, nullifying score")
-                            else:
-                                self.score.myscore+=int((100.0/timr)+0.5)
-                                self.backend.push_message(repr(self.score.myscore)+" total points, "+repr(self.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.score.myscore/float(self.score.mymoves)))
-                        self.objgrid[target[0]][target[1]].remove(obj)
-                        self.beanpoints.remove(target)
-                        new_location=self.get_new_point()
-                        self.beanpoints.append(new_location)
-                        self.objgrid[new_location[0]][new_location[1]].append(obj)
-                        obj.pt=new_location
+                if isinstance(obj,CollectoObject):
+                    obj.handle_contact()
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
@@ -116,93 +83,6 @@ class CollectoGame(Level):
         else:
             self.backend.push_message("You hit something.")
             return 0
-    #
-    def user_input_to_int(self,input):
-        try:
-            return int(input)
-        except ValueError:
-            try:
-                flt=float(input)
-                #Float comparison (never compare floats directly, see below)
-                if abs(float(int(flt))-flt)<0.0001:
-                    return int(flt)
-                else: #Not equal, so further float comparison not an issue
-                    return flt
-            except ValueError:
-                exp="1e+1"
-                #json.decode("nan") would work were I aiming at 2.7+ only.
-                while self.nan==self.nan:
-                    exp+="0"
-                    #Sign bit would seem to distinguish between "indeterminable"
-                    #and "quiet not-a-number".  Eh?  How many NaNs does one need?
-                    self.nan=-(float(exp)/float(exp))
-                return self.nan
-    #
-    def question_test(self,duration):
-        do_sum=random.randrange(2)
-        do_arc=random.randrange(2)
-        if do_sum:
-            if not do_arc:
-                n=random.randrange(100)
-                m=random.randrange(100)
-                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"="))
-                if ri!=ri: #i.e. is NaN
-                    self.backend.push_message("I don't understand that answer (in figures, please).")
-                    return -1
-                elif ri!=n+m:
-                    self.backend.push_message("wrong, it's "+str(n+m))
-                    return False
-                else:
-                    self.backend.push_message("right")
-                    return True
-            else:
-                #Note: ALL PRE-NG COLLECTO VERSIONS had a 1/400 chance of failing 
-                #on each try with "empty range for randrange()".  This is fixed in
-                #this NG version.
-                n=random.randrange(1,100)
-                m=random.randrange(n)
-                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"="))
-                if ri!=ri: #i.e. is NaN
-                    self.backend.push_message("I don't understand that answer (in figures, please).")
-                    return -1
-                elif ri!=n-m:
-                    self.backend.push_message("wrong, it's "+str(n-m))
-                    return False
-                else:
-                    self.backend.push_message("right")
-                    return True
-        else:
-            if not do_arc:
-                n=random.randrange(1,10)
-                m=random.randrange(1,10)
-                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"="))
-                if ri!=ri: #i.e. is NaN
-                    self.backend.push_message("I don't understand that answer (in figures, please).")
-                    return -1
-                elif ri!=n*m:
-                    self.backend.push_message("wrong, it's "+str(n*m))
-                    return False
-                else:
-                    self.backend.push_message("right")
-                    return True
-            else:
-                #Integer division!  NOTE: DO NOT ADD FLOAT DIVISION.  
-                #UNREASONABLE TO COMPARE FLOATS.  LOOKUP WHY.
-                #Hint: try evaluating sum([0.0001]*50000)==5
-                #See also the "decimal" module.
-                n=random.randrange(20)
-                m=random.randrange(1,5)
-                n*=m
-                ri=self.user_input_to_int(self.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"="))
-                if ri!=ri: #i.e. is NaN
-                    self.backend.push_message("I don't understand that answer (in figures, please).")
-                    return -1
-                elif ri!=n//m: #Integer division!
-                    self.backend.push_message("wrong, it's "+str(n//m)) #Integer division!
-                    return False
-                else:
-                    self.backend.push_message("right")
-                    return True
     
     def handle_command(self,e):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="staircase":
