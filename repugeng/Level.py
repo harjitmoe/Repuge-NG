@@ -1,4 +1,4 @@
-import time
+import time,sys,traceback
 from repugeng.BackendSelector import BackendSelector
 from repugeng.GridObject import GridObject
 from repugeng.PlayerObject import PlayerObject
@@ -24,7 +24,7 @@ class Level(object):
     debug_fov_off=0
     #
     inventory=None
-    def __init__(self,backend=None,debug_dummy=False):
+    def __init__(self,backend=None,start=1,resume=0,debug_dummy=False):
         """Initialise the instance (this will run upon creation).
         
         By default: obtain a backend, initialise the grids, set the 
@@ -43,6 +43,10 @@ class Level(object):
         self.backend by some means before trying to output anything.
         More recommended is to override run() and/or initmap().
         
+        Zero or False "start" leaves run(...) to be called separately.
+        
+        Nonzero "resume" is used for loading saves (TODO).
+        
         The debug_dummy argument allows a Level object to be created 
         without any of this initialisation step whatsoever, for 
         debugging purposes only.
@@ -54,24 +58,32 @@ class Level(object):
                     self.backend=backend
                 else:
                     self.backend=BackendSelector.get_backend()
-                self.initmap()
-                self.redraw()
-                if self.starting_pt!=None:
-                    self.move_user(self.starting_pt)
+                if not resume:
+                    self.initmap()
+                    self.redraw()
+                    if self.starting_pt!=None:
+                        self.move_user(self.starting_pt)
+                else:
+                    self.redraw()
+                    self.move_user(self.pt)
                 #Attempt to set title
                 try:
                     self.backend.set_window_title(self.title_window)
                 except NotImplementedError:
                     pass
                 #Inventory, in case level uses this
-                self.inventory=[]
+                if not resume:
+                    self.inventory=[]
                 #Start the event loop
-                self.run()
-            except Exception(e):
+                if start:
+                    self.run(resume)
+            except SystemExit:
+                raise
+            except:
                 #Put the exception in: the program quits on exception and, 
                 #unless started from a shell such as cmd, the terminal 
                 #probably closes promptly leaving it inaccessible.
-                self.bug_report[__name__]["Exception"]=e
+                self.bug_report[__name__]["Exception"]=tuple(sys.exc_info()[:2])+(traceback.extract_tb(sys.exc_info()[2]),)
                 self.bug_report[__name__]["grid"]=self.grid
                 self.bug_report[__name__]["objgrid"]=self.objgrid
                 self.bug_report[__name__]["inventory"]=self.inventory
@@ -195,13 +207,16 @@ class Level(object):
         self.pt=pt
         self.redraw()
     #
-    def run(self):
+    def run(self,resume=0):
         """Level entry point.  May be overridden by subclass.
         
         Default behaviour is an event loop.  Movement is passed to handle_move(...).
         Other commands are passed to handle_command(...).
+        
+        Resume is nonzero when being resumed from a save (TODO implement saving).
         """
-        self.initial_cutscene()
+        if not resume:
+            self.initial_cutscene()
         while 1:
             self.redraw()
             e=self.backend.get_key_event()
@@ -230,14 +245,19 @@ class Level(object):
                         self.debug_ghost=1
                     elif name=="#ghostoff":
                         self.debug_ghost=0
-                    elif name in ("#fovoff","#fovoffon","#clairvoyant","#cranium","#allsight","#seeall"):
+                    elif name in ("#fovoff","#fovoffon","#clairvoyant","#allsight","#seeall"):
                         self.debug_fov_off=1
-                    elif name in ("#fov","#fovon","#fovoffoff","clairvoyantoff","#craniumoff","#allsightoff","#seealloff"):
+                    elif name in ("#fov","#fovon","#fovoffoff","#clairvoyantoff","#allsightoff","#seealloff"):
                         self.debug_fov_off=0
                     elif name.startswith("#passthrough "):
                         self.handle_command(name.split(" ",1)[1])
                     elif name in ("#bugreport","#report","#gurumeditation","#guru"):
                         self._dump_report()
+                    elif name in ("#testerror"):
+                        raise RuntimeError("testing error handler")
+                    elif name in ("#abort","#abrt","#kill"):
+                        import os
+                        os.abort()
                     else:
                         self.handle_command(name)
                 else:

@@ -52,6 +52,8 @@ class CollectoGame(Level):
         self.grid[x][y]=("staircase","%")
         #
         self.nan=0
+        self.children=[]
+        self.backend.push_message("Use #quit to quit.")
 
     def handle_move(self,target):
         try: #XXX kludge/fragile/assumes
@@ -87,7 +89,11 @@ class CollectoGame(Level):
     def handle_command(self,e):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="staircase":
             #Regen the dungeon.
-            CollectoGame.get_next_leveltype()() #yes, two ()
+            self.children.append(CollectoGame.get_next_leveltype()(self.backend,start=0)) #yes, two (...)
+            self.children[-1].daddy=self
+            self.children[-1].run()
+        elif e=="#quit":
+            sys.exit()
 #
 if __name__=="__main__":
     import sys
