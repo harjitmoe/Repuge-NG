@@ -1,8 +1,9 @@
 from prelevula.RoomLevel import RoomLevel
-from repugeng.DumbFovLevel import DumbFovLevel
+from repugeng.DumbFovInterface import DumbFovInterface
 from CollectoGame import CollectoGame
 
-class BasicCollectoGame(CollectoGame,DumbFovLevel,RoomLevel):
+class BasicCollectoGame(CollectoGame,RoomLevel):
+    InterfaceClass=DumbFovInterface
     title_window="Repuge-NG Collecto: Room"
 CollectoGame.register_leveltype(BasicCollectoGame)
 #

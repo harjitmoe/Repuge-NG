@@ -20,6 +20,7 @@ import sys,random,time,math
 from repugeng.Level import Level
 from repugeng.MultilevelStorage import MultilevelStorage
 from repugeng.GridObject import GridObject
+from repugeng.SimpleInterface import SimpleInterface
 from CollectoObject import CollectoObject
 
 class CollectoGame(Level):
@@ -53,11 +54,11 @@ class CollectoGame(Level):
         #
         self.nan=0
         self.children=[]
-        self.backend.push_message("Use #quit to quit.")
+        self.interface.backend.push_message("Use #quit to quit.")
 
     def handle_move(self,target):
         try: #XXX kludge/fragile/assumes
-            floorlevel=type(0)(self.get_index_grid(*self.pt)[0][5:])
+            floorlevel=type(0)(self.get_index_grid(*self.playerobj.pt)[0][5:])
         except ValueError:
             floorlevel=1 #Needed or mazed subclass breaks
         nxtstat=self.get_index_grid(*target)[0]
@@ -69,25 +70,25 @@ class CollectoGame(Level):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
                 if (newlevel-floorlevel)==1:
-                    self.backend.push_message("You climb up")
+                    self.interface.backend.push_message("You climb up")
                 elif (newlevel-floorlevel)<0:
-                    self.backend.push_message("You jump down")
+                    self.interface.backend.push_message("You jump down")
                 return 1
             else:
-                self.backend.push_message("You try to climb but can't")
+                self.interface.backend.push_message("You try to climb but can't")
                 return 0
         elif nxtstat=="staircase":
-            self.backend.push_message("You find a staircase (use Return (enter) to descend).")
+            self.interface.backend.push_message("You find a staircase (use Return (enter) to descend).")
             return 1
         elif nxtstat=="space":
-            self.backend.push_message("You hit the tunnel wall.")
+            self.interface.backend.push_message("You hit the tunnel wall.")
             return 0
         else:
-            self.backend.push_message("You hit something.")
+            self.interface.backend.push_message("You hit something.")
             return 0
     
     def handle_command(self,e):
-        if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.pt)[0]=="staircase":
+        if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*self.playerobj.pt)[0]=="staircase":
             #Regen the dungeon.
             self.children.append(CollectoGame.get_next_leveltype()(self.backend,start=0)) #yes, two (...)
             self.children[-1].daddy=self

@@ -1,8 +1,9 @@
 from prelevula.SimpleDungeonLevel import SimpleDungeonLevel
-from repugeng.DumbFovLevel import DumbFovLevel
+from repugeng.DumbFovInterface import DumbFovInterface
 from CollectoGame import CollectoGame
 
-class DungeonCollectoGame(CollectoGame,DumbFovLevel,SimpleDungeonLevel):
+class DungeonCollectoGame(CollectoGame,SimpleDungeonLevel):
+    InterfaceClass=DumbFovInterface
     title_window="Repuge-NG Collecto: Dungeon"
 CollectoGame.register_leveltype(DungeonCollectoGame)
 #

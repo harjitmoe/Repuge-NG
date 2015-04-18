@@ -1,7 +1,7 @@
 import time,sys,traceback
-from repugeng.BackendSelector import BackendSelector
 from repugeng.GridObject import GridObject
 from repugeng.PlayerObject import PlayerObject
+from repugeng.SimpleInterface import SimpleInterface
 #n.b. put shadowtracer, when introduced, elsewhere (mixin?).
 
 class Level(object):
@@ -22,26 +22,11 @@ class Level(object):
     bug_report={}
     debug_ghost=0
     debug_fov_off=0
+    InterfaceClass=SimpleInterface
     #
     inventory=None
-    def __init__(self,backend=None,start=1,resume=0,debug_dummy=False):
+    def __init__(self,start=1,resume=0,debug_dummy=False):
         """Initialise the instance (this will run upon creation).
-        
-        By default: obtain a backend, initialise the grids, set the 
-        player on self.starting_pt, draw the map, set window title to
-        self.title_window and execute the run() method.
-        
-        A backend can be passed in as an argument, which is used for
-        multi-level games (so as not to require a new window for each
-        level).
-        
-        If starting_pt==None, skip that bit (level is expected to have
-        an intro cutscene where the player character only appears 
-        partway into it.
-        
-        Could be overridden by subclasses, but do remember to obtain a 
-        self.backend by some means before trying to output anything.
-        More recommended is to override run() and/or initmap().
         
         Zero or False "start" leaves run(...) to be called separately.
         
@@ -54,23 +39,14 @@ class Level(object):
         if not debug_dummy:
             self.bug_report[__name__]={}
             try:
-                if backend:
-                    self.backend=backend
-                else:
-                    self.backend=BackendSelector.get_backend()
+                self.interface=self.InterfaceClass(self)
                 if not resume:
                     self.initmap()
-                    self.redraw()
                     if self.starting_pt!=None:
                         self.move_user(self.starting_pt)
                 else:
-                    self.redraw()
-                    self.move_user(self.pt)
-                #Attempt to set title
-                try:
-                    self.backend.set_window_title(self.title_window)
-                except NotImplementedError:
-                    pass
+                    #XXX
+                    self.move_user(self.playerobj.pt)
                 #Inventory, in case level uses this
                 if not resume:
                     self.inventory=[]
@@ -80,15 +56,23 @@ class Level(object):
             except SystemExit:
                 raise
             except:
-                #Put the exception in: the program quits on exception and, 
-                #unless started from a shell such as cmd, the terminal 
-                #probably closes promptly leaving it inaccessible.
-                self.bug_report[__name__]["Exception"]=tuple(sys.exc_info()[:2])+(traceback.extract_tb(sys.exc_info()[2]),)
-                self.bug_report[__name__]["grid"]=self.grid
-                self.bug_report[__name__]["objgrid"]=self.objgrid
-                self.bug_report[__name__]["inventory"]=self.inventory
-                self._dump_report()
-                raise
+                exctype,exception,traceback=sys.exc_info()
+                try:
+                    #Put the exception in: the program quits on exception and, 
+                    #unless started from a shell such as cmd, the terminal 
+                    #probably closes promptly leaving it inaccessible.
+                    self.bug_report[__name__]["Exception"]=(exctype,exception,traceback.extract_tb(traceback))
+                    self.bug_report[__name__]["grid"]=self.grid
+                    self.bug_report[__name__]["objgrid"]=self.objgrid
+                    self.bug_report[__name__]["inventory"]=self.inventory
+                    self._dump_report()
+                except:
+                    pass #Silence the irrelevant exception
+                if sys.hexversion<0x03000000:
+                    #Only 2k way to keep original traceback here, exec'd as invalid 3k syntax
+                    exec("raise exctype,exception,traceback")
+                else:
+                    raise exception
     def _gengrid(self,x,y):
         grid=[]
         for i in range(x):
@@ -143,25 +127,6 @@ class Level(object):
         This default behaviour may be overridden by subclasses.  General
         idea is that self.grid and self.objgrid are initialised."""
         self.readmap()
-    def redraw(self):
-        """Draw the map (grid and objgrid).
-        
-        Presently this, by default, draws grid and (above it) objgrid at once
-        and draws the entire grid.
-        
-        Unless you are a FOV engine, you probably don't want to override 
-        this."""
-        colno=0
-        for col,col2 in zip(self.grid,self.objgrid):
-            rowno=0
-            for row,row2 in zip(col,col2):
-                #print rowno,colno,col
-                if row2:
-                    self.backend.plot_tile(colno,rowno,row2[-1].tile)
-                elif row:
-                    self.backend.plot_tile(colno,rowno,row[0])
-                rowno+=1
-            colno+=1
     #
     def get_index_grid(self,x,y):
         return self.grid[x][y]
@@ -174,14 +139,10 @@ class Level(object):
         for i in points[:-1]:
             if self.playerobj not in self.objgrid[i[0]][i[1]]:
                 self.objgrid[i[0]][i[1]].append(self.playerobj)
-            self.backend.goto_point(*i)
-            self.redraw()
             time.sleep(delay)
             self.objgrid[i[0]][i[1]].remove(self.playerobj)
         i=points[-1]
         self.objgrid[i[0]][i[1]].append(self.playerobj)
-        self.backend.goto_point(*i)
-        self.redraw()
         return i
     def followline(self,delay,points,obj):
         """Move a non-user object visibly down a list of points.
@@ -189,23 +150,16 @@ class Level(object):
         import time
         for i in points[:-1]:
             self.objgrid[i[0]][i[1]].append(obj)
-            self.redraw()
             time.sleep(delay)
             self.objgrid[i[0]][i[1]].remove(obj)
         self.objgrid[points[-1][0]][points[-1][1]].append(obj)
         obj.pt=points[-1]
-        self.redraw()
     def move_user(self,pt):
         """Move the user to pt.
         """
-        if hasattr(self,"pt"): #i.e. not first run
-            self.objgrid[self.pt[0]][self.pt[1]].remove(self.playerobj)
-        else:
+        if not hasattr(self,"playerobj") or self.playerobj==None:
             self.playerobj=PlayerObject(self)
-        self.objgrid[pt[0]][pt[1]].append(self.playerobj)
-        self.backend.goto_point(*pt)
-        self.pt=pt
-        self.redraw()
+        self.playerobj.place(*pt)
     #
     def run(self,resume=0):
         """Level entry point.  May be overridden by subclass.
@@ -218,9 +172,8 @@ class Level(object):
         if not resume:
             self.initial_cutscene()
         while 1:
-            self.redraw()
-            e=self.backend.get_key_event()
-            #self.backend.push_message(e)
+            self.interface.redraw()
+            e=self.interface.backend.get_key_event()
             if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
                 #Does not go through to Python otherwise, meaning that Linux main terminals
                 #are rendered otherwise out of order until someone kills Collecto
@@ -228,14 +181,14 @@ class Level(object):
                 #This is relevant if someone is running this on an RPi.
                 raise KeyboardInterrupt #^c, ^d or ^z pressed
             elif e in ("down","up","left","right","8","4","6","2"):
-                if e in ("down","2"): target=(self.pt[0],self.pt[1]+1)
-                if e in ("right","6"):target=(self.pt[0]+1,self.pt[1])
-                if e in ("up","8"):   target=(self.pt[0],self.pt[1]-1)
-                if e in ("left","4"): target=(self.pt[0]-1,self.pt[1])
+                if e in ("down","2"): target=(self.playerobj.pt[0],self.playerobj.pt[1]+1)
+                if e in ("right","6"):target=(self.playerobj.pt[0]+1,self.playerobj.pt[1])
+                if e in ("up","8"):   target=(self.playerobj.pt[0],self.playerobj.pt[1]-1)
+                if e in ("left","4"): target=(self.playerobj.pt[0]-1,self.playerobj.pt[1])
                 if self.debug_ghost or self.handle_move(target):
                     self.move_user(target)
             elif e=="#":
-                name="#"+self.backend.ask_question("#")
+                name="#"+self.interface.backend.ask_question("#")
                 if name in ("#debug","#debugon"):
                     self.debug=1
                 elif self.debug:
