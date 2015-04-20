@@ -20,6 +20,11 @@ class GridObject(object):
         if self.tileset_expansion:
             self.level.backend.attach_expansion_pack(self.tileset_expansion)
         GridObject.all_objects.append(self)
+        self.initialise()
+    def initialise(self):
+        """Just been spawned.  Do what?"""
+        self.interface=self.level.InterfaceClass(self)
+        pass
     def tick(self):
         """Your move.  If you are a creature, move!
         

@@ -1,7 +1,8 @@
 from repugeng.BackendSelector import BackendSelector
 class SimpleInterface(object):
-    def __init__(self,level,backend=None,debug_dummy=False):
-        self.level=level
+    def __init__(self,playerobj,backend=None,debug_dummy=False):
+        self.playerobj=playerobj
+        self.level=playerobj.level
         #
         if not debug_dummy:
             self.level.bug_report[__name__]={}
@@ -22,8 +23,8 @@ class SimpleInterface(object):
         
         Unless you are a FOV engine, you probably don't want to override 
         this."""
-        if self.level.playerobj.pt:
-            self.backend.goto_point(*self.level.playerobj.pt)
+        if self.playerobj.pt:
+            self.backend.goto_point(*self.playerobj.pt)
         colno=0
         for col,col2 in zip(self.level.grid,self.level.objgrid):
             rowno=0

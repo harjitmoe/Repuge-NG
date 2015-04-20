@@ -39,7 +39,6 @@ class Level(object):
         if not debug_dummy:
             self.bug_report[__name__]={}
             try:
-                self.interface=self.InterfaceClass(self)
                 if not resume:
                     self.initmap()
                     if self.starting_pt!=None:
@@ -172,51 +171,6 @@ class Level(object):
         if not resume:
             self.initial_cutscene()
         while 1:
-            self.interface.redraw()
-            e=self.interface.backend.get_key_event()
-            if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
-                #Does not go through to Python otherwise, meaning that Linux main terminals
-                #are rendered otherwise out of order until someone kills Collecto
-                #from a different terminal or over SSH (or rlogin).
-                #This is relevant if someone is running this on an RPi.
-                raise KeyboardInterrupt #^c, ^d or ^z pressed
-            elif e in ("down","up","left","right","8","4","6","2"):
-                if e in ("down","2"): target=(self.playerobj.pt[0],self.playerobj.pt[1]+1)
-                if e in ("right","6"):target=(self.playerobj.pt[0]+1,self.playerobj.pt[1])
-                if e in ("up","8"):   target=(self.playerobj.pt[0],self.playerobj.pt[1]-1)
-                if e in ("left","4"): target=(self.playerobj.pt[0]-1,self.playerobj.pt[1])
-                if self.debug_ghost or self.handle_move(target):
-                    self.move_user(target)
-            elif e=="#":
-                name="#"+self.interface.backend.ask_question("#")
-                if name in ("#debug","#debugon"):
-                    self.debug=1
-                elif self.debug:
-                    if name=="#debugoff":
-                        self.debug=0
-                    elif name in ("#ghost","#ghoston"):
-                        self.debug_ghost=1
-                    elif name=="#ghostoff":
-                        self.debug_ghost=0
-                    elif name in ("#fovoff","#fovoffon","#clairvoyant","#allsight","#seeall"):
-                        self.debug_fov_off=1
-                    elif name in ("#fov","#fovon","#fovoffoff","#clairvoyantoff","#allsightoff","#seealloff"):
-                        self.debug_fov_off=0
-                    elif name.startswith("#passthrough "):
-                        self.handle_command(name.split(" ",1)[1])
-                    elif name in ("#bugreport","#report","#gurumeditation","#guru"):
-                        self._dump_report()
-                    elif name in ("#testerror"):
-                        raise RuntimeError("testing error handler")
-                    elif name in ("#abort","#abrt","#kill"):
-                        import os
-                        os.abort()
-                    else:
-                        self.handle_command(name)
-                else:
-                    self.handle_command(name)
-            else:
-                self.handle_command(e)
             #Each creature gets a move:
             for obj in GridObject.all_objects:
                 obj.tick()

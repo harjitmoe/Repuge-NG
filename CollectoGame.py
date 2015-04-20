@@ -54,7 +54,7 @@ class CollectoGame(Level):
         #
         self.nan=0
         self.children=[]
-        self.interface.backend.push_message("Use #quit to quit.")
+        #self.playerobj.interface.backend.push_message("Use #quit to quit.")
 
     def handle_move(self,target):
         try: #XXX kludge/fragile/assumes
@@ -70,21 +70,21 @@ class CollectoGame(Level):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
                 if (newlevel-floorlevel)==1:
-                    self.interface.backend.push_message("You climb up")
+                    self.playerobj.interface.backend.push_message("You climb up")
                 elif (newlevel-floorlevel)<0:
-                    self.interface.backend.push_message("You jump down")
+                    self.playerobj.interface.backend.push_message("You jump down")
                 return 1
             else:
-                self.interface.backend.push_message("You try to climb but can't")
+                self.playerobj.interface.backend.push_message("You try to climb but can't")
                 return 0
         elif nxtstat=="staircase":
-            self.interface.backend.push_message("You find a staircase (use Return (enter) to descend).")
+            self.playerobj.interface.backend.push_message("You find a staircase (use Return (enter) to descend).")
             return 1
         elif nxtstat=="space":
-            self.interface.backend.push_message("You hit the tunnel wall.")
+            self.playerobj.interface.backend.push_message("You hit the tunnel wall.")
             return 0
         else:
-            self.interface.backend.push_message("You hit something.")
+            self.playerobj.interface.backend.push_message("You hit something.")
             return 0
     
     def handle_command(self,e):

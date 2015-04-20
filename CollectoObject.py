@@ -54,15 +54,15 @@ class CollectoObject(GridObject):
             self.level.score.mymoves=self.level.score.mymoves+1
             timr=time.time()-timr
             if timr>duration:
-                self.level.interface.backend.push_message("OVERTIME")
+                self.level.playerobj.interface.backend.push_message("OVERTIME")
                 result=False
             if result:
                 if self.level.debug:
                     self.level.score.myscore=0
-                    self.level.interface.backend.push_message("Debug mode is ON, nullifying score")
+                    self.level.playerobj.interface.backend.push_message("Debug mode is ON, nullifying score")
                 else:
                     self.level.score.myscore+=int((100.0/timr)+0.5)
-                    self.level.interface.backend.push_message(repr(self.level.score.myscore)+" total points, "+repr(self.level.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.level.score.myscore/float(self.level.score.mymoves)))
+                    self.level.playerobj.interface.backend.push_message(repr(self.level.score.myscore)+" total points, "+repr(self.level.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.level.score.myscore/float(self.level.score.mymoves)))
             self.place(*self.level.get_new_point())
     #
     def user_input_to_int(self,input):
@@ -96,15 +96,15 @@ class CollectoObject(GridObject):
             if not do_arc:
                 n=random.randrange(100)
                 m=random.randrange(100)
-                ri=self.user_input_to_int(self.level.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"="))
+                ri=self.user_input_to_int(self.level.playerobj.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.level.interface.backend.push_message("I don't understand that answer (in figures, please).")
+                    self.level.playerobj.interface.backend.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n+m:
-                    self.level.interface.backend.push_message("wrong, it's "+str(n+m))
+                    self.level.playerobj.interface.backend.push_message("wrong, it's "+str(n+m))
                     return False
                 else:
-                    self.level.interface.backend.push_message("right")
+                    self.level.playerobj.interface.backend.push_message("right")
                     return True
             else:
                 #Note: ALL PRE-NG COLLECTO VERSIONS had a 1/400 chance of failing 
@@ -112,29 +112,29 @@ class CollectoObject(GridObject):
                 #this NG version.
                 n=random.randrange(1,100)
                 m=random.randrange(n)
-                ri=self.user_input_to_int(self.level.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"="))
+                ri=self.user_input_to_int(self.level.playerobj.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.level.interface.backend.push_message("I don't understand that answer (in figures, please).")
+                    self.level.playerobj.interface.backend.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n-m:
-                    self.level.interface.backend.push_message("wrong, it's "+str(n-m))
+                    self.level.playerobj.interface.backend.push_message("wrong, it's "+str(n-m))
                     return False
                 else:
-                    self.level.interface.backend.push_message("right")
+                    self.level.playerobj.interface.backend.push_message("right")
                     return True
         else:
             if not do_arc:
                 n=random.randrange(1,10)
                 m=random.randrange(1,10)
-                ri=self.user_input_to_int(self.level.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"="))
+                ri=self.user_input_to_int(self.level.playerobj.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.level.interface.backend.push_message("I don't understand that answer (in figures, please).")
+                    self.level.playerobj.interface.backend.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n*m:
-                    self.level.interface.backend.push_message("wrong, it's "+str(n*m))
+                    self.level.playerobj.interface.backend.push_message("wrong, it's "+str(n*m))
                     return False
                 else:
-                    self.level.interface.backend.push_message("right")
+                    self.level.playerobj.interface.backend.push_message("right")
                     return True
             else:
                 #Integer division!  NOTE: DO NOT ADD FLOAT DIVISION.  
@@ -144,13 +144,13 @@ class CollectoObject(GridObject):
                 n=random.randrange(20)
                 m=random.randrange(1,5)
                 n*=m
-                ri=self.user_input_to_int(self.level.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"="))
+                ri=self.user_input_to_int(self.level.playerobj.interface.backend.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.level.interface.backend.push_message("I don't understand that answer (in figures, please).")
+                    self.level.playerobj.interface.backend.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n//m: #Integer division!
-                    self.level.interface.backend.push_message("wrong, it's "+str(n//m)) #Integer division!
+                    self.level.playerobj.interface.backend.push_message("wrong, it's "+str(n//m)) #Integer division!
                     return False
                 else:
-                    self.level.interface.backend.push_message("right")
+                    self.level.playerobj.interface.backend.push_message("right")
                     return True
