@@ -1,6 +1,6 @@
 from repugeng.GridObject import GridObject
 class PlayerObject(GridObject):
-    """A grid object representing the player.
+    """A grid object with an attached interface, controlled by the player.
     """
     tile="user"
     def tick(self):
@@ -49,3 +49,6 @@ class PlayerObject(GridObject):
                 self.level.handle_command(name)
         else:
             self.level.handle_command(e)
+    def level_rebase(self,newlevel):
+        self.level=newlevel
+        self.interface.level=newlevel

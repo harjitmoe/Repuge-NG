@@ -25,8 +25,11 @@ class Level(object):
     InterfaceClass=SimpleInterface
     #
     inventory=None
-    def __init__(self,start=1,resume=0,debug_dummy=False):
+    def __init__(self,playerobj=-1,start=1,resume=0,debug_dummy=False):
         """Initialise the instance (this will run upon creation).
+        
+        Pass in playerobj to keep an interface from a previously open
+        level.
         
         Zero or False "start" leaves run(...) to be called separately.
         
@@ -42,10 +45,14 @@ class Level(object):
                 if not resume:
                     self.initmap()
                     if self.starting_pt!=None:
-                        self.move_user(self.starting_pt)
+                        if playerobj==-1:
+                            self.move_user(self.starting_pt)
+                        else:
+                            self.playerobj=playerobj
+                            playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
                 else:
                     #XXX
-                    self.move_user(self.playerobj.pt)
+                    self.playerobj.place(*self.playerobj.pt)
                 #Inventory, in case level uses this
                 if not resume:
                     self.inventory=[]

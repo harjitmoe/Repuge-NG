@@ -31,13 +31,14 @@ class GridObject(object):
         Do override if appropriate.  Default is nothing."""
         pass
     def place(self,destx,desty,newlevel=None):
-        """Place on the specified point in the level."""
+        """Place on the specified point in the level, lifting from previous point."""
         oldlevel=self.level
         if newlevel==None:
             newlevel=oldlevel
         if self.pt!=None and oldlevel!=None:
             oldlevel.objgrid[self.pt[0]][self.pt[1]].remove(self)
         self.pt=(destx,desty)
+        self.level_rebase(newlevel)
         if len(newlevel.objgrid[destx][desty]) and isinstance(newlevel.objgrid[destx][desty][-1],PlayerObject):
             #Don't obscure the player
             player=newlevel.objgrid[destx][desty].pop()
@@ -45,8 +46,12 @@ class GridObject(object):
             newlevel.objgrid[destx][desty].append(player)
         else:
             newlevel.objgrid[destx][desty].append(self)
-        self.level=newlevel
         self.placed=True
+    def level_rebase(self,newlevel):
+        """Re-associate with a different level.
+        
+        Subclasses may need to override this to take additional action here."""
+        self.level=newlevel
     def lift(self):
         """Remove from the level."""
         if self.pt!=None:
