@@ -106,7 +106,7 @@ class Level(object):
         #my monitor's max res is 1024x768
         #Height 19 as this is the maximum height to avoid lxterminal 
         #scrolling (thus shifting the viewport aaaargggggghhhh)*
-        #*How I'd configured it dimension-wise when picking dimensions
+        #*How I'd configured it dimension-wise when picking dimensions, thatis
         self.grid=self._gengrid(50,19)
         self.objgrid=self._gengrid(50,19)
         rowno=0

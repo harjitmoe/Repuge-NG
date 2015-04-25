@@ -23,7 +23,7 @@ class PlayerObject(GridObject):
             name="#"+self.interface.backend.ask_question("#")
             if name in ("#debug","#debugon"):
                 self.level.debug=1
-            elif self.debug:
+            elif self.level.debug:
                 if name=="#debugoff":
                     self.level.debug=0
                 elif name in ("#ghost","#ghoston"):

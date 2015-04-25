@@ -1,9 +1,9 @@
 from prelevula.MazeLevel import MazeLevel
-from repugeng.DumbFovInterface import DumbFovInterface
+from CollectoInterface import CollectoInterface
 from CollectoGame import CollectoGame
 
 class MazedCollectoGame(CollectoGame,MazeLevel):
-    InterfaceClass=DumbFovInterface
+    InterfaceClass=CollectoInterface
     title_window="Repuge-NG Collecto: Maze"
 CollectoGame.register_leveltype(MazedCollectoGame)
 #

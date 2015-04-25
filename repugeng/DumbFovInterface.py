@@ -15,6 +15,8 @@ class DumbFovInterface(SimpleInterface):
             return True
         if ((x,y) in self._fov_cache) and not passthrough_once:
             return self._fov_cache[(x,y)]
+        if (x<0) or (y<0) or (x>=len(self.level.grid)) or (y>=len(self.level.grid[0])):
+            return False
         
         vector_angle=math.atan2(abs(y-self.level.playerobj.pt[1]),abs(x-self.level.playerobj.pt[0]))
         vector_angle*=180
@@ -59,14 +61,14 @@ class DumbFovInterface(SimpleInterface):
     def redraw(self):
         """Draw the map (grid and objgrid)."""
         if self.level.playerobj.pt:
-            self.backend.goto_point(*self.level.playerobj.pt)
+            self.backend.goto_point(*self.get_viewport_pt())
         colno=0
         self._fov_cache={}
-        for col,col2 in zip(self.level.grid,self.level.objgrid):
+        for coordscol,col,col2 in zip(*self.get_viewport_grids()):
             rowno=0
-            for row,row2 in zip(col,col2):
+            for coords,row,row2 in zip(coordscol,col,col2):
                 #print colno,rowno,col
-                if self._fov_check(colno,rowno):
+                if self._fov_check(*coords):
                     if row2:
                         self.backend.plot_tile(colno,rowno,row2[-1].tile)
                     elif row:

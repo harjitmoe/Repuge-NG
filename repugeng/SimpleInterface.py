@@ -15,6 +15,12 @@ class SimpleInterface(object):
                 self.backend.set_window_title(self.level.title_window)
             except NotImplementedError:
                 pass
+            self.generic_coords=[zip(*enumerate(h))[0] for h in self.level.grid]
+            self.generic_coords=[[(x,y) for y in h] for x,h in enumerate(self.generic_coords)]
+    def get_viewport_grids(self):
+        return self.generic_coords,self.level.grid,self.level.objgrid
+    def get_viewport_pt(self):
+        return self.playerobj.pt
     def redraw(self):
         """Draw the map (grid and objgrid).
         
@@ -24,11 +30,11 @@ class SimpleInterface(object):
         Unless you are a FOV engine, you probably don't want to override 
         this."""
         if self.playerobj.pt:
-            self.backend.goto_point(*self.playerobj.pt)
+            self.backend.goto_point(*self.get_viewport_pt())
         colno=0
-        for col,col2 in zip(self.level.grid,self.level.objgrid):
+        for coordscol,col,col2 in zip(*self.get_viewport_grids()):
             rowno=0
-            for row,row2 in zip(col,col2):
+            for coords,row,row2 in zip(coordscol,col,col2):
                 #print rowno,colno,col
                 if row2:
                     self.backend.plot_tile(colno,rowno,row2[-1].tile)
