@@ -107,8 +107,8 @@ class Level(object):
         #Height 19 as this is the maximum height to avoid lxterminal 
         #scrolling (thus shifting the viewport aaaargggggghhhh)*
         #*How I'd configured it dimension-wise when picking dimensions, thatis
-        self.grid=self._gengrid(50,19)
-        self.objgrid=self._gengrid(50,19)
+        self.grid=self._gengrid(100,100)
+        self.objgrid=self._gengrid(100,100)
         rowno=0
         for row in self.coded_grid.split("\n"):
             colno=0

@@ -46,7 +46,7 @@ class CollectoGame(Level):
         #Generate map
         self.genmap()
         self.starting_pt=self.get_new_point()
-        #Put beans in unique locations
+        #Put collectones in unique locations
         for junk in range(int(math.sqrt(len(self.gamut)))):
             CollectoObject(self).place(*self.get_new_point())
         x,y=self.get_new_point()
@@ -99,6 +99,6 @@ class CollectoGame(Level):
 if __name__=="__main__":
     import sys
     sys.modules["CollectoGame"]=sys.modules["__main__"] #oh, Python
-    import BasicCollectoGame,MazedCollectoGame,DungeonCollectoGame
+    import MazedCollectoGame,DungeonCollectoGame#BasicCollectoGame,
     CollectoGame.get_next_leveltype()() #yes, two ()
 

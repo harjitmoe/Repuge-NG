@@ -2,7 +2,7 @@ from repugeng.SimpleInterface import SimpleInterface
 
 class ScrollingInterface(SimpleInterface):
     def get_viewport_grids(self):
-        width=50
+        width=79
         height=19
         offsetx=self.playerobj.pt[0]-(width//2)
         offsety=self.playerobj.pt[1]-(height//2)
@@ -35,4 +35,4 @@ class ScrollingInterface(SimpleInterface):
             colno+=1
         return coords,grid_subset,objgrid_subset
     def get_viewport_pt(self):
-        return 50//2,19//2
+        return 79//2,19//2

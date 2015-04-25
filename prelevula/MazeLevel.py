@@ -42,7 +42,7 @@ class MazeLevel(GeneratedLevel):
                 broken_walls.append((x*2+1,noy+y+1))
         return broken_walls
     
-    def genmap(self,nsiz=8):
+    def genmap(self,nsiz=12): #Limited by sanity - too large is effectively unexitable
         #Generate a grid of walled cells, as a maze predecessor.
         self.coded_grid="g"+("ov"*(nsiz-1))+"oG\n"
         self.coded_grid+=("d"+(".d"*(nsiz)+"\n")+(">"+("o+"*(nsiz-1))+"o<\n"))*(nsiz-1)
