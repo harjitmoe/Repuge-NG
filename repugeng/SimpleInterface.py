@@ -1,3 +1,4 @@
+import sys
 from repugeng.BackendSelector import BackendSelector
 class SimpleInterface(object):
     """Note that this probably doesn't actually work anymore, use subclasses
@@ -44,4 +45,6 @@ class SimpleInterface(object):
                     self.backend.plot_tile(colno,rowno,row[0])
                 rowno+=1
             colno+=1
+    def close(self):
+        sys.exit()
         

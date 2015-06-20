@@ -50,12 +50,10 @@ class Level(object):
                         else:
                             self.playerobj=playerobj
                             playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
+                    self.initialise()
                 else:
                     #XXX
                     self.playerobj.place(*self.playerobj.pt)
-                #Inventory, in case level uses this
-                if not resume:
-                    self.inventory=[]
                 #Start the event loop
                 if start:
                     self.run(resume)
@@ -70,7 +68,6 @@ class Level(object):
                     self.bug_report[__name__]["Exception"]=(exctype,exception,traceback.extract_tb(traceback))
                     self.bug_report[__name__]["grid"]=self.grid
                     self.bug_report[__name__]["objgrid"]=self.objgrid
-                    self.bug_report[__name__]["inventory"]=self.inventory
                     self._dump_report()
                 except:
                     pass #Silence the irrelevant exception
@@ -134,6 +131,10 @@ class Level(object):
         idea is that self.grid and self.objgrid are initialised."""
         self.readmap()
     #
+    def initialise(self):
+        """Ran after playerobj placed.  To be overridden by subclasses."""
+        pass
+    #
     def get_index_grid(self,x,y):
         return self.grid[x][y]
     def set_index_grid(self,v,x,y):
@@ -188,14 +189,14 @@ class Level(object):
         pickle.dump(self.bug_report,f)
         f.close()
     #
-    def handle_move(self,dest):
+    def handle_move(self,dest,playerobj):
         """Handle a move command by the user. --> True to go ahead or False 
         to block the move.
         
         Default allows no movement.  May be overridden by level subclass."""
         return 0
     #
-    def handle_command(self,key_event):
+    def handle_command(self,key_event,playerobj):
         r"""Handle a command by the user.  This is not called on move 
         commands by default.
         

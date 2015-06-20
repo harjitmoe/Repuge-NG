@@ -40,7 +40,8 @@ class ConsoleTiles(object):
     floor5="#"
     user="@"
     item="'"
-    staircase="%"
+    staircase=">"
+    adversary="&"
     #
     _error_code=1
     expansion_packs=[]

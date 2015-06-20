@@ -17,36 +17,36 @@ jooooooooooooJ"""
     starting_pt=(1,1)
     title_window="Basic Sample Repuge-NG Map"
 
-    def handle_move(self,target):
-        floorlevel=type(0)(self.get_index_grid(*self.playerobj.pt)[0][5:]) #XXX kludge/fragile/assumes
-        curstat=self.get_index_grid(*self.playerobj.pt)[0]
+    def handle_move(self,target,playerobj):
+        floorlevel=type(0)(self.get_index_grid(*playerobj.pt)[0][5:]) #XXX kludge/fragile/assumes
+        curstat=self.get_index_grid(*playerobj.pt)[0]
         nxtstat=self.get_index_grid(*target)[0]
         if nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
                 if (newlevel-floorlevel)==1:
-                    self.playerobj.interface.backend.push_message("You climb up")
+                    playerobj.interface.backend.push_message("You climb up")
                 elif (newlevel-floorlevel)<0:
-                    self.playerobj.interface.backend.push_message("You jump down")
+                    playerobj.interface.backend.push_message("You jump down")
                 return 1
             else:
-                self.playerobj.interface.backend.push_message("You try to climb but can't")
+                playerobj.interface.backend.push_message("You try to climb but can't")
                 return 0
         elif self.get_index_grid(*target)[1]==":":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("floor2",car),*target)
-            self.playerobj.interface.backend.push_message("The door opens")
+            playerobj.interface.backend.push_message("The door opens")
             return 0
         elif self.get_index_grid(*target)[1]=="*":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("floor1",car),*target)
-            self.playerobj.interface.backend.push_message("The door opens")
+            playerobj.interface.backend.push_message("The door opens")
             return 0
         elif nxtstat=="space":
-            self.playerobj.interface.backend.push_message("You decide not to jump into the abyss")
+            playerobj.interface.backend.push_message("You decide not to jump into the abyss")
             return 0
         else:
-            self.playerobj.interface.backend.push_message("You hit something")
+            playerobj.interface.backend.push_message("You hit something")
             return 0
 
 if __name__=="__main__":

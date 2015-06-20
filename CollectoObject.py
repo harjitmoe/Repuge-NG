@@ -7,7 +7,14 @@ class CollectoObject(GridObject):
     """
     tile="item"
     nan=65536
-    def tick(self):
+    name="collectone"
+    appearance="floating spheroid"
+    #
+    def initialise(self,noinit):
+        """Just been spawned.  Do what?"""
+        self.add_handler(1,self.onetick)
+    #
+    def onetick(self):
         if self.nan==self.nan and hasattr(self.level,"nan"):
             self.nan=self.level.nan
         for i in range(5):
