@@ -1,9 +1,9 @@
 from repugeng.GridObject import GridObject
-from repugeng.PlayerObject import PlayerObject
+from repugeng.PlayableObject import PlayableObject
 from repugeng.Container import Container
 import random
 
-class DumbMonster(GridObject):
+class DumbMonster(PlayableObject):
     """An generic adversary.
     """
     tile="adversary"
@@ -11,15 +11,16 @@ class DumbMonster(GridObject):
     appearance="featureless monster"
     vitality=5
     maxhp=5
-    def initialise(self,noinit):
+    def initialise_playable(self):
         """Just been spawned.  Do what?"""
         self.inventory=Container(self.level)
         self.inventory.insert(GridObject(self.level))
         self.inventory.insert(GridObject(self.level))
         self.inventory.insert(GridObject(self.level))
         self.add_handler(1,self.onetick)
-        self.add_handler(5,self.up_hitpoint)
     def onetick(self):
+        if self.interface!=None:
+            return
         if self.vitality<=0:
             self.die()
             return
@@ -42,7 +43,7 @@ class DumbMonster(GridObject):
             if self.level.objgrid[target[0]][target[1]]:
                 breakp=1
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
-                    if isinstance(obj,PlayerObject):
+                    if hasattr(obj,"interface") and obj.interface!=None:
                         if type(self) in obj.known:
                             obj.interface.backend.push_message("The %s hits!"%self.name)
                         else:
@@ -63,6 +64,3 @@ class DumbMonster(GridObject):
             return #stuck, cannot move
         self.place(*target)
         self.level.playerobj.interface.redraw()
-    def up_hitpoint(self):
-        if self.vitality<self.maxhp:
-            self.vitality+=1

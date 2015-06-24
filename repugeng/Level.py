@@ -1,6 +1,6 @@
 import time,sys,traceback
 from repugeng.GridObject import GridObject
-from repugeng.PlayerObject import PlayerObject
+from repugeng.PlayableObject import PlayableObject
 from repugeng.SimpleInterface import SimpleInterface
 #n.b. put shadowtracer, when introduced, elsewhere (mixin?).
 
@@ -23,6 +23,7 @@ class Level(object):
     debug_ghost=0
     debug_fov_off=0
     InterfaceClass=SimpleInterface
+    PlayerClass=PlayableObject
     #
     inventory=None
     def __init__(self,playerobj=-1,start=1,resume=0,debug_dummy=False):
@@ -46,10 +47,10 @@ class Level(object):
                     self.initmap()
                     if self.starting_pt!=None:
                         if playerobj==-1:
-                            self.move_user(self.starting_pt)
+                            playerobj=self.playerobj=self.PlayerClass(self,play=1)
                         else:
                             self.playerobj=playerobj
-                            playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
+                        playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
                     self.initialise()
                 else:
                     #XXX
@@ -161,12 +162,7 @@ class Level(object):
             self.objgrid[i[0]][i[1]].remove(obj)
         self.objgrid[points[-1][0]][points[-1][1]].append(obj)
         obj.pt=points[-1]
-    def move_user(self,pt):
-        """Move the user to pt.
-        """
-        if not hasattr(self,"playerobj") or self.playerobj==None:
-            self.playerobj=PlayerObject(self)
-        self.playerobj.place(*pt)
+    # move_user(self,pt) removed as obsolete, use PlayableObject.place
     #
     def run(self,resume=0):
         """Level entry point.  May be overridden by subclass.

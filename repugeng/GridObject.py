@@ -14,12 +14,16 @@ class GridObject(object):
     container=None #i.e. the one containing the object
     handlers=None
     inventory=None #A Container instance or None
-    vitality=0 #Hit-points, enchantment scores...
+    vitality=0 #Hit-points, enchantment level... depending on object
+    maxhp=9999
     name="unspecified object"
     appearance="featureless object"
-    def __init__(self,level,extra=None,tile=-1,noinit=0):
+    def __init__(self,level,extra=None,tile=-1,play=0):
         """Overriding is not recommended unless __reduce__ also
-        overridden"""
+        overridden
+        
+        Argument play is true if should attach new interface.
+        See PlayableObject."""
         self.level=level
         self.extra=extra
         if tile!=-1:
@@ -28,9 +32,11 @@ class GridObject(object):
             self.level.playerobj.interface.backend.attach_expansion_pack(self.tileset_expansion)
         GridObject.all_objects.append(self)
         self.handlers=[]
-        self.initialise(noinit)
-    def initialise(self,noinit):
-        """Just been spawned.  Do what?"""
+        self.initialise(play)
+    def initialise(self,play=None):
+        """Just been spawned.  Do what?
+        
+        Argument play is true if should attach new interface."""
         pass
     def tick(self):
         """Your move.  If you are a creature, move!
@@ -61,7 +67,7 @@ class GridObject(object):
             oldlevel.objgrid[self.pt[0]][self.pt[1]].remove(self)
         self.pt=(destx,desty)
         self.level_rebase(newlevel)
-        if len(newlevel.objgrid[destx][desty]) and isinstance(newlevel.objgrid[destx][desty][-1],PlayerObject):
+        if len(newlevel.objgrid[destx][desty]) and hasattr(newlevel.objgrid[destx][desty][-1],"interface") and newlevel.objgrid[destx][desty][-1].interface!=None:
             #Don't obscure the player
             player=newlevel.objgrid[destx][desty].pop()
             newlevel.objgrid[destx][desty].append(self)
@@ -101,7 +107,7 @@ class GridObject(object):
         self.status="defunct"
     def polymorph(self,otype):
         """Note that this object becomes defunct and a new one made."""
-        new=otype(self.level,self.extra)
+        new=otype(self.level,self.extra,play=0)
         if self.inventory!=None:
             if new.inventory!=None:
                 new.inventory.die()
@@ -110,10 +116,12 @@ class GridObject(object):
                 self.inventory.dump(self.pt)
                 self.inventory.die()
         if self.status=="contained":
+            self.container.insert(new)
             self.container.remove(self)
         elif self.status=="placed":
             new.place(*self.pt)
             self.lift()
+        new.vitality=self.vitality
         GridObject.all_objects.remove(self)
         self.level=None
         self.status="defunct"
@@ -122,7 +130,3 @@ class GridObject(object):
     def __reduce__(self):
         """Implementation of the Pickle protocol."""
         return (self.__class__,(None,self.extra,self.tile))
-
-#Cannot appear at beginning of file due to recursive importing, 
-#must appear after classdef.
-from repugeng.PlayerObject import PlayerObject #for isinstance(...)

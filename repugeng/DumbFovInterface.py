@@ -7,7 +7,12 @@ class DumbFovInterface(SimpleInterface):
     Slow.
     """
     _fov_cache=None
+    _atan_cache=None
     fov_status=1
+    def _atan2(self,y,x):
+        if (y,x) not in self._atan_cache:
+            self._atan_cache[(y,x)]=math.atan2(y,x)
+        return self._atan_cache[(y,x)]
     def _fov_check(self,x,y,passthrough_once=True):
         if (not self.fov_status) or (self.level.debug_fov_off):
             return True
@@ -18,7 +23,7 @@ class DumbFovInterface(SimpleInterface):
         if (x<0) or (y<0) or (x>=len(self.level.grid)) or (y>=len(self.level.grid[0])):
             return False
         
-        vector_angle=math.atan2(abs(y-self.level.playerobj.pt[1]),abs(x-self.level.playerobj.pt[0]))
+        vector_angle=self._atan2(abs(y-self.level.playerobj.pt[1]),abs(x-self.level.playerobj.pt[0]))
         vector_angle*=180
         vector_angle/=math.pi
         vector_angle=int(vector_angle+0.5)
@@ -60,10 +65,12 @@ class DumbFovInterface(SimpleInterface):
         return ret
     def redraw(self):
         """Draw the map (grid and objgrid)."""
-        if self.level.playerobj.pt:
+        if self.playerobj.pt:
             self.backend.goto_point(*self.get_viewport_pt())
         colno=0
         self._fov_cache={}
+        if not self._atan_cache:
+            self._atan_cache={}
         for coordscol,col,col2 in zip(*self.get_viewport_grids()):
             rowno=0
             for coords,row,row2 in zip(coordscol,col,col2):

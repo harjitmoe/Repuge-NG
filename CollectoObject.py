@@ -32,7 +32,7 @@ class CollectoObject(GridObject):
             if self.level.objgrid[target[0]][target[1]]:
                 breakp=1
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
-                    if isinstance(obj,PlayerObject):
+                    if hasattr(obj,"interface") and obj.interface!=None:
                         self.handle_contact()
                 else:
                     breakp=0

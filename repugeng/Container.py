@@ -1,7 +1,7 @@
 from GridObject import GridObject
 class Container(GridObject):
     contents=None
-    def initialise(self):
+    def initialise(self,play=None):
         self.contents=[]
     def insert(self,object):
         if object.status=="placed":

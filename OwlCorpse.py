@@ -1,5 +1,4 @@
 from repugeng.GridObject import GridObject
-from repugeng.PlayerObject import PlayerObject
 from repugeng.DumbMonster import DumbMonster
 from OwlTiles import OwlTiles
 import random

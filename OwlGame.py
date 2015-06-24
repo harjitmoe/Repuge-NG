@@ -4,11 +4,14 @@ from repugeng.MultilevelStorage import MultilevelStorage
 from repugeng.GridObject import GridObject
 from repugeng.DumbMonster import DumbMonster
 from prelevula.RoomLevel import RoomLevel
+from prelevula.ExperimentalDungeonLevel import ExperimentalDungeonLevel
 from OwlObject import OwlObject
+from CollectoInterface import CollectoInterface
 
-class OwlGame(RoomLevel):
+class OwlGame(ExperimentalDungeonLevel):
     coded_grid=None #?
     title_window="Creature test"
+    InterfaceClass=CollectoInterface
 
     def get_new_point(self):
         if hasattr(self,"pt"):
@@ -26,7 +29,7 @@ class OwlGame(RoomLevel):
         self.score.initialise_property("myscore",0)
         self.score.initialise_property("mymoves",0)
         #Generate map
-        self.genmap(10)
+        self.genmap()#10)
         self.starting_pt=random.choice(self.gamut)
 
     def initialise(self):
@@ -78,7 +81,9 @@ class OwlGame(RoomLevel):
             #Regen the dungeon.
             #CollectoGame.get_next_leveltype()() #yes, two ()
             pass
-        if e in (",","#pickup"):
+        elif e=="o":
+            playerobj.polymorph(OwlObject)
+        elif e in (",","#pickup"):
             for obj in self.objgrid[playerobj.pt[0]][playerobj.pt[1]][:]:
                 if obj==playerobj:
                     continue

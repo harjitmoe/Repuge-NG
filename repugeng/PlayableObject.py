@@ -1,28 +1,48 @@
 from repugeng.GridObject import GridObject
 from repugeng.Container import Container
 
-class PlayerObject(GridObject):
-    """A grid object with an attached interface, controlled by the player.
+class PlayableObject(GridObject):
+    """A grid object with ability to be controlled by a player.
     """
     tile="user"
     vitality=10
     known=None
     maxhp=10
-    name="player"
-    appearance="player"
-    def initialise(self,noinit):
-        """Just been spawned.  Do what?"""
-        if not noinit:
-            self.interface=self.level.InterfaceClass(self)
-            self.known=[]
-            self.inventory=Container(self.level)
-        self.add_handler(1,self.onetick)
-        self.add_handler(5,self.up_hitpoint)
-    def onetick(self):
+    init_hp_interval=5
+    name="playable object"
+    appearance="playable object"
+    interface=None
+    def initialise(self,play):
+        """Just been spawned.  Do what?
+        
+        Argument play is true if should attach new interface."""
+        if play:
+            self.play()
+        self.inventory=Container(self.level)
+        self.known=[]
+        self.add_handler(1,self._PlayableObject__playercheck)
+        self.add_handler(self.init_hp_interval,self.up_hitpoint)
+        self.initialise_playable()
+    def initialise_playable(self):
+        """Just been spawned and set up as a playable.  Do what?"""
+        pass
+    def play(self,interface=None):
+        """Connect to player."""
+        if interface==None:
+            interface=self.level.InterfaceClass(self)
+        self.interface=interface
+    def unplay(self):
+        """Disconnect from player."""
+        self.interface=None
+    def _PlayableObject__playercheck(self): #Two underscores
+        if self.interface==None:
+            return
         if self.vitality<=0:
             self.die()
             return
         self.interface.redraw()
+        if self.status!="placed":
+            return
         e=self.interface.backend.get_key_event()
         if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
             #Does not go through to Python otherwise, meaning that Linux main terminals
@@ -40,7 +60,7 @@ class PlayerObject(GridObject):
             if e in ("1","b"): target=(self.pt[0]-1,self.pt[1]+1)
             if e in ("3","n"): target=(self.pt[0]+1,self.pt[1]+1)
             if self.level.debug_ghost or self.level.handle_move(target,self):
-                self.level.move_user(target)
+                self.place(*target)
         elif e=="#":
             name="#"+self.interface.backend.ask_question("#")
             if name in ("#debug","#debugon"):
@@ -65,6 +85,9 @@ class PlayerObject(GridObject):
                 elif name in ("#abort","#abrt","#kill"):
                     import os
                     os.abort()
+                elif name in ("#quit"):
+                    import sys
+                    sys.exit()
                 else:
                     self.level.handle_command(name,self)
             else:
@@ -75,34 +98,46 @@ class PlayerObject(GridObject):
         if self.vitality<self.maxhp:
             self.vitality+=1
     def level_rebase(self,newlevel):
-        self.level=newlevel
-        self.interface.level=newlevel
-        self.inventory.level_rebase(newlevel)
+        GridObject.level_rebase(self,newlevel)
+        if self.interface!=None:
+            self.interface.level=newlevel
     def die(self):
-        self.lift()
-        GridObject.all_objects.remove(self)
-        self.level=None
-        self.status="defunct"
-        self.interface.backend.ask_question("DYWYPI?")
-        self.interface.close()
+        if self.interface!=None:
+            self.interface.backend.ask_question("DYWYPI?")
+            self.interface.close()
+        GridObject.die(self)
     def polymorph(self,otype):
         """Note that this object becomes defunct and a new one is made.
         
-        Obviously the new one must support interaction."""
-        new=otype(self.level,self.extra,noinit=1)
+        If there is a connected player, obviously the new one must be a 
+        PlayableObject subtype."""
+        if self.interface!=None:
+            if not issubclass(otype,PlayableObject):
+                raise TypeError("you cannot play as that!")
+        new=otype(self.level,self.extra,play=0)
         #
-        new.interface=self.interface
+        if self.interface!=None:
+            new.play(self.interface)
         new.known=self.known
-        new.inventory=self.inventory
+        if new.inventory!=None:
+            new.inventory.die()
+            new.inventory=self.inventory
+        else:
+            self.inventory.dump(self.pt)
+            self.inventory.die()
+        new.vitality=(self.vitality if self.vitality>new.maxhp else new.maxhp)
         #
-        new.inventory.die()
-        new.inventory=self.inventory
         if self.status=="contained":
+            self.container.insert(new)
             self.container.remove(self)
         elif self.status=="placed":
             new.place(*self.pt)
             self.lift()
         GridObject.all_objects.remove(self)
+        if self is self.level.playerobj:
+            self.level.playerobj=new
+        if self.interface!=None:
+            self.interface.playerobj=new
         self.level=None
         self.status="defunct"
 

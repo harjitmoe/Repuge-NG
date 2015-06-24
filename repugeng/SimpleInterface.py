@@ -1,8 +1,6 @@
 import sys
 from repugeng.BackendSelector import BackendSelector
 class SimpleInterface(object):
-    """Note that this probably doesn't actually work anymore, use subclasses
-    of ScrollingInterface only."""
     def __init__(self,playerobj,backend=None,debug_dummy=False):
         self.playerobj=playerobj
         self.level=playerobj.level
