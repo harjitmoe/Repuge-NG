@@ -45,7 +45,7 @@ class ExperimentalDungeonLevel(GeneratedLevel):
                 return list(self._genroom(width,height))
             newheight=random.randrange(4,height-3)
             return self._spack_grids_y(self._gendungeon(width,newheight),self._gendungeon(width,height-newheight))
-    def genmap(self,w=100,h=25):
+    def genmap(self,w=100,h=100):
         self.objgrid=self._gengrid(w,h)
         self.grid=self._gendungeon(w-1,h-1)
         self.grid=self._spack_grids_x(self.grid,[[("wall_corner_ne",None)]+((h-2)*[("vwall",None)])])
@@ -58,24 +58,26 @@ class ExperimentalDungeonLevel(GeneratedLevel):
         sp=random.choice(self.gamut)
         #return
         self.blazen=[]
+        self.blazenext=[]
+        self.walzen=[]
+        self.nowalzen=[]
         self.bwalls=[]
         #sys.setrecursionlimit(9999)
         while len(self.blazen)<len(self.gamut):
-            self.blazen=[]
-            self.blazenext=[]
-            self.walzen=[]
             self.blazenext.append(sp)
             self.blaze()
             if not self.walzen:
                 continue #This should only happen if it spat out a single huge room
-            x,y=random.choice(self.walzen) #XXX fails occasionally
-            self.bwalls.append((x,y))
-            self.gamut.append((x,y))
+            sp=random.choice(self.walzen) #XXX fails occasionally
+            self.walzen.remove(sp)
+            self.bwalls.append(sp)
+            self.gamut.append(sp)
         for x,y in self.bwalls:
             self.grid[x][y]=("floor1",None)
     blazen=None
     blazenext=None
     walzen=None
+    nowalzen=None
     bwalls=None
     def _bn(self,co):
         if co not in self.blazenext:
@@ -102,7 +104,9 @@ class ExperimentalDungeonLevel(GeneratedLevel):
                                 and (x+1,y) not in self.bwalls \
                                 and (x,y-1) not in self.bwalls \
                                 and (x,y+1) not in self.bwalls:
-                            self.walzen.append((x,y))
+                            if (x,y) not in self.nowalzen:
+                                self.walzen.append((x,y))
             elif (x,y) in self.walzen:
                 #Remove walls where the other side can be accessed already
                 self.walzen.remove((x,y))
+                self.nowalzen.append((x,y))
