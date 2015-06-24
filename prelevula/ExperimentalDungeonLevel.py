@@ -45,7 +45,7 @@ class ExperimentalDungeonLevel(GeneratedLevel):
                 return list(self._genroom(width,height))
             newheight=random.randrange(4,height-3)
             return self._spack_grids_y(self._gendungeon(width,newheight),self._gendungeon(width,height-newheight))
-    def genmap(self,w=25,h=25):
+    def genmap(self,w=100,h=25):
         self.objgrid=self._gengrid(w,h)
         self.grid=self._gendungeon(w-1,h-1)
         self.grid=self._spack_grids_x(self.grid,[[("wall_corner_ne",None)]+((h-2)*[("vwall",None)])])
@@ -62,35 +62,47 @@ class ExperimentalDungeonLevel(GeneratedLevel):
         #sys.setrecursionlimit(9999)
         while len(self.blazen)<len(self.gamut):
             self.blazen=[]
+            self.blazenext=[]
             self.walzen=[]
-            self.blaze(*sp)
+            self.blazenext.append(sp)
+            self.blaze()
             if not self.walzen:
                 continue #This should only happen if it spat out a single huge room
             x,y=random.choice(self.walzen) #XXX fails occasionally
             self.bwalls.append((x,y))
+            self.gamut.append((x,y))
         for x,y in self.bwalls:
             self.grid[x][y]=("floor1",None)
     blazen=None
+    blazenext=None
     walzen=None
     bwalls=None
-    def blaze(self,x,y):
-        if (x,y) not in self.blazen+self.walzen:
-            #print (x,y),sorted(self.blazen)
-            if (self.grid[x][y][0].startswith("floor")) or (x,y) in self.bwalls:
-                self.blazen.append((x,y))
-                if x>1:
-                    self.blaze(x-1,y)
-                if y>1:
-                    self.blaze(x,y-1)
-                if (x+2)<len(self.grid):
-                    self.blaze(x+1,y)
-                if (y+2)<len(self.grid[0]):
-                    self.blaze(x,y+1)
-            else:
-                if self.grid[x][y][0] in ("vwall","hwall"):
-                    #No widened doorways by sticking two adjacent doors
-                    if (x-1,y) not in self.bwalls \
-                            and (x+1,y) not in self.bwalls \
-                            and (x,y-1) not in self.bwalls \
-                            and (x,y+1) not in self.bwalls:
-                        self.walzen.append((x,y))
+    def _bn(self,co):
+        if co not in self.blazenext:
+            self.blazenext.append(co)
+    def blaze(self):
+        while self.blazenext:
+            x,y=self.blazenext.pop(0)
+            if (x,y) not in self.blazen+self.walzen:
+                #print (x,y),sorted(self.blazen)
+                if (self.grid[x][y][0].startswith("floor")) or (x,y) in self.bwalls:
+                    self.blazen.append((x,y))
+                    if x>1:
+                        self._bn((x-1,y))
+                    if y>1:
+                        self._bn((x,y-1))
+                    if (x+2)<len(self.grid):
+                        self._bn((x+1,y))
+                    if (y+2)<len(self.grid[0]):
+                        self._bn((x,y+1))
+                else:
+                    if self.grid[x][y][0] in ("vwall","hwall"):
+                        #No widened doorways by sticking two adjacent doors
+                        if (x-1,y) not in self.bwalls \
+                                and (x+1,y) not in self.bwalls \
+                                and (x,y-1) not in self.bwalls \
+                                and (x,y+1) not in self.bwalls:
+                            self.walzen.append((x,y))
+            elif (x,y) in self.walzen:
+                #Remove walls where the other side can be accessed already
+                self.walzen.remove((x,y))
