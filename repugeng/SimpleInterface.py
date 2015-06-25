@@ -18,6 +18,15 @@ class SimpleInterface(object):
                 pass
             self.generic_coords=[zip(*enumerate(h))[0] for h in self.level.grid]
             self.generic_coords=[[(x,y) for y in h] for x,h in enumerate(self.generic_coords)]
+    def get_offsets(self):
+        """Used for LOS optimisation if only part of map visible."""
+        width=79
+        height=19
+        offsetx=0
+        roffsetx=width
+        offsety=0
+        roffsety=height
+        return width,height,offsetx,offsety,roffsetx,roffsety
     def get_viewport_grids(self):
         return self.generic_coords,self.level.grid,self.level.objgrid
     def get_viewport_pt(self):

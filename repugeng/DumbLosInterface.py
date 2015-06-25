@@ -1,8 +1,8 @@
 from repugeng.SimpleInterface import SimpleInterface
 import math
 
-class DumbFovInterface(SimpleInterface):
-    """Dumb field of view.  An interface class which adds field of view support.
+class DumbLosInterface(SimpleInterface):
+    """Dumb line of site.  An interface class which adds field of view support.
     
     Slow.
     """
@@ -27,9 +27,16 @@ class DumbFovInterface(SimpleInterface):
         vector_angle*=180
         vector_angle/=math.pi
         vector_angle=int(vector_angle+0.5)
+        junk,junk2,offsetx,offsety,roffsetx,roffsety=self.get_offsets()
         
         #Normal elif/else doesn't really work here
         ret=-1
+        if ret==-1 and x<offsetx or x>roffsetx:
+            #Off the viewport
+            ret=False
+        if ret==-1 and y<offsety or y>roffsety:
+            #Off the viewport
+            ret=False
         if ret==-1 and x==self.level.playerobj.pt[0] and y==self.level.playerobj.pt[1]:
             #Trace has reached the destination successfully
             ret=True
