@@ -70,7 +70,7 @@ class ExperimentalDungeonLevel(GeneratedLevel):
             self.walzen.remove(sp)
             self.bwalls.append(sp)
             self.gamut.append(sp)
-        for i in range(int(0.5+random.normalvariate((w*h)/100,w))):
+        for i in range(int(0.5+random.normalvariate(((w*h)**1.2)/1000,w))):
             #Add a few unneeded doors
             if self.nowalzen:
                 x,y=sp=random.choice(self.nowalzen)

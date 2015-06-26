@@ -100,7 +100,7 @@ class PlayableObject(GridObject):
     def level_rebase(self,newlevel):
         GridObject.level_rebase(self,newlevel)
         if self.interface!=None:
-            self.interface.level=newlevel
+            self.interface.level_rebase(newlevel)
     def die(self):
         if self.interface!=None:
             self.interface.backend.ask_question("DYWYPI?")

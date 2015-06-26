@@ -52,6 +52,9 @@ class SimpleInterface(object):
                     self.backend.plot_tile(colno,rowno,row[0])
                 rowno+=1
             colno+=1
+    def level_rebase(self,newlevel):
+        """Link to new level, and bin any cached info about the current level."""
+        self.level=newlevel
     def close(self):
         sys.exit()
         
