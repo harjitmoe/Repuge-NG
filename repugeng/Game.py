@@ -13,8 +13,6 @@ class Game(object):
     #
     InterfaceClass=SimpleInterface
     PlayerClass=PlayableObject
-    class AdvanceLevelException(BaseException):pass
-    class RegressLevelException(BaseException):pass
     #
     title_window="Repuge-NG Application"
     #
@@ -49,12 +47,15 @@ class Game(object):
             else:
                 raise exception
     #
+    class AdvanceLevelException(BaseException):pass
+    class RegressLevelException(BaseException):pass
     def run(self):
         #Designed to avoid gaining recursion levels with each level
         #Levels are advanced or regressed by exception control
         #Level.run is always executed at same stack depth
         while 1:
             try:
+                self.level.bring_to_front()
                 self.level.run()
             except Game.AdvanceLevelException:
                 self.level_advance()

@@ -1,8 +1,7 @@
 from repugeng.Level import Level
 from CollectoInterface import CollectoInterface
 
-class SampleMap(Level):
-    InterfaceClass=CollectoInterface
+class TeddyMapU(Level):
     #Raw string (r""") because backslashes
     # Grace  Bathroom
     # Tedd   Edward
@@ -78,10 +77,7 @@ class SampleMap(Level):
     
     def handle_command(self,e,playerobj):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*playerobj.pt)[0]=="staircase":
-            #Regen the dungeon.
-            self.children.append(CollectoGame.get_next_leveltype()(playerobj,start=0)) #yes, two (...)
-            self.children[-1].daddy=self
-            self.children[-1].run()
+            raise self.game.RegressLevelException
         elif e in ("o",):
             e2=playerobj.interface.backend.get_key_event() #estraDiol (an oestrogen)
             target=playerobj.conv_to_target(e2)
@@ -102,7 +98,3 @@ class SampleMap(Level):
                 playerobj.interface.flush_fov()
         elif e=="#quit":
             sys.exit()
-
-if __name__=="__main__":
-    SampleMap()
-

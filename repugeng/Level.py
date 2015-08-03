@@ -21,6 +21,11 @@ class Level(object):
         self.initmap()
         self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
         self.initialise()
+    def bring_to_front(self):
+        """Called when this level becomes the active one in a level stack.
+        
+        The general idea is to take control of the player object."""
+        self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
     def _gengrid(self,x,y):
         grid=[]
         for i in range(x):
