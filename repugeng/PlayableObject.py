@@ -136,7 +136,7 @@ class PlayableObject(GridObject):
             self.container.insert(new)
             self.container.remove(self)
         elif self.status=="placed":
-            new.place(*self.pt)
+            new.place(*self.pt+(self.level,))
             self.lift()
         GridObject.all_objects.remove(self)
         if self is self.game.playerobj:
@@ -145,4 +145,4 @@ class PlayableObject(GridObject):
             self.interface.playerobj=new
         self.level=None
         self.status="defunct"
-
+        return new

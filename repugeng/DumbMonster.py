@@ -63,4 +63,4 @@ class DumbMonster(PlayableObject):
         else: #i.e. ran to completion with no break
             return #stuck, cannot move
         self.place(*target)
-        self.level.playerobj.interface.redraw()
+        self.game.playerobj.interface.redraw()

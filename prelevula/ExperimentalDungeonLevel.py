@@ -45,7 +45,7 @@ class ExperimentalDungeonLevel(GeneratedLevel):
                 return list(self._genroom(width,height))
             newheight=random.randrange(2,height-1)
             return self._join_grids_y(self._gendungeon(width,newheight),self._gendungeon(width,height-newheight))
-    def genmap(self,w=70,h=70):
+    def genmap(self,w=30,h=30):
         self.objgrid=self._gengrid(w,h)
         self.grid=self._gendungeon(w-1,h-1)
         self.grid=self._join_grids_x(self.grid,[[("wall_corner_ne",None)]+((h-2)*[("vwall",None)])])

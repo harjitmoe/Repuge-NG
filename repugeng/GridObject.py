@@ -108,7 +108,7 @@ class GridObject(object):
         self.status="defunct"
     def polymorph(self,otype):
         """Note that this object becomes defunct and a new one made."""
-        new=otype(self.level,self.extra,play=0)
+        new=otype(self.game,self.extra,play=0)
         if self.inventory!=None:
             if new.inventory!=None:
                 new.inventory.die()
@@ -120,12 +120,13 @@ class GridObject(object):
             self.container.insert(new)
             self.container.remove(self)
         elif self.status=="placed":
-            new.place(*self.pt)
+            new.place(*self.pt+(self.level,))
             self.lift()
         new.vitality=self.vitality
         GridObject.all_objects.remove(self)
         self.level=None
         self.status="defunct"
+        return new
     #
     __safe_for_unpickling__=True
     def __reduce__(self):
