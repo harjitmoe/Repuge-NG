@@ -4,20 +4,14 @@ class SimpleInterface(object):
     def __init__(self,playerobj,backend=None,debug_dummy=False):
         self.playerobj=playerobj
         self.level=playerobj.level
+        self.game=playerobj.game
         #
         if not debug_dummy:
-            self.level.bug_report[__name__]={}
+            self.game.bug_report[__name__]={}
             if backend:
                 self.backend=backend
             else:
                 self.backend=BackendSelector.get_backend()
-            #Attempt to set title
-            try:
-                self.backend.set_window_title(self.level.title_window)
-            except NotImplementedError:
-                pass
-            self.generic_coords=[zip(*enumerate(h))[0] for h in self.level.grid]
-            self.generic_coords=[[(x,y) for y in h] for x,h in enumerate(self.generic_coords)]
     def get_offsets(self):
         """Used for LOS optimisation if only part of map visible."""
         width=79
@@ -37,7 +31,7 @@ class SimpleInterface(object):
         Presently this, by default, draws grid and (above it) objgrid at once
         and draws the entire grid.
         
-        Unless you are a FOV engine, you probably don't want to override 
+        Unless you are a FOV/LOS engine, you probably don't want to override 
         this."""
         if self.playerobj.pt:
             self.backend.goto_point(*self.get_viewport_pt())
@@ -55,6 +49,16 @@ class SimpleInterface(object):
     def level_rebase(self,newlevel):
         """Link to new level, and bin any cached info about the current level."""
         self.level=newlevel
+        #Attempt to set title
+        try:
+            self.backend.set_window_title(self.level.title_window)
+        except NotImplementedError:
+            pass
+        self.generic_coords=[zip(*enumerate(h))[0] for h in self.level.grid]
+        self.generic_coords=[[(x,y) for y in h] for x,h in enumerate(self.generic_coords)]
+    def flush_fov(self):
+        """Bin any cached info about the current level FOV."""
+        pass
     def close(self):
         sys.exit()
         

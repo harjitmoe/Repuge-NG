@@ -36,14 +36,14 @@ class ExperimentalDungeonLevel(GeneratedLevel):
             yield [("hwall",None)]+(height-1)*[("floor1",None)]
     def _gendungeon(self,width,height):
         if random.randrange(2):
-            if width<8 or not random.randrange(int(width**1.5)):
+            if width<4 or not random.randrange(2+int(abs(width-5)**1.5)):
                 return list(self._genroom(width,height))
-            newwidth=random.randrange(4,width-3)
+            newwidth=random.randrange(2,width-1)
             return self._join_grids_x(self._gendungeon(newwidth,height),self._gendungeon(width-newwidth,height))
         else:
-            if height<8 or not random.randrange(int(height**1.5)):
+            if height<4 or not random.randrange(2+int(abs(height-5)**1.5)):
                 return list(self._genroom(width,height))
-            newheight=random.randrange(4,height-3)
+            newheight=random.randrange(2,height-1)
             return self._join_grids_y(self._gendungeon(width,newheight),self._gendungeon(width,height-newheight))
     def genmap(self,w=70,h=70):
         self.objgrid=self._gengrid(w,h)

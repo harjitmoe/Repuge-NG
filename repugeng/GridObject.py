@@ -18,18 +18,18 @@ class GridObject(object):
     maxhp=9999
     name="unspecified object"
     appearance="featureless object"
-    def __init__(self,level,extra=None,tile=-1,play=0):
+    def __init__(self,game,extra=None,tile=-1,play=0):
         """Overriding is not recommended unless __reduce__ also
         overridden
         
         Argument play is true if should attach new interface.
         See PlayableObject."""
-        self.level=level
+        self.game=game
         self.extra=extra
         if tile!=-1:
             self.tile=tile
         if self.tileset_expansion:
-            self.level.playerobj.interface.backend.attach_expansion_pack(self.tileset_expansion)
+            game.playerobj.interface.backend.attach_expansion_pack(self.tileset_expansion)
         GridObject.all_objects.append(self)
         self.handlers=[]
         self.initialise(play)
@@ -86,6 +86,7 @@ class GridObject(object):
         """Remove from the level."""
         if self.pt!=None:
             self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
+            self.level=None
             self.pt=None
         self.status="unplaced"
     def leave_corpse_p(self):

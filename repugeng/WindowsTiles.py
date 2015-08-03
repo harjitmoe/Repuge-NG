@@ -12,6 +12,8 @@ class WindowsTiles(ConsoleTiles):
     wall_TeeJnc_rt="\xc3"
     wall_TeeJnc_lt="\xb4"
     wall_cross="\xc5"
+    vfeature_open="\xfe"
+    hfeature_open="\xfe"
     user="\x01"
     #
     _error_code=0

@@ -29,11 +29,23 @@ class PlayableObject(GridObject):
     def play(self,interface=None):
         """Connect to player."""
         if interface==None:
-            interface=self.level.InterfaceClass(self)
+            interface=self.game.InterfaceClass(self)
         self.interface=interface
     def unplay(self):
         """Disconnect from player."""
         self.interface=None
+    def conv_to_target(self,e):
+        if e not in ("down","up","left","right","8","4","6","2","7","9","1","3","h","j","k","l","y","u","b","n"):
+            return None
+        if e in ("left", "4","h"): target=(self.pt[0]-1,self.pt[1])
+        if e in ("down", "2","j"): target=(self.pt[0],self.pt[1]+1)
+        if e in ("up",   "8","k"): target=(self.pt[0],self.pt[1]-1)
+        if e in ("right","6","l"): target=(self.pt[0]+1,self.pt[1])
+        if e in ("7","y"): target=(self.pt[0]-1,self.pt[1]-1)
+        if e in ("9","u"): target=(self.pt[0]+1,self.pt[1]-1)
+        if e in ("1","b"): target=(self.pt[0]-1,self.pt[1]+1)
+        if e in ("3","n"): target=(self.pt[0]+1,self.pt[1]+1)
+        return target
     def _PlayableObject__playercheck(self): #Two underscores
         if self.interface==None:
             return
@@ -51,35 +63,28 @@ class PlayableObject(GridObject):
             #This is relevant if someone is running this on an RPi.
             raise KeyboardInterrupt #^c, ^d or ^z pressed
         elif e in ("down","up","left","right","8","4","6","2","7","9","1","3","h","j","k","l","y","u","b","n"):
-            if e in ("left", "4","h"): target=(self.pt[0]-1,self.pt[1])
-            if e in ("down", "2","j"): target=(self.pt[0],self.pt[1]+1)
-            if e in ("up",   "8","k"): target=(self.pt[0],self.pt[1]-1)
-            if e in ("right","6","l"): target=(self.pt[0]+1,self.pt[1])
-            if e in ("7","y"): target=(self.pt[0]-1,self.pt[1]-1)
-            if e in ("9","u"): target=(self.pt[0]+1,self.pt[1]-1)
-            if e in ("1","b"): target=(self.pt[0]-1,self.pt[1]+1)
-            if e in ("3","n"): target=(self.pt[0]+1,self.pt[1]+1)
-            if self.level.debug_ghost or self.level.handle_move(target,self):
+            target=self.conv_to_target(e)
+            if self.game.debug_ghost or self.level.handle_move(target,self):
                 self.place(*target)
         elif e=="#":
             name="#"+self.interface.backend.ask_question("#")
             if name in ("#debug","#debugon"):
-                self.level.debug=1
-            elif self.level.debug:
+                self.game.debug=1
+            elif self.game.debug:
                 if name=="#debugoff":
-                    self.level.debug=0
+                    self.game.debug=0
                 elif name in ("#ghost","#ghoston"):
-                    self.level.debug_ghost=1
+                    self.game.debug_ghost=1
                 elif name=="#ghostoff":
-                    self.level.debug_ghost=0
+                    self.game.debug_ghost=0
                 elif name in ("#fovoff","#fovoffon","#clairvoyant","#allsight","#seeall"):
-                    self.level.debug_fov_off=1
+                    self.game.debug_fov_off=1
                 elif name in ("#fov","#fovon","#fovoffoff","#clairvoyantoff","#allsightoff","#seealloff"):
-                    self.level.debug_fov_off=0
+                    self.game.debug_fov_off=0
                 elif name.startswith("#passthrough "):
-                    self.level.handle_command(name.split(" ",1)[1],self)
+                    self.game.handle_command(name.split(" ",1)[1],self)
                 elif name in ("#bugreport","#report","#gurumeditation","#guru"):
-                    self.level._dump_report()
+                    self.game._dump_report()
                 elif name in ("#testerror"):
                     raise RuntimeError("testing error handler")
                 elif name in ("#abort","#abrt","#kill"):
@@ -114,7 +119,7 @@ class PlayableObject(GridObject):
         if self.interface!=None:
             if not issubclass(otype,PlayableObject):
                 raise TypeError("you cannot play as that!")
-        new=otype(self.level,self.extra,play=0)
+        new=otype(self.game,self.extra,play=0)
         #
         if self.interface!=None:
             new.play(self.interface)
@@ -134,8 +139,8 @@ class PlayableObject(GridObject):
             new.place(*self.pt)
             self.lift()
         GridObject.all_objects.remove(self)
-        if self is self.level.playerobj:
-            self.level.playerobj=new
+        if self is self.game.playerobj:
+            self.game.playerobj=new
         if self.interface!=None:
             self.interface.playerobj=new
         self.level=None

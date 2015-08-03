@@ -1,11 +1,12 @@
 from prelevula.SimpleDungeonLevel import SimpleDungeonLevel
 from CollectoInterface import CollectoInterface
+from CollectoLevel import CollectoLevel
 from CollectoGame import CollectoGame
 
-class DungeonCollectoGame(CollectoGame,SimpleDungeonLevel):
+class DungeonCollectoLevel(CollectoLevel,SimpleDungeonLevel):
     InterfaceClass=CollectoInterface
     title_window="Repuge-NG Collecto: Dungeon"
-CollectoGame.register_leveltype(DungeonCollectoGame)
+CollectoGame.register_leveltype(DungeonCollectoLevel)
 #
 if __name__=="__main__":
-    DungeonCollectoGame()
+    CollectoGame()

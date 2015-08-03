@@ -2,7 +2,6 @@ import time,sys,traceback
 from repugeng.GridObject import GridObject
 from repugeng.PlayableObject import PlayableObject
 from repugeng.SimpleInterface import SimpleInterface
-#n.b. put shadowtracer, when introduced, elsewhere (mixin?).
 
 class Level(object):
     """Base class of a level.
@@ -17,66 +16,13 @@ class Level(object):
     - starting_pt - sets the initial location of the user.
     - pt - location of user at time of access.
     """
-    #Debugging settings, nothing to see here
-    debug=0
-    bug_report={}
-    debug_ghost=0
-    debug_fov_off=0
-    InterfaceClass=SimpleInterface
-    PlayerClass=PlayableObject
-    #
-    inventory=None
-    def __init__(self,playerobj=-1,start=1,resume=0,debug_dummy=False):
-        """Initialise the instance (this will run upon creation).
-        
-        Pass in playerobj to keep an interface from a previously open
-        level.
-        
-        Zero or False "start" leaves run(...) to be called separately.
-        
-        Nonzero "resume" is used for loading saves (TODO).
-        
-        The debug_dummy argument allows a Level object to be created 
-        without any of this initialisation step whatsoever, for 
-        debugging purposes only.
-        """
-        if not debug_dummy:
-            self.bug_report[__name__]={}
-            try:
-                if not resume:
-                    self.initmap()
-                    if self.starting_pt!=None:
-                        if playerobj==-1:
-                            playerobj=self.playerobj=self.PlayerClass(self,play=1)
-                        else:
-                            self.playerobj=playerobj
-                        playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
-                    self.initialise()
-                else:
-                    #XXX
-                    self.playerobj.place(*self.playerobj.pt)
-                #Start the event loop
-                if start:
-                    self.run(resume)
-            except SystemExit:
-                raise
-            except:
-                exctype,exception,traceback=sys.exc_info()
-                try:
-                    #Put the exception in: the program quits on exception and, 
-                    #unless started from a shell such as cmd, the terminal 
-                    #probably closes promptly leaving it inaccessible.
-                    self.bug_report[__name__]["Exception"]=(exctype,exception,traceback.extract_tb(traceback))
-                    self.bug_report[__name__]["grid"]=self.grid
-                    self.bug_report[__name__]["objgrid"]=self.objgrid
-                    self._dump_report()
-                except:
-                    pass #Silence the irrelevant exception
-                if sys.hexversion<0x03000000:
-                    #Only 2k way to keep original traceback here, exec'd as invalid 3k syntax
-                    exec("raise exctype,exception,traceback")
-                else:
-                    raise exception
+    def boot(self,start):
+        self.initmap()
+        self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
+        self.initialise()
+        #Start the event loop
+        if start:
+            self.run()
     def _gengrid(self,x,y):
         grid=[]
         for i in range(x):
@@ -145,12 +91,12 @@ class Level(object):
         """Move the user visibly down a list of points."""
         import time
         for i in points[:-1]:
-            if self.playerobj not in self.objgrid[i[0]][i[1]]:
-                self.objgrid[i[0]][i[1]].append(self.playerobj)
+            if self.game.playerobj not in self.objgrid[i[0]][i[1]]:
+                self.objgrid[i[0]][i[1]].append(self.game.playerobj)
             time.sleep(delay)
-            self.objgrid[i[0]][i[1]].remove(self.playerobj)
+            self.objgrid[i[0]][i[1]].remove(self.game.playerobj)
         i=points[-1]
-        self.objgrid[i[0]][i[1]].append(self.playerobj)
+        self.objgrid[i[0]][i[1]].append(self.game.playerobj)
         return i
     def followline(self,delay,points,obj):
         """Move a non-user object visibly down a list of points.
