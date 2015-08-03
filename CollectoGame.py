@@ -11,7 +11,7 @@ class CollectoGame(Game):
         cls.leveltypes.append(levelcls)
     #
     def level_advance(self):
-        return random.choice(CollectoGame.leveltypes)(self,1)
+        self.level=random.choice(CollectoGame.leveltypes)(self)
 #
 if __name__=="__main__":
     import sys

@@ -16,14 +16,11 @@ class Level(object):
     - starting_pt - sets the initial location of the user.
     - pt - location of user at time of access.
     """
-    def __init__(self,game,start):
+    def __init__(self,game):
         self.game=game
         self.initmap()
         self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
         self.initialise()
-        #Start the event loop
-        if start:
-            self.run()
     def _gengrid(self,x,y):
         grid=[]
         for i in range(x):

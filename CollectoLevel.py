@@ -82,6 +82,6 @@ class CollectoLevel(Level):
     def handle_command(self,e,playerobj):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*playerobj.pt)[0]=="staircase":
             #Regen the dungeon.
-            self.game.level_advance()
+            raise self.game.AdvanceLevelException
         elif e=="#quit":
             sys.exit()
