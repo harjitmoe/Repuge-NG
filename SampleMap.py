@@ -50,5 +50,10 @@ jooooooooooooJ"""
             return 0
 
 if __name__=="__main__":
-    SampleMap()
+    from repugeng.Game import Game
+    class SampleMapGame(Game):
+        def level_advance(self):
+            self.level=SampleMap(self)
+    SampleMapGame()
+
 
