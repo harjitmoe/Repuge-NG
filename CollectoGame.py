@@ -5,20 +5,16 @@ import random
 
 class CollectoGame(Game):
     InterfaceClass=CollectoInterface
-    _leveltypes=[]
+    leveltypes=[]
     @classmethod
-    def register_leveltype(cls,subcls):
-        cls._leveltypes.append(subcls)
-    @classmethod
-    def get_next_leveltype(cls):
-        return random.choice(cls._leveltypes)
+    def register_leveltype(cls,levelcls):
+        cls.leveltypes.append(levelcls)
     #
-    def gen_next_level(self):
-        return CollectoGame.get_next_leveltype()() #yes, two ()
+    def level_advance(self):
+        return random.choice(CollectoGame.leveltypes)(self,1)
 #
 if __name__=="__main__":
     import sys
     sys.modules["CollectoGame"]=sys.modules["__main__"] #oh, Python
-    import MazedCollectoGame,DungeonCollectoGame#BasicCollectoGame,
+    import MazedCollectoLevel,DungeonCollectoLevel#BasicCollectoLevel,
     CollectoGame()
-

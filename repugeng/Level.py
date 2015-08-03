@@ -16,7 +16,8 @@ class Level(object):
     - starting_pt - sets the initial location of the user.
     - pt - location of user at time of access.
     """
-    def boot(self,start):
+    def __init__(self,game,start):
+        self.game=game
         self.initmap()
         self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
         self.initialise()

@@ -82,8 +82,6 @@ class CollectoLevel(Level):
     def handle_command(self,e,playerobj):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*playerobj.pt)[0]=="staircase":
             #Regen the dungeon.
-            self.children.append(CollectoGame.get_next_leveltype()(playerobj,start=0)) #yes, two (...)
-            self.children[-1].daddy=self
-            self.children[-1].run()
+            self.game.level_advance()
         elif e=="#quit":
             sys.exit()

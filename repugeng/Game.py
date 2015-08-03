@@ -22,9 +22,7 @@ class Game(object):
         self.bug_report[__name__]={}
         try:
             self.playerobj=self.PlayerClass(self,play=1)
-            self.level=self.gen_next_level()
-            self.level.game=self
-            self.level.boot(start)
+            self.level_advance()
         except SystemExit:
             raise
         except:
@@ -45,7 +43,8 @@ class Game(object):
             else:
                 raise exception
     #
-    def gen_next_level(self):
-        """Returns a level object.  Called to generate a new level."""
+    def level_advance(self):
         raise NotImplementedError
-    
+    #
+    def level_regress(self):
+        raise NotImplementedError
