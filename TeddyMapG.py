@@ -12,9 +12,9 @@ class TeddyMapG(Level):
 |...............................|
 >------------T-T---T-----=------<
 |............|.:...:............|
-|............|.|...|............|
-|............|.|...|............|
 |............|&|...|............|
+|............>-<...|............|
+|............|.|...|............|
 |............>-<...|,,,,,,,,,,,,|
 |............|%|...|............|
 |............|.|...|............|
@@ -27,6 +27,13 @@ class TeddyMapG(Level):
     list_of_symbols={"/":"wall_corner_nw","\\":"wall_corner_ne","`":"wall_corner_sw","'":"wall_corner_se","|":"vwall","-":"hwall",":":"vfeature","=":"hfeature"," ":"space",".":"floor1",",":"floor2","#":"floor3","T":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","&":"staircase","%":"staircase"}
     starting_pt=(16,13)
     title_window="Basic Sample Repuge-NG Map"
+    def bring_to_front(self, whence="unspecified"):
+        if whence=="advancement":
+            self.game.playerobj.place(14,8,self)
+        elif whence=="regression":
+            self.game.playerobj.place(14,10,self)
+        else:
+            self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
 
     def handle_move(self,target,playerobj):
         curstat=self.get_index_grid(*playerobj.pt)[0]

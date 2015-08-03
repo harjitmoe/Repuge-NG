@@ -6,7 +6,7 @@ from repugeng.SimpleInterface import SimpleInterface
 class Level(object):
     """Base class of a level.
     
-    Notable attributes and methods:
+    Notable attributes and methods (FIXME this is outdated):
     - run() - normally the level entrypoint.  Takes no args but self.
     - grid - list of lists of type-tuples for main level.
       A type-tuple is a tuple (type, extra_data) where extra_data is
@@ -19,12 +19,31 @@ class Level(object):
     def __init__(self,game):
         self.game=game
         self.initmap()
-        self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
         self.initialise()
-    def bring_to_front(self):
-        """Called when this level becomes the active one in a level stack.
+    def bring_to_front(self, whence="unspecified"):
+        """Called when this level becomes active, which may be anything
+        from immediately after creation to never.
         
-        The general idea is to take control of the player object."""
+        The general idea is to take control of the player object, by 
+        placing it on the level via its place(...) method.  The 
+        mechanics of PlayableObject will then take care of hooking up
+        that player's interface. 
+        
+        The player object is self.game.playerobj.
+        
+        The whence argument specifies how the level was entered.
+        Presently standard values are:
+        
+        - "starting"
+        - "advancement"
+        - "regression"
+        - "jumping"
+        - "unspecified"
+        
+        but a Game subclass which overrides run(...) may pass any object 
+        imaginable.  In these cases, it is paramount that those levels 
+        which process this data are compatible with the Game subclass.
+        """
         self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
     def _gengrid(self,x,y):
         grid=[]

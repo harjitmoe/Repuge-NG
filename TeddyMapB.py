@@ -9,8 +9,8 @@ class TeddyMapB(Level):
 
 
 /------------T-T----------------\
+|............>-<................|
 |............|%|................|
-|............|.|................|
 |............|.|................|
 |............|.|................|
 |..............|................|
@@ -23,7 +23,7 @@ class TeddyMapB(Level):
     #More than one symbol per type can be defined: these
     # can then be distinguished in the run code
     list_of_symbols={"/":"wall_corner_nw","\\":"wall_corner_ne","`":"wall_corner_sw","'":"wall_corner_se","|":"vwall","-":"hwall",":":"vfeature","=":"hfeature"," ":"space",".":"floor1",",":"floor2","#":"floor3","T":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","&":"staircase","%":"staircase"}
-    starting_pt=(16,13)
+    starting_pt=(14,5)
     title_window="Basic Sample Repuge-NG Map"
 
     def handle_move(self,target,playerobj):
