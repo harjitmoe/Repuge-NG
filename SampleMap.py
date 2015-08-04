@@ -25,28 +25,28 @@ jooooooooooooJ"""
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
                 if (newlevel-floorlevel)==1:
-                    playerobj.interface.backend.push_message("You climb up")
+                    playerobj.myinterface.backend.push_message("You climb up")
                 elif (newlevel-floorlevel)<0:
-                    playerobj.interface.backend.push_message("You jump down")
+                    playerobj.myinterface.backend.push_message("You jump down")
                 return 1
             else:
-                playerobj.interface.backend.push_message("You try to climb but can't")
+                playerobj.myinterface.backend.push_message("You try to climb but can't")
                 return 0
         elif self.get_index_grid(*target)[1]==":":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("floor2",car),*target)
-            playerobj.interface.backend.push_message("The door opens")
+            playerobj.myinterface.backend.push_message("The door opens")
             return 0
         elif self.get_index_grid(*target)[1]=="*":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("floor1",car),*target)
-            playerobj.interface.backend.push_message("The door opens")
+            playerobj.myinterface.backend.push_message("The door opens")
             return 0
         elif nxtstat=="space":
-            playerobj.interface.backend.push_message("You decide not to jump into the abyss")
+            playerobj.myinterface.backend.push_message("You decide not to jump into the abyss")
             return 0
         else:
-            playerobj.interface.backend.push_message("You hit something")
+            playerobj.myinterface.backend.push_message("You hit something")
             return 0
 
 if __name__=="__main__":

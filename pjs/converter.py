@@ -44,9 +44,9 @@ class Scope:
 def find_import(name, filename):
     curdir = os.path.dirname(filename)
     cd = os.getcwd()
-    for dr in sys.path:
-        if dr == cd:
-            dr = curdir
+    for dr in sys.path+[curdir,]:
+        """if dr == cd:
+            dr = curdir"""
         fn = os.path.join(curdir, dr)
         for sub in name.split('.')[:-1]:
             if not os.path.exists(os.path.join(fn, sub, '__init__.py')):
@@ -104,7 +104,7 @@ class Converter:
         return modules
 
     def add_import(self, name):
-        if name in ('os', 'os.path', 'sys', '__builtin__', '__main__'):
+        if name in ('os', 'os.path', 'sys', '__builtin__', '__main__', 'math', 'time', 'binascii', 'random'):
             return
         self.to_import += list(find_import(name, self.current))
 
@@ -121,6 +121,7 @@ class Converter:
 
     ## Conversion funcs
     def convert_module(self, filename):
+        print filename
         filename = os.path.abspath(filename)
         text = open(filename).read()
         node = ast.parse(text, filename)

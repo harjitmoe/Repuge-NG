@@ -29,14 +29,14 @@ class GridObject(object):
         if tile!=-1:
             self.tile=tile
         if self.tileset_expansion:
-            game.playerobj.interface.backend.attach_expansion_pack(self.tileset_expansion)
+            game.playerobj.myinterface.backend.attach_expansion_pack(self.tileset_expansion)
         GridObject.all_objects.append(self)
         self.handlers=[]
         self.initialise(play)
     def initialise(self,play=None):
         """Just been spawned.  Do what?
         
-        Argument play is true if should attach new interface."""
+        Argument play is true if should attach novus interface."""
         pass
     def tick(self):
         """Your move.  If you are a creature, move!
@@ -67,7 +67,7 @@ class GridObject(object):
             oldlevel.objgrid[self.pt[0]][self.pt[1]].remove(self)
         self.pt=(destx,desty)
         self.level_rebase(newlevel)
-        if len(newlevel.objgrid[destx][desty]) and hasattr(newlevel.objgrid[destx][desty][-1],"interface") and newlevel.objgrid[destx][desty][-1].interface!=None:
+        if len(newlevel.objgrid[destx][desty]) and hasattr(newlevel.objgrid[destx][desty][-1],"myinterface") and newlevel.objgrid[destx][desty][-1].myinterface!=None:
             #Don't obscure the player
             player=newlevel.objgrid[destx][desty].pop()
             newlevel.objgrid[destx][desty].append(self)
@@ -108,25 +108,25 @@ class GridObject(object):
         self.status="defunct"
     def polymorph(self,otype):
         """Note that this object becomes defunct and a new one made."""
-        new=otype(self.game,self.extra,play=0)
+        novus=otype(self.game,self.extra,play=0)
         if self.inventory!=None:
-            if new.inventory!=None:
-                new.inventory.die()
-                new.inventory=self.inventory
+            if novus.inventory!=None:
+                novus.inventory.die()
+                novus.inventory=self.inventory
             else:
                 self.inventory.dump(self.pt)
                 self.inventory.die()
         if self.status=="contained":
-            self.container.insert(new)
+            self.container.insert(novus)
             self.container.remove(self)
         elif self.status=="placed":
-            new.place(*self.pt+(self.level,))
+            novus.place(*self.pt+(self.level,))
             self.lift()
-        new.vitality=self.vitality
+        novus.vitality=self.vitality
         GridObject.all_objects.remove(self)
         self.level=None
         self.status="defunct"
-        return new
+        return novus
     #
     __safe_for_unpickling__=True
     def __reduce__(self):

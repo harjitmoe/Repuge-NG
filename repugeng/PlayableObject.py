@@ -11,7 +11,7 @@ class PlayableObject(GridObject):
     init_hp_interval=5
     name="playable object"
     appearance="playable object"
-    interface=None
+    myinterface=None
     def initialise(self,play):
         """Just been spawned.  Do what?
         
@@ -26,14 +26,14 @@ class PlayableObject(GridObject):
     def initialise_playable(self):
         """Just been spawned and set up as a playable.  Do what?"""
         pass
-    def play(self,interface=None):
+    def play(self,myinterface=None):
         """Connect to player."""
-        if interface==None:
-            interface=self.game.InterfaceClass(self)
-        self.interface=interface
+        if myinterface==None:
+            myinterface=self.game.InterfaceClass(self)
+        self.myinterface=myinterface
     def unplay(self):
         """Disconnect from player."""
-        self.interface=None
+        self.myinterface=None
     def conv_to_target(self,e):
         if e not in ("down","up","left","right","8","4","6","2","7","9","1","3","h","j","k","l","y","u","b","n"):
             return None
@@ -47,15 +47,15 @@ class PlayableObject(GridObject):
         if e in ("3","n"): target=(self.pt[0]+1,self.pt[1]+1)
         return target
     def _PlayableObject__playercheck(self): #Two underscores
-        if self.interface==None:
+        if self.myinterface==None:
             return
         if self.vitality<=0:
             self.die()
             return
-        self.interface.redraw()
+        self.myinterface.redraw()
         if self.status!="placed":
             return
-        e=self.interface.backend.get_key_event()
+        e=self.myinterface.backend.get_key_event()
         if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
             #Does not go through to Python otherwise, meaning that Linux main terminals
             #are rendered otherwise out of order until someone kills Collecto
@@ -67,7 +67,7 @@ class PlayableObject(GridObject):
             if self.game.debug_ghost or self.level.handle_move(target,self):
                 self.place(*target)
         elif e=="#":
-            name="#"+self.interface.backend.ask_question("#")
+            name="#"+self.myinterface.backend.ask_question("#")
             if name in ("#debug","#debugon"):
                 self.game.debug=1
             elif self.game.debug:
@@ -104,45 +104,45 @@ class PlayableObject(GridObject):
             self.vitality+=1
     def level_rebase(self,newlevel):
         GridObject.level_rebase(self,newlevel)
-        if self.interface!=None:
-            self.interface.level_rebase(newlevel)
+        if self.myinterface!=None:
+            self.myinterface.level_rebase(newlevel)
     def die(self):
-        if self.interface!=None:
-            self.interface.backend.ask_question("DYWYPI?")
-            self.interface.close()
+        if self.myinterface!=None:
+            self.myinterface.backend.ask_question("DYWYPI?")
+            self.myinterface.close()
         GridObject.die(self)
     def polymorph(self,otype):
         """Note that this object becomes defunct and a new one is made.
         
         If there is a connected player, obviously the new one must be a 
         PlayableObject subtype."""
-        if self.interface!=None:
+        if self.myinterface!=None:
             if not issubclass(otype,PlayableObject):
                 raise TypeError("you cannot play as that!")
-        new=otype(self.game,self.extra,play=0)
+        novus=otype(self.game,self.extra,play=0)
         #
-        if self.interface!=None:
-            new.play(self.interface)
-        new.known=self.known
-        if new.inventory!=None:
-            new.inventory.die()
-            new.inventory=self.inventory
+        if self.myinterface!=None:
+            novus.play(self.myinterface)
+        novus.known=self.known
+        if novus.inventory!=None:
+            novus.inventory.die()
+            novus.inventory=self.inventory
         else:
             self.inventory.dump(self.pt)
             self.inventory.die()
-        new.vitality=(self.vitality if self.vitality>new.maxhp else new.maxhp)
+        novus.vitality=(self.vitality if self.vitality>novus.maxhp else novus.maxhp)
         #
         if self.status=="contained":
-            self.container.insert(new)
+            self.container.insert(novus)
             self.container.remove(self)
         elif self.status=="placed":
-            new.place(*self.pt+(self.level,))
+            novus.place(*self.pt+(self.level,))
             self.lift()
         GridObject.all_objects.remove(self)
         if self is self.game.playerobj:
-            self.game.playerobj=new
-        if self.interface!=None:
-            self.interface.playerobj=new
+            self.game.playerobj=novus
+        if self.myinterface!=None:
+            self.myinterface.playerobj=novus
         self.level=None
         self.status="defunct"
-        return new
+        return novus

@@ -113,6 +113,34 @@ module('<builtin>/sys.py', function sys_module(_) {
     });
 });
 
+module('<builtin>/math.py', function math_module(_) {
+    _.sqrt = $def(function sqrt(number) {
+        return Math.sqrt(number);
+    });
+});
+
+module('<builtin>/time.py', function time_module(_) {
+    _.time = $def(function time() {
+	date=new Date;
+        return date.getTime();
+    });
+});
+
+module('<builtin>/random.py', function (_) {
+    _.random = $def(function $_random(self) {
+        return window.Math.random();
+    });
+    _.randrange = $def({"end":-1},function $_randrange(self,start,end) {
+        if(end==-1){
+            end=start;
+            start=0;
+        }
+        return start+Math.floor(Math.random()*(end-start-0.01));
+    });
+});
+
+module('<builtin>/binascii.py', function binascii_module(_) {});
+
 module('<builtin>/os/__init__.py', function os_module(_) {
 
 });

@@ -18,10 +18,10 @@ class MultilevelStorage(object):
         if name in cls.existing:
             return cls.existing[name]
         else:
-            new=object.__new__(cls)
-            cls.existing[name]=new
-            new.existing=None #Cannot del, but still break ref to keep mutable dict safer
-            return new
+            novus=object.__new__(cls)
+            cls.existing[name]=novus
+            novus.existing=None #Cannot del, but still break ref to keep mutable dict safer
+            return novus
     def initialise_property(self,name,value):
         """Initialise an attribute to a value without overwriting 
         any existing value.

@@ -54,8 +54,8 @@ class SimpleInterface(object):
             self.backend.set_window_title(self.level.title_window)
         except NotImplementedError:
             pass
-        self.generic_coords=[zip(*enumerate(h))[0] for h in self.level.grid]
-        self.generic_coords=[[(x,y) for y in h] for x,h in enumerate(self.generic_coords)]
+        self.generic_coords=map(lambda h:zip(*enumerate(h))[0],self.level.grid)
+        self.generic_coords=map(lambda x:map((lambda y,x=x[0]:(x,y)),x[1]), enumerate(self.generic_coords))
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
         pass

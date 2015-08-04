@@ -19,7 +19,7 @@ class DumbMonster(PlayableObject):
         self.inventory.insert(GridObject(self.level))
         self.add_handler(1,self.onetick)
     def onetick(self):
-        if self.interface!=None:
+        if self.myinterface!=None:
             return
         if self.vitality<=0:
             self.die()
@@ -43,11 +43,11 @@ class DumbMonster(PlayableObject):
             if self.level.objgrid[target[0]][target[1]]:
                 breakp=1
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
-                    if hasattr(obj,"interface") and obj.interface!=None:
+                    if hasattr(obj,"myinterface") and obj.myinterface!=None:
                         if type(self) in obj.known:
-                            obj.interface.backend.push_message("The %s hits!"%self.name)
+                            obj.myinterface.backend.push_message("The %s hits!"%self.name)
                         else:
-                            obj.interface.backend.push_message("The %s hits!"%self.appearance)
+                            obj.myinterface.backend.push_message("The %s hits!"%self.appearance)
                         obj.vitality-=1
                         return
                 else:
@@ -63,4 +63,4 @@ class DumbMonster(PlayableObject):
         else: #i.e. ran to completion with no break
             return #stuck, cannot move
         self.place(*target)
-        self.game.playerobj.interface.redraw()
+        self.game.playerobj.myinterface.redraw()
