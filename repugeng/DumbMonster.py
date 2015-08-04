@@ -4,7 +4,7 @@ from repugeng.Container import Container
 import random
 
 class DumbMonster(PlayableObject):
-    """An generic adversary.
+    """An generic adversary, random in its movements.
     """
     tile="adversary"
     name="unspecified monster"
