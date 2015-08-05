@@ -29,7 +29,7 @@ class TeddyMapG(Level):
     title_window="Basic Sample Repuge-NG Map"
     def bring_to_front(self, whence="unspecified"):
         if whence=="advancement":
-            self.game.playerobj.place(14,8,self)
+            self.game.playerobj.place(14,6,self)
         elif whence=="regression":
             self.game.playerobj.place(14,10,self)
         else:
