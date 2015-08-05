@@ -31,12 +31,12 @@ class Game(object):
         except KeyboardInterrupt:
             raise
         except:
-            exctype,exception,traceback=sys.exc_info()
+            exctype,exception,trace=sys.exc_info()
             try:
                 #Put the exception in: the program quits on exception and, 
                 #unless started from a shell such as cmd, the terminal 
                 #probably closes promptly leaving it inaccessible.
-                self.bug_report[__name__]["Exception"]=(exctype,exception,traceback.extract_tb(traceback))
+                self.bug_report[__name__]["Exception"]=(exctype,exception,traceback.extract_tb(trace))
                 self.bug_report[__name__]["grid"]=self.grid
                 self.bug_report[__name__]["objgrid"]=self.objgrid
                 self._dump_report()
