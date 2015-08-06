@@ -71,7 +71,7 @@ class Backend(object):
         
         Might not be implement*able* in all cases.  If not, leave 
         unimplemented.  NotImplementedError should be caught by the level 
-        module."""
+        class."""
         raise NotImplementedError("no means to set window title")
     def get_key_event(self):
         """Return a keyboard event in WConio.getkey style.
@@ -84,3 +84,6 @@ class Backend(object):
     def attach_expansion_pack(self,pack):
         """Attach an expansion pack of tiles"""
         raise NotImplementedError("should be implemented by subclass")
+    def flush_plots(self):
+        """Flush any plot caching to the screen"""
+        pass

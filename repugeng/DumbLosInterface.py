@@ -112,6 +112,7 @@ class DumbLosInterface(SimpleInterface):
                     self.backend.plot_tile(colno,rowno,"space")
                 rowno+=1
             colno+=1
+        self.backend.flush_plots()
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
         self._fov_cache={}
