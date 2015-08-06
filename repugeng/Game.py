@@ -44,7 +44,7 @@ class Game(object):
                 pass #Silence the irrelevant exception
             if sys.hexversion<0x03000000:
                 #Only 2k way to keep original traceback here, exec'd as invalid 3k syntax
-                exec("raise exctype,exception,traceback")
+                exec("raise exctype,exception,trace")
             else:
                 raise exception
     #
