@@ -54,8 +54,8 @@ if __name__=="__main__":
     from repugeng.Game import Game
     class SampleMapGame(Game):
         InterfaceClass=SimpleInterface
-        def level_advance(self):
-            self.level=SampleMap(self)
+        def level_initiate(self,playerobj):
+            SampleMap(self).bring_to_front(playerobj,"starting")
     SampleMapGame()
 
 

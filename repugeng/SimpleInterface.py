@@ -2,7 +2,7 @@ import sys
 from repugeng.BackendSelector import BackendSelector
 class SimpleInterface(object):
     #Semantically public
-    def __init__(self,playerobj,backend=None,debug_dummy=False):
+    def __init__(self,playerobj,use_rpc=False,backend=None,debug_dummy=False):
         self.playerobj=playerobj
         self.level=playerobj.level
         self.game=playerobj.game
@@ -13,7 +13,7 @@ class SimpleInterface(object):
             if backend:
                 self.backend=backend
             else:
-                self.backend=BackendSelector.get_backend()
+                self.backend=BackendSelector.get_backend(use_rpc)
     def redraw(self):
         """Draw the map (grid and objgrid).
         

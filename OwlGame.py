@@ -5,8 +5,8 @@ from CollectoInterface import CollectoInterface
 
 class OwlGame(Game):
     InterfaceClass=CollectoInterface
-    def level_advance(self):
-        self.level=OwlLevel(self)
+    def level_initiate(self,playerobj):
+        OwlLevel(self).bring_to_front(playerobj,"starting")
 #
 if __name__=="__main__":
     OwlGame()

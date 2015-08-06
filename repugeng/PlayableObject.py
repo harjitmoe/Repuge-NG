@@ -29,7 +29,7 @@ class PlayableObject(GridObject):
     def play(self,myinterface=None):
         """Connect to player."""
         if myinterface==None:
-            myinterface=self.game.InterfaceClass(self)
+            myinterface=self.game.InterfaceClass(self,use_rpc=self.game.use_rpc)
         self.myinterface=myinterface
     def unplay(self):
         """Disconnect from player."""

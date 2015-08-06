@@ -23,8 +23,9 @@ class Level(object):
         self.initmap()
         self.initialise()
     def bring_to_front(self, playerobj, whence="unspecified"):
-        """Called when this level becomes active for a player, which 
-        may be anything from immediately after creation to never.
+        """To be called to make this level the active level for a 
+        player, which may be anything from immediately after creation
+        to never.
         
         The general idea is to take control of the player object, by 
         placing it on the level via its place(...) method.  The 
@@ -32,7 +33,7 @@ class Level(object):
         that player's interface. 
         
         The whence argument specifies how the level was entered.
-        Presently standard values are:
+        Typically expected values are:
         
         - "starting"
         - "advancement"
@@ -40,9 +41,9 @@ class Level(object):
         - "jumping"
         - "unspecified"
         
-        but a Game subclass which overrides run(...) may pass any object 
-        imaginable.  In these cases, it is paramount that those levels 
-        which process this data are compatible with the Game subclass.
+        but a Game subclass may pass any object imaginable.  It is 
+        paramount that those levels which process this are 
+        compatible with the Game subclass with which they are used.
         """
         playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
     def _gengrid(self,x,y):
@@ -144,5 +145,6 @@ class Level(object):
         "enter", "\r", "\n", "\r\n") for example."""
         return 0
     #
-    # initial_cutscene removed as could not be kept compatible
+    # initial_cutscene removed as fundamentally incompatible with the 
+    # new multi-user persistent-levels paradigm
     #

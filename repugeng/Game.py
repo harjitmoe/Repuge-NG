@@ -5,17 +5,18 @@ from repugeng.SimpleInterface import SimpleInterface
 from repugeng.Level import Level
 
 class Game(object):
+    #
     #Debugging settings, nothing to see here
     debug=0
     bug_report={}
     debug_ghost=0
     debug_fov_off=0
     #
+    #For subclasses to override or not
     InterfaceClass=SimpleInterface
     PlayerClass=PlayableObject
     title_window="Repuge-NG Application"
-    #
-    interfaces=None
+    use_rpc=False
     #
     def __init__(self,start=1):
         self.bug_report[__name__]={}
@@ -51,13 +52,21 @@ class Game(object):
             for obj in GridObject.all_objects:
                 obj.tick()
     #
+    interfaces=None
     def redraw(self):
         for aninterface in self.interfaces:
             aninterface.redraw()
     #
     def add_players(self):
-        playerobj=self.PlayerClass(self,play=1)
-        self.level_initiate(playerobj)
+        if self.use_rpc:
+            number=int(raw_input("How many players (+ve number in figures): "))
+            print ("Please start %d instance(s) of remote.py with unique ports."%number)
+            print ("Once you have done this, enter the port numbers here.")
+        else:
+            number=1
+        for i in range(number):
+            playerobj=self.PlayerClass(self,play=1)
+            self.level_initiate(playerobj)
     #
     def level_initiate(self,playerobj):
         raise NotImplementedError

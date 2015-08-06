@@ -4,7 +4,7 @@ class RpcBackend(Backend):
     _plot_cache=None
     _already=None
     def __init__(self):
-        port=int(raw_input("Port used by remote: "))
+        port=int(raw_input("Port used by next remote: "))
         self.backend=xmlrpclib.ServerProxy("http://localhost:%d/"%port,allow_none=True)
         self._plot_cache=[]
         self._already={}

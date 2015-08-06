@@ -10,8 +10,11 @@ class CollectoGame(Game):
     def register_leveltype(cls,levelcls):
         cls.leveltypes.append(levelcls)
     #
-    def level_advance(self):
-        self.level=random.choice(CollectoGame.leveltypes)(self)
+    def level_initiate(self,playerobj):
+        random.choice(CollectoGame.leveltypes)(self).bring_to_front(playerobj,"starting")
+    #
+    def level_advance(self,playerobj):
+        random.choice(CollectoGame.leveltypes)(self).bring_to_front(playerobj,"advancement")
 #
 if __name__=="__main__":
     import sys
