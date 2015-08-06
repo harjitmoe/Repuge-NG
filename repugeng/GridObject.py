@@ -28,8 +28,8 @@ class GridObject(object):
         self.extra=extra
         if tile!=-1:
             self.tile=tile
-        if self.tileset_expansion:
-            game.playerobj.myinterface.backend.attach_expansion_pack(self.tileset_expansion)
+        #if self.tileset_expansion:
+        #    game.playerobj.myinterface.backend.attach_expansion_pack(self.tileset_expansion)
         GridObject.all_objects.append(self)
         self.handlers=[]
         self.initialise(play)

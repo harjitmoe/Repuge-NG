@@ -1,10 +1,9 @@
 """From my proposal: The first thing I did was to produce a very simple level with no aim so I could see if what I was developing actually worked and correct errors as I made them. This consists of relatively sophisticated logic including doors and raised platforms, but no cutscenes."""
 
 from repugeng.Level import Level
-from CollectoInterface import CollectoInterface
+from repugeng.ProxyInterface import ProxyInterface
 
 class SampleMap(Level):
-    InterfaceClass=CollectoInterface
     coded_grid="""\
 gooooooooooooG
 d#,......,,,.jooooooo
@@ -25,33 +24,34 @@ jooooooooooooJ"""
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
                 if (newlevel-floorlevel)==1:
-                    playerobj.myinterface.backend.push_message("You climb up")
+                    playerobj.myinterface.push_message("You climb up")
                 elif (newlevel-floorlevel)<0:
-                    playerobj.myinterface.backend.push_message("You jump down")
+                    playerobj.myinterface.push_message("You jump down")
                 return 1
             else:
-                playerobj.myinterface.backend.push_message("You try to climb but can't")
+                playerobj.myinterface.push_message("You try to climb but can't")
                 return 0
         elif self.get_index_grid(*target)[1]==":":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("floor2",car),*target)
-            playerobj.myinterface.backend.push_message("The door opens")
+            playerobj.myinterface.push_message("The door opens")
             return 0
         elif self.get_index_grid(*target)[1]=="*":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("floor1",car),*target)
-            playerobj.myinterface.backend.push_message("The door opens")
+            playerobj.myinterface.push_message("The door opens")
             return 0
         elif nxtstat=="space":
-            playerobj.myinterface.backend.push_message("You decide not to jump into the abyss")
+            playerobj.myinterface.push_message("You decide not to jump into the abyss")
             return 0
         else:
-            playerobj.myinterface.backend.push_message("You hit something")
+            playerobj.myinterface.push_message("You hit something")
             return 0
 
 if __name__=="__main__":
     from repugeng.Game import Game
     class SampleMapGame(Game):
+        InterfaceClass=ProxyInterface
         def level_advance(self):
             self.level=SampleMap(self)
     SampleMapGame()

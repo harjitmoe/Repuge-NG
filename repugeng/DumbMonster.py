@@ -45,9 +45,9 @@ class DumbMonster(PlayableObject):
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if hasattr(obj,"myinterface") and obj.myinterface!=None:
                         if type(self) in obj.known:
-                            obj.myinterface.backend.push_message("The %s hits!"%self.name)
+                            obj.myinterface.push_message("The %s hits!"%self.name)
                         else:
-                            obj.myinterface.backend.push_message("The %s hits!"%self.appearance)
+                            obj.myinterface.push_message("The %s hits!"%self.appearance)
                         obj.vitality-=1
                         return
                 else:

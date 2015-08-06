@@ -55,7 +55,7 @@ class PlayableObject(GridObject):
         self.myinterface.redraw()
         if self.status!="placed":
             return
-        e=self.myinterface.backend.get_key_event()
+        e=self.myinterface.get_key_event()
         if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
             #Does not go through to Python otherwise, meaning that Linux main terminals
             #are rendered otherwise out of order until someone kills Collecto
@@ -67,7 +67,7 @@ class PlayableObject(GridObject):
             if self.game.debug_ghost or self.level.handle_move(target,self):
                 self.place(*target)
         elif e=="#":
-            name="#"+self.myinterface.backend.ask_question("#")
+            name="#"+self.myinterface.ask_question("#")
             if name in ("#debug","#debugon"):
                 self.game.debug=1
             elif self.game.debug:
@@ -108,7 +108,7 @@ class PlayableObject(GridObject):
             self.myinterface.level_rebase(newlevel)
     def die(self):
         if self.myinterface!=None:
-            self.myinterface.backend.ask_question("DYWYPI?")
+            self.myinterface.ask_question("DYWYPI?")
             self.myinterface.close()
         GridObject.die(self)
     def polymorph(self,otype):

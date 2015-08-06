@@ -46,32 +46,32 @@ class OwlLevel(ExperimentalDungeonLevel):
             for obj in self.objgrid[target[0]][target[1]][:]:
                 if isinstance(obj,DumbMonster):
                     if type(obj) in playerobj.known:
-                        playerobj.myinterface.backend.push_message("You hit the %s!"%obj.name)
+                        playerobj.myinterface.push_message("You hit the %s!"%obj.name)
                     else:
-                        playerobj.myinterface.backend.push_message("You hit the %s!"%obj.appearance)
+                        playerobj.myinterface.push_message("You hit the %s!"%obj.appearance)
                     obj.vitality-=1
                     return 0
-            playerobj.myinterface.backend.push_message("There is something here.")
+            playerobj.myinterface.push_message("There is something here.")
             return 1
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
                 if (newlevel-floorlevel)==1:
-                    playerobj.myinterface.backend.push_message("You climb up")
+                    playerobj.myinterface.push_message("You climb up")
                 elif (newlevel-floorlevel)<0:
-                    playerobj.myinterface.backend.push_message("You jump down")
+                    playerobj.myinterface.push_message("You jump down")
                 return 1
             else:
-                playerobj.myinterface.backend.push_message("You try to climb but can't")
+                playerobj.myinterface.push_message("You try to climb but can't")
                 return 0
         elif nxtstat=="staircase":
-            playerobj.myinterface.backend.push_message("You find a staircase (use Return (enter) to descend).")
+            playerobj.myinterface.push_message("You find a staircase (use Return (enter) to descend).")
             return 1
         elif nxtstat=="space":
-            playerobj.myinterface.backend.push_message("You hit the tunnel wall.")
+            playerobj.myinterface.push_message("You hit the tunnel wall.")
             return 0
         else:
-            playerobj.myinterface.backend.push_message("You hit something.")
+            playerobj.myinterface.push_message("You hit something.")
             return 0
     
     def handle_command(self,e,playerobj):
@@ -87,9 +87,9 @@ class OwlLevel(ExperimentalDungeonLevel):
                     continue
                 while 1:
                     if type(obj) in playerobj.known:
-                        ans=playerobj.myinterface.backend.ask_question("Pick up a %s [ynq]? "%obj.name)
+                        ans=playerobj.myinterface.ask_question("Pick up a %s [ynq]? "%obj.name)
                     else:
-                        ans=playerobj.myinterface.backend.ask_question("Pick up a %s [ynq]? "%obj.appearance)
+                        ans=playerobj.myinterface.ask_question("Pick up a %s [ynq]? "%obj.appearance)
                     ans=ans.lower().strip()
                     if ans in "ynq":
                         break

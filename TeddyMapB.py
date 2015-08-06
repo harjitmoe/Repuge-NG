@@ -39,45 +39,45 @@ class TeddyMapB(Level):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:
                 if (newlevel-floorlevel)==1:
-                    playerobj.myinterface.backend.push_message("You climb up")
+                    playerobj.myinterface.push_message("You climb up")
                 elif (newlevel-floorlevel)<0:
-                    playerobj.myinterface.backend.push_message("You jump down")
+                    playerobj.myinterface.push_message("You jump down")
                 return 1
             else:
-                playerobj.myinterface.backend.push_message("You try to climb but can't")
+                playerobj.myinterface.push_message("You try to climb but can't")
                 return 0
         elif nxtstat in ("vfeature_open","hfeature_open"):
             return 1
         elif self.get_index_grid(*target)[1]=="%":
-            playerobj.myinterface.backend.push_message("Use Return (enter) to ascend.")
+            playerobj.myinterface.push_message("Use Return (enter) to ascend.")
             return 1
         elif self.get_index_grid(*target)[1]=="&":
-            playerobj.myinterface.backend.push_message("Use Return (enter) to descend.")
+            playerobj.myinterface.push_message("Use Return (enter) to descend.")
             return 1
         elif self.get_index_grid(*target)[1]==":":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("vfeature_open",car),*target)
             playerobj.myinterface.flush_fov()
-            playerobj.myinterface.backend.push_message("The door opens")
+            playerobj.myinterface.push_message("The door opens")
             return 0
         elif self.get_index_grid(*target)[1]=="=":
             kind,car=self.get_index_grid(*target)
             self.set_index_grid(("hfeature_open",car),*target)
             playerobj.myinterface.flush_fov()
-            playerobj.myinterface.backend.push_message("The door opens")
+            playerobj.myinterface.push_message("The door opens")
             return 0
         elif nxtstat=="space":
-            playerobj.myinterface.backend.push_message("You decide not to jump into the abyss")
+            playerobj.myinterface.push_message("You decide not to jump into the abyss")
             return 0
         else:
-            playerobj.myinterface.backend.push_message("You hit something")
+            playerobj.myinterface.push_message("You hit something")
             return 0
     
     def handle_command(self,e,playerobj):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*playerobj.pt)[0]=="staircase":
             raise self.game.AdvanceLevelException
         elif e in ("o",):
-            e2=playerobj.myinterface.backend.get_key_event() #estraDiol (an oestrogen)
+            e2=playerobj.myinterface.get_key_event() #estraDiol (an oestrogen)
             target=playerobj.conv_to_target(e2)
             if target!=None:
                 kind,car=self.get_index_grid(*target)
@@ -86,7 +86,7 @@ class TeddyMapB(Level):
                 self.set_index_grid((kind,car),*target)
                 playerobj.myinterface.flush_fov()
         elif e in ("c",):
-            e2=playerobj.myinterface.backend.get_key_event() #estraDiol (an oestrogen)
+            e2=playerobj.myinterface.get_key_event() #estraDiol (an oestrogen)
             target=playerobj.conv_to_target(e2)
             if target!=None:
                 kind,car=self.get_index_grid(*target)
