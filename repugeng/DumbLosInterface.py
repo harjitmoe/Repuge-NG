@@ -116,11 +116,11 @@ class DumbLosInterface(SimpleInterface):
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
         self._fov_cache={}
-        self.redraw()
+        self.game.redraw()
     def level_rebase(self,newlevel):
         """Link to new level, and bin any cached info about the current level."""
         if self.level!=newlevel:
             self.level=newlevel
             self._los_cache={}
             self._fov_cache={}
-            self.redraw()
+            self.game.redraw()

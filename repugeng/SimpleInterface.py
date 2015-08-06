@@ -6,6 +6,7 @@ class SimpleInterface(object):
         self.playerobj=playerobj
         self.level=playerobj.level
         self.game=playerobj.game
+        self.game.interfaces.append(self)
         #
         if not debug_dummy:
             self.game.bug_report[__name__]={}
@@ -52,6 +53,8 @@ class SimpleInterface(object):
         sys.exit()
     def push_message(self,s):
         return self.backend.push_message(s)
+    def dump_messages(self):
+        return self.backend.dump_messages()
     def ask_question(self,s):
         return self.backend.ask_question(s)
     def slow_ask_question(self,s,p=""):

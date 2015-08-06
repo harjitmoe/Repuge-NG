@@ -13,12 +13,14 @@ class Game(object):
     #
     InterfaceClass=SimpleInterface
     PlayerClass=PlayableObject
-    #
     title_window="Repuge-NG Application"
+    #
+    interfaces=None
     #
     def __init__(self,start=1):
         self.bug_report[__name__]={}
         try:
+            self.interfaces=[]
             self.add_players()
             self.run()
         except SystemExit:
@@ -43,12 +45,15 @@ class Game(object):
             else:
                 raise exception
     #
-    whence=None #starting, advancement, regression, jumping
     def run(self):
         while 1:
             #Each creature gets a move:
             for obj in GridObject.all_objects:
                 obj.tick()
+    #
+    def redraw(self):
+        for aninterface in self.interfaces:
+            aninterface.redraw()
     #
     def add_players(self):
         playerobj=self.PlayerClass(self,play=1)

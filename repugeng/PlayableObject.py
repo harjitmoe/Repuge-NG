@@ -52,9 +52,11 @@ class PlayableObject(GridObject):
         if self.vitality<=0:
             self.die()
             return
-        self.myinterface.redraw()
+        self.game.redraw()
         if self.status!="placed":
             return
+        if len(self.game.interfaces)>1:
+            self.myinterface.push_message("Your turn.")
         e=self.myinterface.get_key_event()
         if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
             #Does not go through to Python otherwise, meaning that Linux main terminals
@@ -99,6 +101,9 @@ class PlayableObject(GridObject):
                 self.level.handle_command(name,self)
         else:
             self.level.handle_command(e,self)
+        if len(self.game.interfaces)>1:
+            self.myinterface.push_message("Turn over.")
+            self.myinterface.dump_messages()
     def up_hitpoint(self):
         if self.vitality<self.maxhp:
             self.vitality+=1
