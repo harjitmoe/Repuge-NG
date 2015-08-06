@@ -19,7 +19,7 @@ class DumbLosInterface(SimpleInterface):
     def _fov_check(self,x,y,passthrough_once=True):
         if (not self.fov_status) or (self.game.debug_fov_off):
             return True,"ind"
-        if not hasattr(self.game,"playerobj") or self.playerobj==None or self.playerobj.pt==None:
+        if not hasattr(self,"playerobj") or self.playerobj==None or self.playerobj.pt==None:
             return True,"ind"
         if ((x,y) in self._los_cache) and not passthrough_once:
             return self._los_cache[(x,y)],"nul"

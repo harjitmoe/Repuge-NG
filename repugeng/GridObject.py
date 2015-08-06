@@ -36,7 +36,7 @@ class GridObject(object):
     def initialise(self,play=None):
         """Just been spawned.  Do what?
         
-        Argument play is true if should attach novus interface."""
+        Argument play is true if should attach new interface."""
         pass
     def tick(self):
         """Your move.  If you are a creature, move!

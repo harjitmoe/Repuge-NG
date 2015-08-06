@@ -139,8 +139,6 @@ class PlayableObject(GridObject):
             novus.place(*self.pt+(self.level,))
             self.lift()
         GridObject.all_objects.remove(self)
-        if self is self.game.playerobj:
-            self.game.playerobj=novus
         if self.myinterface!=None:
             self.myinterface.playerobj=novus
         self.level=None

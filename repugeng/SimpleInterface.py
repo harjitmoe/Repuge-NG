@@ -55,7 +55,7 @@ class SimpleInterface(object):
     def ask_question(self,s):
         return self.backend.ask_question(s)
     def slow_ask_question(self,s,p=""):
-        return self.backend.ask_question(s,p)
+        return self.backend.slow_ask_question(s,p)
     def get_key_event(self):
         return self.backend.get_key_event()
     #Semantically protected

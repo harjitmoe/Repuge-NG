@@ -57,7 +57,7 @@ class Game(object):
         #Level.run is always executed at same stack depth
         while 1:
             try:
-                self.level.bring_to_front(self.whence)
+                self.level.bring_to_front(self.playerobj,self.whence)
                 self.level.run()
             except Game.AdvanceLevelException:
                 self.whence="advancement"

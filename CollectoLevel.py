@@ -46,7 +46,6 @@ class CollectoLevel(Level):
         #
         self.nan=0
         self.children=[]
-        #self.playerobj.myinterface.push_message("Use #quit to quit.")
 
     def handle_move(self,target,playerobj):
         try: #XXX kludge/fragile/assumes
@@ -57,7 +56,7 @@ class CollectoLevel(Level):
         if self.objgrid[target[0]][target[1]]:
             for obj in self.objgrid[target[0]][target[1]][:]:
                 if isinstance(obj,CollectoObject):
-                    obj.handle_contact()
+                    obj.handle_contact(playerobj)
         elif nxtstat.startswith("floor"):
             newlevel=type(0)(nxtstat[5:])
             if (newlevel-floorlevel)<=1:

@@ -32,7 +32,7 @@ class CollectoObject(GridObject):
                 breakp=1
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if hasattr(obj,"myinterface") and obj.myinterface!=None:
-                        self.handle_contact()
+                        self.handle_contact(obj)
                 else:
                     breakp=0
                 if breakp:
@@ -47,29 +47,29 @@ class CollectoObject(GridObject):
             return #stuck, cannot move
         self.place(*target)
     #
-    def handle_contact(self):
-        self.game.playerobj.myinterface.redraw()
+    def handle_contact(self,playerobj):
+        playerobj.myinterface.redraw()
         self.game.bug_report[__name__]={}
         duration=random.normalvariate(15,5)
         self.game.bug_report[__name__]["duration"]=duration
         if duration<5:
             duration=5
         timr=time.time()
-        result=self.question_test(duration)
+        result=self.question_test(duration,playerobj)
         self.game.bug_report[__name__]["result"]=result
         if result!=-1:
             self.level.score.mymoves=self.level.score.mymoves+1
             timr=time.time()-timr
             if timr>duration:
-                self.game.playerobj.myinterface.push_message("OVERTIME")
+                playerobj.myinterface.push_message("OVERTIME")
                 result=False
             if result:
                 if self.game.debug:
                     self.level.score.myscore=0
-                    self.game.playerobj.myinterface.push_message("Debug mode is ON, nullifying score")
+                    playerobj.myinterface.push_message("Debug mode is ON, nullifying score")
                 else:
                     self.level.score.myscore+=int((100.0/timr)+0.5)
-                    self.game.playerobj.myinterface.push_message(repr(self.level.score.myscore)+" total points, "+repr(self.level.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.level.score.myscore/float(self.level.score.mymoves)))
+                    playerobj.myinterface.push_message(repr(self.level.score.myscore)+" total points, "+repr(self.level.score.mymoves)+" done, %.0f average points (point v10.1)"%(self.level.score.myscore/float(self.level.score.mymoves)))
             self.place(*self.level.get_new_point())
     #
     def user_input_to_int(self,input):
@@ -94,7 +94,7 @@ class CollectoObject(GridObject):
                     self.nan=-(float(exp)/float(exp))
                 return self.nan
     #
-    def question_test(self,duration):
+    def question_test(self,duration,playerobj):
         do_sum=random.randrange(2)
         do_arc=random.randrange(2)
         self.game.bug_report[__name__]["do_sum"]=do_sum
@@ -103,15 +103,15 @@ class CollectoObject(GridObject):
             if not do_arc:
                 n=random.randrange(100)
                 m=random.randrange(100)
-                ri=self.user_input_to_int(self.game.playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"="))
+                ri=self.user_input_to_int(playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"+"+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.game.playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
+                    playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n+m:
-                    self.game.playerobj.myinterface.push_message("wrong, it's "+str(n+m))
+                    playerobj.myinterface.push_message("wrong, it's "+str(n+m))
                     return False
                 else:
-                    self.game.playerobj.myinterface.push_message("right")
+                    playerobj.myinterface.push_message("right")
                     return True
             else:
                 #Note: ALL PRE-NG COLLECTO VERSIONS had a 1/400 chance of failing 
@@ -119,29 +119,29 @@ class CollectoObject(GridObject):
                 #this NG version.
                 n=random.randrange(1,100)
                 m=random.randrange(n)
-                ri=self.user_input_to_int(self.game.playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"="))
+                ri=self.user_input_to_int(playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+"-"+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.game.playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
+                    playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n-m:
-                    self.game.playerobj.myinterface.push_message("wrong, it's "+str(n-m))
+                    playerobj.myinterface.push_message("wrong, it's "+str(n-m))
                     return False
                 else:
-                    self.game.playerobj.myinterface.push_message("right")
+                    playerobj.myinterface.push_message("right")
                     return True
         else:
             if not do_arc:
                 n=random.randrange(1,10)
                 m=random.randrange(1,10)
-                ri=self.user_input_to_int(self.game.playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"="))
+                ri=self.user_input_to_int(playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" times "+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.game.playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
+                    playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n*m:
-                    self.game.playerobj.myinterface.push_message("wrong, it's "+str(n*m))
+                    playerobj.myinterface.push_message("wrong, it's "+str(n*m))
                     return False
                 else:
-                    self.game.playerobj.myinterface.push_message("right")
+                    playerobj.myinterface.push_message("right")
                     return True
             else:
                 #Integer division!  NOTE: DO NOT ADD FLOAT DIVISION.  
@@ -151,13 +151,13 @@ class CollectoObject(GridObject):
                 n=random.randrange(20)
                 m=random.randrange(1,5)
                 n*=m
-                ri=self.user_input_to_int(self.game.playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"="))
+                ri=self.user_input_to_int(playerobj.myinterface.slow_ask_question(("in %.2f seconds, "%duration)+repr(n)+" divided by "+repr(m)+"="))
                 if ri!=ri: #i.e. is NaN
-                    self.game.playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
+                    playerobj.myinterface.push_message("I don't understand that answer (in figures, please).")
                     return -1
                 elif ri!=n//m: #Integer division!
-                    self.game.playerobj.myinterface.push_message("wrong, it's "+str(n//m)) #Integer division!
+                    playerobj.myinterface.push_message("wrong, it's "+str(n//m)) #Integer division!
                     return False
                 else:
-                    self.game.playerobj.myinterface.push_message("right")
+                    playerobj.myinterface.push_message("right")
                     return True

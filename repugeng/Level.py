@@ -22,16 +22,14 @@ class Level(object):
         self.game=game
         self.initmap()
         self.initialise()
-    def bring_to_front(self, whence="unspecified"):
-        """Called when this level becomes active, which may be anything
-        from immediately after creation to never.
+    def bring_to_front(self, playerobj, whence="unspecified"):
+        """Called when this level becomes active for a player, which 
+        may be anything from immediately after creation to never.
         
         The general idea is to take control of the player object, by 
         placing it on the level via its place(...) method.  The 
         mechanics of PlayableObject will then take care of hooking up
         that player's interface. 
-        
-        The player object is self.game.playerobj.
         
         The whence argument specifies how the level was entered.
         Presently standard values are:
@@ -46,7 +44,7 @@ class Level(object):
         imaginable.  In these cases, it is paramount that those levels 
         which process this data are compatible with the Game subclass.
         """
-        self.game.playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
+        playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
     def _gengrid(self,x,y):
         grid=[]
         for i in range(x):
@@ -106,17 +104,7 @@ class Level(object):
     def set_index_grid(self,v,x,y):
         self.grid[x][y]=v
     #
-    def followline_user(self,delay,points):
-        """Move the user visibly down a list of points."""
-        import time
-        for i in points[:-1]:
-            if self.game.playerobj not in self.objgrid[i[0]][i[1]]:
-                self.objgrid[i[0]][i[1]].append(self.game.playerobj)
-            time.sleep(delay)
-            self.objgrid[i[0]][i[1]].remove(self.game.playerobj)
-        i=points[-1]
-        self.objgrid[i[0]][i[1]].append(self.game.playerobj)
-        return i
+    # followline_user removed as obsolete and incompatible
     def followline(self,delay,points,obj):
         """Move a non-user object visibly down a list of points.
         (obj should be the object)."""
