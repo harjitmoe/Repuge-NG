@@ -1,4 +1,4 @@
-from GridObject import GridObject
+from repugeng.GridObject import GridObject
 class Container(GridObject):
     contents=None
     def initialise(self,play=None):

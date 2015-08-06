@@ -3,6 +3,7 @@ from repugeng.GridObject import GridObject
 from repugeng.PlayableObject import PlayableObject
 from repugeng.SimpleInterface import SimpleInterface
 from repugeng.Level import Level
+from repugeng.compat3k import *
 
 class Game(object):
     #

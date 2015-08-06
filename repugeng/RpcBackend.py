@@ -1,5 +1,10 @@
-import sys,xmlrpclib
+import sys
+try:
+    import xmlrpclib
+except ImportError:
+    import xmlrpc.client as xmlrpclib #3k
 from repugeng.Backend import Backend
+from repugeng.compat3k import *
 class RpcBackend(Backend):
     _plot_cache=None
     _already=None

@@ -1,4 +1,7 @@
-from SimpleXMLRPCServer import SimpleXMLRPCServer
+try:
+    from SimpleXMLRPCServer import SimpleXMLRPCServer
+except ImportError:
+    from xmlrpc.server import SimpleXMLRPCServer #3k
 from repugeng.BackendSelector import BackendSelector
 class RpcRemote(object):
     def __init__(self):
