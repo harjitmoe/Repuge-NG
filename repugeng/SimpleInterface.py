@@ -1,6 +1,7 @@
 import sys
 from repugeng.BackendSelector import BackendSelector
 class SimpleInterface(object):
+    #Semantically public
     def __init__(self,playerobj,backend=None,debug_dummy=False):
         self.playerobj=playerobj
         self.level=playerobj.level
@@ -12,19 +13,6 @@ class SimpleInterface(object):
                 self.backend=backend
             else:
                 self.backend=BackendSelector.get_backend()
-    def get_offsets(self):
-        """Used for LOS optimisation if only part of map visible."""
-        width=79
-        height=19
-        offsetx=0
-        roffsetx=width
-        offsety=0
-        roffsety=height
-        return width,height,offsetx,offsety,roffsetx,roffsety
-    def get_viewport_grids(self):
-        return self.generic_coords,self.level.grid,self.level.objgrid
-    def get_viewport_pt(self):
-        return self.playerobj.pt
     def redraw(self):
         """Draw the map (grid and objgrid).
         
@@ -69,4 +57,18 @@ class SimpleInterface(object):
         return self.backend.ask_question(s,p)
     def get_key_event(self):
         return self.backend.get_key_event()
+    #Semantically protected
+    def get_offsets(self):
+        """Used for LOS optimisation if only part of map visible."""
+        width=79
+        height=19
+        offsetx=0
+        roffsetx=width
+        offsety=0
+        roffsety=height
+        return width,height,offsetx,offsety,roffsetx,roffsety
+    def get_viewport_grids(self):
+        return self.generic_coords,self.level.grid,self.level.objgrid
+    def get_viewport_pt(self):
+        return self.playerobj.pt
         

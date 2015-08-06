@@ -1,22 +1,18 @@
 import sys,xmlrpclib,thread
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from repugeng.SimpleInterface import SimpleInterface
+from repugeng.BackendSelector import BackendSelector
 class RpcInterfaceServer(SimpleInterface):
+    #Semantically public
     def __init__(self,playerobj,backend=None,debug_dummy=False):
-        self.server=SimpleXMLRPCServer(("localhost", 8001),allow_none=True,logRequests=False)
-        self.server.register_instance(self)
-        thread.start_new_thread(self.server.serve_forever,())
-        self.remote=xmlrpclib.ServerProxy("http://localhost:8000/",allow_none=True)
-        self.remote.init(debug_dummy,8001)
-        self.level_map=[]
+        if not debug_dummy:
+            if backend:
+                self.backend=backend
+            else:
+                self.backend=BackendSelector.get_backend()
+        remoteport=int(self.backend.ask_question("Port used by client: "))
+        self.remote=xmlrpclib.ServerProxy("http://localhost:%d/"%remoteport,allow_none=True)
         self.playerobj=playerobj
-    def get_offsets(self):
-        """Used for LOS optimisation if only part of map visible."""
-        return self.remote.get_offsets()
-    def get_viewport_grids(self):
-        return self.remote.get_viewport_grids()
-    def get_viewport_pt(self):
-        return self.remote.get_viewport_pt()
     def redraw(self):
         """Draw the map (grid and objgrid).
         
@@ -25,25 +21,31 @@ class RpcInterfaceServer(SimpleInterface):
         
         Unless you are a FOV/LOS engine, you probably don't want to override 
         this."""
-        return self.remote.redraw(self.get_pt(),self.get_grid(),self.get_flat_objgrid())
+        return self.remote.redraw(self.playerobj.pt,self.level.grid,self.get_flat_objgrid())
     def level_rebase(self,newlevel):
         """Link to new level, and bin any cached info about the current level."""
         self.level=newlevel
-        if newlevel in self.level_map:
-            codelevel=self.level_map.index(newlevel)
-        else:
-            codelevel=len(self.level_map)
-            self.level_map.append(codelevel)
-        return self.remote.level_rebase(codelevel)
+        try:
+            self.backend.set_window_title("[SERVER] "+self.level.title_window)
+        except NotImplementedError:
+            pass
+        return self.remote.level_load(self.level.title_window,self.level.grid)
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
-        pass
+        return self.remote.flush_fov()
     def close(self):
-        sys.exit()
-    def get_title(self):
-        return self.level.title_window
-    def get_grid(self):
-        return self.level.grid
+        self.remote.close()
+        sys.exit() #For now
+    def push_message(self,s):
+        return self.remote.push_message(s)
+    def ask_question(self,s):
+        return self.remote.ask_question(s)
+    def slow_ask_question(self,s,p=""):
+        return self.remote.ask_question(s,p)
+    def get_key_event(self):
+        return self.remote.get_key_event()
+    #Semantically private
+    remote=None
     def get_flat_objgrid(self):
         out=[]
         for col in self.level.objgrid:
@@ -53,13 +55,3 @@ class RpcInterfaceServer(SimpleInterface):
                 outcol.append(outpile)
             out.append(outcol)
         return out
-    def get_pt(self):
-        return self.playerobj.pt
-    def push_message(self,s):
-        return self.remote.push_message(s)
-    def ask_question(self,s):
-        return self.remote.ask_question(s)
-    def slow_ask_question(self,s,p=""):
-        return self.remote.ask_question(s,p)
-    def get_key_event(self):
-        return self.remote.get_key_event()
