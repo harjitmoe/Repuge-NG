@@ -4,6 +4,8 @@ from repugeng.Level import Level
 from repugeng.ProxyInterface import ProxyInterface
 
 class SampleMap(Level):
+    WIDTH=25
+    HEIGHT=6
     coded_grid="""\
 gooooooooooooG
 d#,......,,,.jooooooo

@@ -5,6 +5,9 @@ class SimpleInterface(object):
     def __init__(self):
         self.client=SimpleXMLRPCServer(("localhost", 8000),allow_none=True,logRequests=False)
         self.client.register_instance(self)
+        self._pt=None
+        self._grid=None
+        self._fobjgrid=None
         self.client.serve_forever()
     def init(self,debug_dummy=False,number=8001):
         self.remote=xmlrpclib.ServerProxy("http://localhost:%d/"%number,allow_none=True)
@@ -22,10 +25,10 @@ class SimpleInterface(object):
         roffsety=height
         return width,height,offsetx,offsety,roffsetx,roffsety
     def get_viewport_grids(self):
-        return self.generic_coords,self.remote.get_grid(),self.remote.get_flat_objgrid()
+        return self.generic_coords,(self._grid or self.remote.get_grid()),(self._fobjgrid or self.remote.get_flat_objgrid())
     def get_viewport_pt(self):
-        return self.remote.get_pt()
-    def redraw(self):
+        return (self._pt or self.remote.get_pt())
+    def redraw(self,pt=None,grid=None,fobjgrid=None):
         """Draw the map (grid and objgrid).
         
         Presently this, by default, draws grid and (above it) objgrid at once
@@ -33,7 +36,10 @@ class SimpleInterface(object):
         
         Unless you are a FOV/LOS engine, you probably don't want to override 
         this."""
-        if self.remote.get_pt():
+        self._pt=pt
+        self._grid=grid
+        self._fobjgrid=fobjgrid
+        if self._pt or self.remote.get_pt():
             self.backend.goto_point(*self.get_viewport_pt())
         colno=0
         for coordscol,col,col2 in zip(*self.get_viewport_grids()):

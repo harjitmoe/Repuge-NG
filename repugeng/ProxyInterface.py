@@ -25,7 +25,7 @@ class ProxyInterface(SimpleInterface):
         
         Unless you are a FOV/LOS engine, you probably don't want to override 
         this."""
-        return self.remote.redraw()
+        return self.remote.redraw(self.get_pt(),self.get_grid(),self.get_flat_objgrid())
     def level_rebase(self,newlevel):
         """Link to new level, and bin any cached info about the current level."""
         self.level=newlevel
