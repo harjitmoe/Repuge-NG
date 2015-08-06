@@ -16,15 +16,11 @@ class Game(object):
     #
     title_window="Repuge-NG Application"
     #
-    playerobj=None
-    level=None
-    #
     def __init__(self,start=1):
         self.bug_report[__name__]={}
         try:
-            self.playerobj=self.PlayerClass(self,play=1)
-            self.level_advance()
-            self.whence="starting"
+            playerobj=self.PlayerClass(self,play=1)
+            self.level_initiate(playerobj)
             self.run()
         except SystemExit:
             raise
@@ -48,32 +44,18 @@ class Game(object):
             else:
                 raise exception
     #
-    class AdvanceLevelException(BaseException):pass
-    class RegressLevelException(BaseException):pass
     whence=None #starting, advancement, regression, jumping
     def run(self):
-        #Designed to avoid gaining recursion levels with each level
-        #Levels are advanced or regressed by exception control
-        #Level.run is always executed at same stack depth
         while 1:
-            try:
-                self.level.bring_to_front(self.playerobj,self.whence)
-                self.level.run()
-            except Game.AdvanceLevelException:
-                self.whence="advancement"
-                self.level_advance()
-            except Game.RegressLevelException:
-                self.whence="regression"
-                self.level_regress()
+            #Each creature gets a move:
+            for obj in GridObject.all_objects:
+                obj.tick()
     #
-    def level_advance(self):
-        """Should set self.level and not be called directly.
-        
-        Please raise Game.AdvanceLevelException to trigger this."""
+    def level_initiate(self,playerobj):
         raise NotImplementedError
     #
-    def level_regress(self):
-        """Should set self.level and not be called directly.
-        
-        Please raise Game.RegressLevelException to trigger this."""
+    def level_advance(self,playerobj):
+        raise NotImplementedError
+    #
+    def level_regress(self,playerobj):
         raise NotImplementedError

@@ -117,20 +117,7 @@ class Level(object):
         obj.pt=points[-1]
     # move_user(self,pt) removed as obsolete, use PlayableObject.place
     #
-    def run(self,resume=0):
-        """Level entry point.  May be overridden by subclass.
-        
-        Default behaviour is an event loop.  Movement is passed to handle_move(...).
-        Other commands are passed to handle_command(...).
-        
-        Resume is nonzero when being resumed from a save (TODO implement saving).
-        """
-        if not resume:
-            self.initial_cutscene()
-        while 1:
-            #Each creature gets a move:
-            for obj in GridObject.all_objects:
-                obj.tick()
+    # run moved to Game, surprisingly
     #
     def _dump_report(self):
         import pickle,time
@@ -157,7 +144,5 @@ class Level(object):
         "enter", "\r", "\n", "\r\n") for example."""
         return 0
     #
-    def initial_cutscene(self):
-        """Hook called by default implementation of run() before the event loop"""
-        pass
+    # initial_cutscene removed as could not be kept compatible
     #

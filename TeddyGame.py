@@ -10,18 +10,21 @@ class TeddyGame(Game):
     leveltypes=None
     levindex=None
     _inited=0 #Int is an immutable type
-    def _stack_init(self):
+    def level_initiate(self,playerobj):
         if not self._inited:
             self.leveltypes=[None,TeddyMapB(self),TeddyMapG(self),TeddyMapU(self),None]
-            self.levindex=1 #will be immediately +1'd by level_advance
             self._inited=1
-    def level_advance(self):
-        self._stack_init()
-        self.levindex+=1
-        self.level=self.leveltypes[self.levindex]
-    def level_regress(self):
-        self.levindex-=1
-        self.level=self.leveltypes[self.levindex]
+        playerobj.levindex=2
+        playerobj.level=self.leveltypes[playerobj.levindex]
+        playerobj.level.bring_to_front(playerobj,"starting")
+    def level_advance(self,playerobj):
+        playerobj.levindex+=1
+        playerobj.level=self.leveltypes[playerobj.levindex]
+        playerobj.level.bring_to_front(playerobj,"advancement")
+    def level_regress(self,playerobj):
+        playerobj.levindex-=1
+        playerobj.level=self.leveltypes[playerobj.levindex]
+        playerobj.level.bring_to_front(playerobj,"regression")
 #
 if __name__=="__main__":
     import sys

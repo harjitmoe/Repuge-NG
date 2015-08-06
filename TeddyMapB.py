@@ -75,7 +75,7 @@ class TeddyMapB(Level):
     
     def handle_command(self,e,playerobj):
         if e in (">","\r","\n","\r\n"," ","return","enter","space") and self.get_index_grid(*playerobj.pt)[0]=="staircase":
-            raise self.game.AdvanceLevelException
+            self.game.level_advance(playerobj)
         elif e in ("o",):
             e2=playerobj.myinterface.get_key_event() #estraDiol (an oestrogen)
             target=playerobj.conv_to_target(e2)

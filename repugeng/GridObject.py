@@ -64,7 +64,8 @@ class GridObject(object):
         if newlevel==None:
             newlevel=oldlevel
         if self.pt!=None and oldlevel!=None:
-            oldlevel.objgrid[self.pt[0]][self.pt[1]].remove(self)
+            if self in oldlevel.objgrid[self.pt[0]][self.pt[1]]:
+                oldlevel.objgrid[self.pt[0]][self.pt[1]].remove(self)
         self.pt=(destx,desty)
         self.level_rebase(newlevel)
         if len(newlevel.objgrid[destx][desty]) and hasattr(newlevel.objgrid[destx][desty][-1],"myinterface") and newlevel.objgrid[destx][desty][-1].myinterface!=None:
