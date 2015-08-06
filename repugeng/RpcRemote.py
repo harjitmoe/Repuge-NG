@@ -1,15 +1,16 @@
 import sys,xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from repugeng.BackendSelector import BackendSelector
-class RpcInterfaceClient(object):
+class RpcRemote(object):
     def __init__(self):
-        self.client=SimpleXMLRPCServer(("localhost", 8000),allow_none=True,logRequests=False)
-        self.client.register_instance(self,False)
+        self.backend=BackendSelector.get_backend()
+        port=int(self.backend.ask_question("Use port: "))
+        self.server=SimpleXMLRPCServer(("localhost", port),allow_none=True,logRequests=False)
+        self.server.register_instance(self,False)
         self._pt=None
         self._grid=None
         self._fobjgrid=None
-        self.backend=BackendSelector.get_backend()
-        self.client.serve_forever()
+        self.server.serve_forever()
     def get_offsets(self):
         """Used for LOS optimisation if only part of map visible."""
         width=79
@@ -49,7 +50,7 @@ class RpcInterfaceClient(object):
             colno+=1
     def level_load(self,title,grid):
         try:
-            self.backend.set_window_title("[CLIENT] "+title)
+            self.backend.set_window_title("[REMOTE] "+title)
         except NotImplementedError:
             pass
         self.generic_coords=map(lambda h:zip(*enumerate(h))[0],grid)
@@ -57,8 +58,6 @@ class RpcInterfaceClient(object):
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
         pass
-    def close(self):
-        sys.exit()
     def push_message(self,s):
         return self.backend.push_message(s)
     def ask_question(self,s):
@@ -67,3 +66,5 @@ class RpcInterfaceClient(object):
         return self.backend.ask_question(s,p)
     def get_key_event(self):
         return self.backend.get_key_event()
+    def close(self):
+        sys.exit()
