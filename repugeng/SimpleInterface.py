@@ -1,10 +1,10 @@
 import sys
 from repugeng.BackendSelector import BackendSelector
 class SimpleInterface(object):
-    def __init__(self,playerobj,backend=None,debug_dummy=False):
-        self.playerobj=playerobj
-        self.level=playerobj.level
-        self.game=playerobj.game
+    def init(self,debug_dummy=False,number=8001):
+        self.client=SimpleXMLRPCServer(("localhost", 8000))
+        self.client.register_instance(self)
+        self.remote=xmlrpclib.ServerProxy("http://localhost:%d/"%number)
         #
         if not debug_dummy:
             self.game.bug_report[__name__]={}
@@ -22,9 +22,9 @@ class SimpleInterface(object):
         roffsety=height
         return width,height,offsetx,offsety,roffsetx,roffsety
     def get_viewport_grids(self):
-        return self.generic_coords,self.level.grid,self.level.objgrid
+        return self.generic_coords,self.remote._get_grid(),self.remote._get_flat_objgrid()
     def get_viewport_pt(self):
-        return self.playerobj.pt
+        return self.remote._get_pt()
     def redraw(self):
         """Draw the map (grid and objgrid).
         
@@ -33,7 +33,7 @@ class SimpleInterface(object):
         
         Unless you are a FOV/LOS engine, you probably don't want to override 
         this."""
-        if self.playerobj.pt:
+        if self.remote._get_pt():
             self.backend.goto_point(*self.get_viewport_pt())
         colno=0
         for coordscol,col,col2 in zip(*self.get_viewport_grids()):
@@ -41,7 +41,7 @@ class SimpleInterface(object):
             for coords,row,row2 in zip(coordscol,col,col2):
                 #print rowno,colno,col
                 if row2:
-                    self.backend.plot_tile(colno,rowno,row2[-1].tile)
+                    self.backend.plot_tile(colno,rowno,row2[-1])
                 elif row:
                     self.backend.plot_tile(colno,rowno,row[0])
                 rowno+=1
@@ -51,10 +51,10 @@ class SimpleInterface(object):
         self.level=newlevel
         #Attempt to set title
         try:
-            self.backend.set_window_title(self.level.title_window)
+            self.backend.set_window_title(self.remote._get_title())
         except NotImplementedError:
             pass
-        self.generic_coords=map(lambda h:zip(*enumerate(h))[0],self.level.grid)
+        self.generic_coords=map(lambda h:zip(*enumerate(h))[0],self.remote._get_grid())
         self.generic_coords=map(lambda x:map((lambda y,x=x[0]:(x,y)),x[1]), enumerate(self.generic_coords))
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
