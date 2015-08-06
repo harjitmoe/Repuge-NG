@@ -1,7 +1,7 @@
 import sys,xmlrpclib,thread
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from repugeng.SimpleInterface import SimpleInterface
-class ProxyInterface(SimpleInterface):
+class RpcInterfaceServer(SimpleInterface):
     def __init__(self,playerobj,backend=None,debug_dummy=False):
         self.server=SimpleXMLRPCServer(("localhost", 8001),allow_none=True,logRequests=False)
         self.server.register_instance(self)

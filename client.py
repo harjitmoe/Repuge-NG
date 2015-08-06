@@ -1,3 +1,3 @@
-from repugeng.SimpleInterface import SimpleInterface
+from repugeng.RpcInterfaceClient import RpcInterfaceClient
 
-SimpleInterface()
+RpcInterfaceClient()
