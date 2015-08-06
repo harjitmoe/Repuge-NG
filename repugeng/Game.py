@@ -19,8 +19,7 @@ class Game(object):
     def __init__(self,start=1):
         self.bug_report[__name__]={}
         try:
-            playerobj=self.PlayerClass(self,play=1)
-            self.level_initiate(playerobj)
+            self.add_players()
             self.run()
         except SystemExit:
             raise
@@ -50,6 +49,10 @@ class Game(object):
             #Each creature gets a move:
             for obj in GridObject.all_objects:
                 obj.tick()
+    #
+    def add_players(self):
+        playerobj=self.PlayerClass(self,play=1)
+        self.level_initiate(playerobj)
     #
     def level_initiate(self,playerobj):
         raise NotImplementedError

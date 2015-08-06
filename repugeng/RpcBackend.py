@@ -1,19 +1,17 @@
 import sys,xmlrpclib
 from repugeng.Backend import Backend
-import repugeng.BackendSelector
 class RpcBackend(Backend):
     _plot_cache=None
     _already=None
     def __init__(self):
-        self.backend2=repugeng.BackendSelector.BackendSelector.get_backend(rpc=False)
-        port=int(self.backend2.ask_question("Port used by remote: "))
+        port=int(raw_input("Port used by remote: "))
         self.backend=xmlrpclib.ServerProxy("http://localhost:%d/"%port,allow_none=True)
         self._plot_cache=[]
         self._already={}
     def __getattribute__(self,attr):
         if attr.startswith("__"):
             return object.__getattribute__(self,attr)
-        if attr in ("backend","backend2","plot_tile","flush_plots","goto_point","_plot_cache","_already"):
+        if attr in ("backend","plot_tile","flush_plots","goto_point","_plot_cache","_already"):
             return object.__getattribute__(self,attr)
         return getattr(self.backend,attr)
     def plot_tile(self,y,x,tile_id):

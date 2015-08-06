@@ -9,7 +9,7 @@ class BackendSelector(object):
         raise TypeError("attempt to create instance of static class")
     dispatcher={"nt":[WconioWindowsBackend],"posix":[PosixBackend]}
     @classmethod
-    def get_backend(cls,rpc=False):
+    def get_backend(cls,rpc=True):
         if rpc:
             return RpcBackend()
         for i in cls.dispatcher[os.name]:

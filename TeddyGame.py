@@ -25,6 +25,11 @@ class TeddyGame(Game):
         playerobj.levindex-=1
         playerobj.level=self.leveltypes[playerobj.levindex]
         playerobj.level.bring_to_front(playerobj,"regression")
+    def add_players(self):
+        playerobj=self.PlayerClass(self,play=1)
+        self.level_initiate(playerobj)
+        playerobj=self.PlayerClass(self,play=1)
+        self.level_initiate(playerobj)
 #
 if __name__=="__main__":
     import sys
