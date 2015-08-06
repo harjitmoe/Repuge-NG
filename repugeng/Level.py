@@ -120,12 +120,6 @@ class Level(object):
     #
     # run moved to Game, surprisingly
     #
-    def _dump_report(self):
-        import pickle,time
-        f=open("bugreport.%010d.txt"%time.time(),"w")
-        pickle.dump(self.bug_report,f)
-        f.close()
-    #
     def handle_move(self,dest,playerobj):
         """Handle a move command by the user. --> True to go ahead or False 
         to block the move.

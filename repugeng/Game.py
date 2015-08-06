@@ -47,6 +47,12 @@ class Game(object):
             else:
                 raise exception
     #
+    def _dump_report(self):
+        import pickle,time
+        f=open("bugreport.%010d.txt"%time.time(),"w")
+        pickle.dump(self.bug_report,f)
+        f.close()
+    #
     def run(self):
         while 1:
             #Each creature gets a move:
