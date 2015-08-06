@@ -16,6 +16,8 @@ class Level(object):
     - starting_pt - sets the initial location of the user.
     - pt - location of user at time of access.
     """
+    WIDTH=100
+    HEIGHT=100
     def __init__(self,game):
         self.game=game
         self.initmap()
@@ -68,20 +70,15 @@ class Level(object):
         The code characters used are included in the grid as extra data.
         So multiple internally different e.g. vfeature can be coded with 
         different characters and detected as different by the level code."""
-        #Width 50 not 80 as 16x16 tiles are a conceivable backend and
-        #my monitor's max res is 1024x768
-        #Height 19 as this is the maximum height to avoid lxterminal 
-        #scrolling (thus shifting the viewport aaaargggggghhhh)*
-        #*How I'd configured it dimension-wise when picking dimensions, thatis
-        self.grid=self._gengrid(100,100)
-        self.objgrid=self._gengrid(100,100)
+        self.grid=self._gengrid(self.WIDTH,self.HEIGHT)
+        self.objgrid=self._gengrid(self.WIDTH,self.HEIGHT)
         rowno=0
         for row in self.coded_grid.split("\n"):
             colno=0
             for col in row:
                 self.grid[colno][rowno]=self.list_of_symbols[col],col
                 colno+=1
-            while len(row)<50:
+            while len(row)<self.WIDTH:
                 self.grid[len(row)][rowno]=("space"," ")
                 row+=" "
             rowno+=1
