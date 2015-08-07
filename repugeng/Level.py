@@ -115,7 +115,7 @@ class Level(object):
     def run(self):
         while 1:
             #Each creature gets a move:
-            for obj in self.child_objects:
+            for obj in self.child_objects[:]:
                 obj.tick()
             #Avoid inactive levels tightlooping and throttling
             #the system:
