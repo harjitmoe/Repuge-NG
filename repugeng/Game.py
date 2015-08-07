@@ -54,8 +54,9 @@ class Game(object):
     #
     def run(self):
         if self.use_rpc:
+            print ("Please do not close this.")
             import code
-            code.interact(banner="Entering debug prompt...",local=locals())
+            code.interact(banner="Entering leader debug prompt...",local=locals())
         else:
             while 1:
                 #Idle as subservient threads do the work
