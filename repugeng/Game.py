@@ -55,9 +55,8 @@ class Game(object):
     #
     def run(self):
         while 1:
-            #Each creature gets a move:
-            for obj in GridObject.all_objects:
-                obj.tick()
+            #Idle as subservient threads do the work
+            time.sleep(10000)
     #
     interfaces=None
     def redraw(self):

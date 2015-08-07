@@ -27,7 +27,7 @@ class Level(object):
         self.child_interfaces=[]
         self.initmap()
         self.initialise()
-        #thread.start_new_thread(self.run,())
+        thread.start_new_thread(self.run,())
     def bring_to_front(self, playerobj, whence="unspecified"):
         """To be called to make this level the active level for a 
         player, which may be anything from immediately after creation
