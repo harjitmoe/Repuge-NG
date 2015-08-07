@@ -116,6 +116,8 @@ class Level(object):
         while 1:
             #Each creature gets a move:
             for obj in self.child_objects[:]:
+                while self.game.loading_lock:
+                    time.sleep(0.2)
                 obj.tick()
             #Avoid inactive levels tightlooping and throttling
             #the system:

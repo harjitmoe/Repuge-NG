@@ -59,7 +59,9 @@ class Game(object):
             #Idle as subservient threads do the work
             time.sleep(10000)
     #
+    loading_lock=0
     def add_players(self):
+        self.loading_lock=1
         self._p=players=[]
         if self.use_rpc:
             number=int(raw_input("How many players (+ve number in figures): "))
@@ -71,6 +73,7 @@ class Game(object):
             players.append(self.PlayerClass(self,play=1))
         for playerobj in players:
             self.level_initiate(playerobj)
+        self.loading_lock=0
     #
     def level_initiate(self,playerobj):
         raise NotImplementedError
