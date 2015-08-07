@@ -1,4 +1,9 @@
-import time,sys,traceback,thread
+import time,sys,traceback
+#The "threading" module over-complicates things imo
+try:
+    from thread import start_new_thread
+except ImportError:
+    from _thread import start_new_thread #3k
 from repugeng.GridObject import GridObject
 from repugeng.PlayableObject import PlayableObject
 from repugeng.SimpleInterface import SimpleInterface
@@ -27,7 +32,7 @@ class Level(object):
         self.child_interfaces=[]
         self.initmap()
         self.initialise()
-        thread.start_new_thread(self.run,())
+        start_new_thread(self.run,())
     def bring_to_front(self, playerobj, whence="unspecified"):
         """To be called to make this level the active level for a 
         player, which may be anything from immediately after creation
