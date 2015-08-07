@@ -26,7 +26,7 @@ class TeddyMapG(Level):
     # can then be distinguished in the run code
     list_of_symbols={"/":"wall_corner_nw","\\":"wall_corner_ne","`":"wall_corner_sw","'":"wall_corner_se","|":"vwall","-":"hwall",":":"vfeature","=":"hfeature"," ":"space",".":"floor1",",":"floor2","#":"floor3","T":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","&":"staircase","%":"staircase"}
     starting_pt=(16,13)
-    title_window="Basic Sample Repuge-NG Map"
+    title_window="The Verres' Ground Floor"
     def bring_to_front(self, playerobj, whence="unspecified"):
         if whence=="advancement":
             playerobj.place(14,6,self)

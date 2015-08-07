@@ -76,6 +76,7 @@ class GridObject(object):
         else:
             newlevel.objgrid[destx][desty].append(self)
         self.status="placed"
+        newlevel.redraw()
     def level_rebase(self,newlevel):
         """Re-associate with a different level.
         
@@ -94,6 +95,7 @@ class GridObject(object):
             self.level.child_objects.remove(self)
             assert self not in self.level.child_objects
             self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
+            oldlevel=self.level
             self.level=None
             self.pt=None
         self.status="unplaced"
