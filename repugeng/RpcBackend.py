@@ -1,16 +1,17 @@
 import sys
-try:
-    import xmlrpclib
-except ImportError:
-    import xmlrpc.client as xmlrpclib #3k
 from repugeng.Backend import Backend
 from repugeng.compat3k import *
 class RpcBackend(Backend):
     _plot_cache=None
     _already=None
     def __init__(self):
-        port=int(raw_input("Port used by next remote: "))
-        self.backend=xmlrpclib.ServerProxy("http://localhost:%d/"%port,allow_none=True)
+        try:
+            import xmlrpclib
+        except ImportError:
+            import xmlrpc.client as xmlrpclib #3k
+        host=raw_input("Host of next remote (blank for localhost): ").strip() or "localhost"
+        port=int(raw_input("Port used: "))
+        self.backend=xmlrpclib.ServerProxy("http://%s:%d/"%(host,port),allow_none=True)
         self._plot_cache=[]
         self._already={}
     def __getattribute__(self,attr):
@@ -29,3 +30,13 @@ class RpcBackend(Backend):
     def flush_plots(self):
         self.system.multicall(self._plot_cache)
         self._plot_cache=[]
+    @staticmethod
+    def works_p():
+        try:
+            import xmlrpclib
+        except:
+            try:
+                import xmlrpc.client as xmlrpclib #3k
+            except:
+                return False
+        return True
