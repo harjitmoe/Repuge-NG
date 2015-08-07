@@ -21,8 +21,11 @@ class DumbLosInterface(SimpleInterface):
             return True,"ind"
         if not hasattr(self,"playerobj") or self.playerobj==None or self.playerobj.pt==None:
             return True,"ind"
-        if ((x,y) in self._los_cache) and not passthrough_once:
-            return self._los_cache[(x,y)],"nul"
+        if ((x,y) in self._los_cache) and not passthrough_once: 
+            #Apparently (x,y) can still not be in it even after
+            #the first conditional.  What the skanking heck?
+            if ((x,y) in self._los_cache):
+                return self._los_cache[(x,y)],"nul"
         if (x<0) or (y<0) or (x>=len(self.level.grid)) or (y>=len(self.level.grid[0])):
             return False,"nul"
         

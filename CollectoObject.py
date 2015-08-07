@@ -48,7 +48,7 @@ class CollectoObject(GridObject):
         self.place(*target)
     #
     def handle_contact(self,playerobj):
-        selg.game.redraw()
+        self.level.redraw()
         self.game.bug_report[__name__]={}
         duration=random.normalvariate(15,5)
         self.game.bug_report[__name__]["duration"]=duration

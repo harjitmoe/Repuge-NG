@@ -22,7 +22,6 @@ class Game(object):
     def __init__(self,start=1):
         self.bug_report[__name__]={}
         try:
-            self.interfaces=[]
             self.add_players()
             self.run()
         except SystemExit:
@@ -54,16 +53,14 @@ class Game(object):
         f.close()
     #
     def run(self):
+        import code
+        code.interact(local=locals())
         while 1:
             #Idle as subservient threads do the work
             time.sleep(10000)
     #
-    interfaces=None
-    def redraw(self):
-        for aninterface in self.interfaces:
-            aninterface.redraw()
-    #
     def add_players(self):
+        self._p=players=[]
         if self.use_rpc:
             number=int(raw_input("How many players (+ve number in figures): "))
             print ("Please start %d instance(s) of remote.py or remote.exe with unique ports."%number)
@@ -71,7 +68,8 @@ class Game(object):
         else:
             number=1
         for i in range(number):
-            playerobj=self.PlayerClass(self,play=1)
+            players.append(self.PlayerClass(self,play=1))
+        for playerobj in players:
             self.level_initiate(playerobj)
     #
     def level_initiate(self,playerobj):

@@ -117,6 +117,11 @@ class Level(object):
             #Each creature gets a move:
             for obj in self.child_objects:
                 obj.tick()
+            #Avoid inactive levels tightlooping and throttling
+            #the system:
+            time.sleep(0.2)
+            if not self.child_objects:
+                time.sleep(0.4)
     #
     def get_index_grid(self,x,y):
         return self.grid[x][y]

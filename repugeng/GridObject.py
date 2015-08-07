@@ -82,6 +82,8 @@ class GridObject(object):
         Subclasses may need to override this to take additional action here."""
         if self.status=="placed":
             self.lift()
+        if self.level:
+            assert self not in self.level.child_objects
         self.level=newlevel
         self.level.child_objects.append(self)
         if self.inventory!=None:
@@ -90,6 +92,7 @@ class GridObject(object):
         """Remove from the level."""
         if self.pt!=None:
             self.level.child_objects.remove(self)
+            assert self not in self.level.child_objects
             self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
             self.level=None
             self.pt=None

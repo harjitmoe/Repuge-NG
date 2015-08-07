@@ -8,7 +8,6 @@ class SimpleInterface(object):
         if self.level:
             self.level.child_interfaces.append(self)
         self.game=playerobj.game
-        self.game.interfaces.append(self)
         #
         if not debug_dummy:
             self.game.bug_report[__name__]={}
@@ -44,11 +43,18 @@ class SimpleInterface(object):
             if self.level:
                 self.level.child_interfaces.remove(self)
                 assert self not in self.level.child_interfaces
+                self.backend.push_message("You leave the level.")
+                self.level.broadcast("A player has left this level.")
+                if len(self.level.child_interfaces)<=1:
+                    self.level.broadcast("This level is now deserted.")
             self.level=newlevel
             if not self.level.child_interfaces:
-                self.backend.push_message("You are the only player in this level")
+                self.backend.push_message("You arrive on a deserted level.")
             else:
-                self.level.broadcast("Another player has arrived.")
+                self.backend.push_message("You arrive on an occupied level.")
+                self.level.broadcast("A player has arrived.")
+                if len(self.level.child_interfaces)==2:
+                    self.level.broadcast("This level is now occupied.")
             self.level.child_interfaces.append(self)
             try:
                 self.backend.set_window_title(self.level.title_window)
