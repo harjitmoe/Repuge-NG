@@ -5,6 +5,8 @@ class SimpleInterface(object):
     def __init__(self,playerobj,use_rpc=False,backend=None,debug_dummy=False):
         self.playerobj=playerobj
         self.level=playerobj.level
+        if self.level:
+            self.level.child_interfaces.append(self)
         self.game=playerobj.game
         self.game.interfaces.append(self)
         #
@@ -38,14 +40,18 @@ class SimpleInterface(object):
         self.backend.flush_plots()
     def level_rebase(self,newlevel):
         """Link to new level, and bin any cached info about the current level."""
-        self.level=newlevel
-        #Attempt to set title
-        try:
-            self.backend.set_window_title(self.level.title_window)
-        except NotImplementedError:
-            pass
-        self.generic_coords=map(lambda h:zip(*enumerate(h))[0],self.level.grid)
-        self.generic_coords=map(lambda x:map((lambda y,x=x[0]:(x,y)),x[1]), enumerate(self.generic_coords))
+        if self.level!=newlevel:
+            if self.level:
+                self.level.child_interfaces.remove(self)
+                assert self not in self.level.child_interfaces
+            self.level=newlevel
+            self.level.child_interfaces.append(self)
+            try:
+                self.backend.set_window_title(self.level.title_window)
+            except NotImplementedError:
+                pass
+            self.generic_coords=map(lambda h:zip(*enumerate(h))[0],self.level.grid)
+            self.generic_coords=map(lambda x:map((lambda y,x=x[0]:(x,y)),x[1]), enumerate(self.generic_coords))
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
         pass

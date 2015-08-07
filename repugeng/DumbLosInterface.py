@@ -120,7 +120,7 @@ class DumbLosInterface(SimpleInterface):
     def level_rebase(self,newlevel):
         """Link to new level, and bin any cached info about the current level."""
         if self.level!=newlevel:
-            self.level=newlevel
+            SimpleInterface.level_rebase(self,newlevel)
             self._los_cache={}
             self._fov_cache={}
             self.game.redraw()

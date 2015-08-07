@@ -67,8 +67,8 @@ class Game(object):
     def add_players(self):
         if self.use_rpc:
             number=int(raw_input("How many players (+ve number in figures): "))
-            print ("Please start %d instance(s) of remote.py with unique ports."%number)
-            print ("Once you have done this, enter the port numbers here.")
+            print ("Please start %d instance(s) of remote.py or remote.exe with unique ports."%number)
+            print ("Once you have done this, enter the hosts and ports here.")
         else:
             number=1
         for i in range(number):

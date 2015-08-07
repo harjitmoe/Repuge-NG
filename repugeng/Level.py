@@ -1,4 +1,4 @@
-import time,sys,traceback
+import time,sys,traceback,thread
 from repugeng.GridObject import GridObject
 from repugeng.PlayableObject import PlayableObject
 from repugeng.SimpleInterface import SimpleInterface
@@ -18,10 +18,16 @@ class Level(object):
     """
     WIDTH=100
     HEIGHT=100
+    #
+    child_objects=None
+    child_interfaces=None
     def __init__(self,game):
         self.game=game
+        self.child_objects=[]
+        self.child_interfaces=[]
         self.initmap()
         self.initialise()
+        #thread.start_new_thread(self.run,())
     def bring_to_front(self, playerobj, whence="unspecified"):
         """To be called to make this level the active level for a 
         player, which may be anything from immediately after creation
@@ -100,6 +106,15 @@ class Level(object):
         """Ran after playerobj placed.  To be overridden by subclasses."""
         pass
     #
+    def redraw(self):
+        for aninterface in self.child_interfaces:
+            aninterface.redraw()
+    def run(self):
+        while 1:
+            #Each creature gets a move:
+            for obj in self.child_objects:
+                obj.tick()
+    #
     def get_index_grid(self,x,y):
         return self.grid[x][y]
     def set_index_grid(self,v,x,y):
@@ -117,8 +132,6 @@ class Level(object):
         self.objgrid[points[-1][0]][points[-1][1]].append(obj)
         obj.pt=points[-1]
     # move_user(self,pt) removed as obsolete, use PlayableObject.place
-    #
-    # run moved to Game, surprisingly
     #
     def handle_move(self,dest,playerobj):
         """Handle a move command by the user. --> True to go ahead or False 

@@ -65,7 +65,7 @@ class GridObject(object):
             newlevel=oldlevel
         if self.pt!=None and oldlevel!=None:
             if self in oldlevel.objgrid[self.pt[0]][self.pt[1]]:
-                oldlevel.objgrid[self.pt[0]][self.pt[1]].remove(self)
+                self.lift()
         self.pt=(destx,desty)
         self.level_rebase(newlevel)
         if len(newlevel.objgrid[destx][desty]) and hasattr(newlevel.objgrid[destx][desty][-1],"myinterface") and newlevel.objgrid[destx][desty][-1].myinterface!=None:
@@ -80,12 +80,16 @@ class GridObject(object):
         """Re-associate with a different level.
         
         Subclasses may need to override this to take additional action here."""
+        if self.status=="placed":
+            self.lift()
         self.level=newlevel
+        self.level.child_objects.append(self)
         if self.inventory!=None:
             self.inventory.level_rebase(newlevel)
     def lift(self):
         """Remove from the level."""
         if self.pt!=None:
+            self.level.child_objects.remove(self)
             self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
             self.level=None
             self.pt=None

@@ -22,6 +22,8 @@ class RpcBackend(Backend):
         return getattr(self.backend,attr)
     def plot_tile(self,y,x,tile_id):
         if ((x,y) in self._already) and (self._already[(x,y)]==tile_id):
+            #This optimisation is at this end as it takes *much* longer to send a
+            #plot_tile request over XMLRPC than it does to execute it.
             return
         self._already[(x,y)]=tile_id
         self._plot_cache.append({"methodName":"plot_tile","params":(y,x,tile_id)})
