@@ -49,13 +49,15 @@ class PlayableObject(GridObject):
     def _PlayableObject__playercheck(self): #Two underscores
         if self.myinterface==None:
             return
+        if self.level==None:
+            return
         if self.vitality<=0:
             self.die()
             return
-        self.game.redraw()
+        self.level.redraw()
         if self.status!="placed":
             return
-        if len(self.game.interfaces)>1:
+        if len(self.level.child_interfaces)>1:
             self.myinterface.push_message("Your turn.")
         e=self.myinterface.get_key_event()
         if e in ("\x03","\x04","\x1a"): #ETX ^C, EOT ^D, and ^Z
@@ -101,7 +103,7 @@ class PlayableObject(GridObject):
                 self.level.handle_command(name,self)
         else:
             self.level.handle_command(e,self)
-        if len(self.game.interfaces)>1:
+        if len(self.level.child_interfaces)>1:
             self.myinterface.push_message("Turn over.")
             self.myinterface.dump_messages()
     def up_hitpoint(self):

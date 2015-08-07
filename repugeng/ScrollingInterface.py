@@ -3,14 +3,19 @@ from repugeng.SimpleInterface import SimpleInterface
 class ScrollingInterface(SimpleInterface):
     def get_offsets(self):
         """Used for LOS optimisation and get_viewport_grids."""
+        x=y=0
+        if self.playerobj.pt:
+            x,y=self.playerobj.pt
         width=79
         height=19
-        offsetx=self.playerobj.pt[0]-(width//2)
+        offsetx=x-(width//2)
         roffsetx=offsetx+width
-        offsety=self.playerobj.pt[1]-(height//2)
+        offsety=y-(height//2)
         roffsety=offsety+height
         return width,height,offsetx,offsety,roffsetx,roffsety
     def get_viewport_grids(self):
+        if not self.level:
+            return SimpleInterface.get_viewport_grids(self)
         width,height,offsetx,offsety,roffsetx,roffsety=self.get_offsets()
         levwidth=len(self.level.grid)
         levheight=len(self.level.grid[0])

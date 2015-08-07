@@ -45,6 +45,10 @@ class SimpleInterface(object):
                 self.level.child_interfaces.remove(self)
                 assert self not in self.level.child_interfaces
             self.level=newlevel
+            if not self.level.child_interfaces:
+                self.backend.push_message("You are the only player in this level")
+            else:
+                self.level.broadcast("Another player has arrived.")
             self.level.child_interfaces.append(self)
             try:
                 self.backend.set_window_title(self.level.title_window)

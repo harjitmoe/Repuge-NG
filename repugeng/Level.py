@@ -109,6 +109,9 @@ class Level(object):
     def redraw(self):
         for aninterface in self.child_interfaces:
             aninterface.redraw()
+    def broadcast(self,m):
+        for i in self.child_interfaces:
+            i.push_message(m)
     def run(self):
         while 1:
             #Each creature gets a move:

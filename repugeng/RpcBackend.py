@@ -25,6 +25,10 @@ class RpcBackend(Backend):
             #This optimisation is at this end as it takes *much* longer to send a
             #plot_tile request over XMLRPC than it does to execute it.
             return
+        if ((x,y) not in self._already) and (tile_id=="space"):
+            #This optimisation is at this end as it takes *much* longer to send a
+            #plot_tile request over XMLRPC than it does to execute it.
+            return
         self._already[(x,y)]=tile_id
         self._plot_cache.append({"methodName":"plot_tile","params":(y,x,tile_id)})
     def goto_point(self,x,y):
