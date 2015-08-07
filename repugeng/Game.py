@@ -53,11 +53,13 @@ class Game(object):
         f.close()
     #
     def run(self):
-        import code
-        code.interact(local=locals())
-        while 1:
-            #Idle as subservient threads do the work
-            time.sleep(10000)
+        if self.use_rpc:
+            import code
+            code.interact(banner="Entering debug prompt...",local=locals())
+        else:
+            while 1:
+                #Idle as subservient threads do the work
+                time.sleep(10000)
     #
     loading_lock=0
     def add_players(self):
