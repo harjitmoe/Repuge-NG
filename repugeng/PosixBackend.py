@@ -2,6 +2,7 @@
 import sys
 from repugeng.ConsoleBackend import ConsoleBackend
 from repugeng.PosixTiles import PosixTiles
+from repugeng.TermcapUtility import TermcapUtility
 from repugeng.compat3k import *
 
 class PosixBackend(ConsoleBackend):
@@ -70,4 +71,6 @@ class PosixBackend(ConsoleBackend):
         attrs=termios.tcgetattr(0);
         termios.tcsetattr(0,termios.TCSADRAIN,attrs[:3]+[attrs[3]|termios.ICANON|termios.ECHO]+attrs[4:])
         termios.tcdrain(0)
+    def get_dimensions(self):
+        return TermcapUtility.dimensions()
 

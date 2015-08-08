@@ -1,5 +1,5 @@
 class FollowlineUtility(object):
-    """Utility for generating lines for followline(...) and followline_user(...)"""
+    """Utility for generating lines for Level.followline(...)"""
     @staticmethod
     def __new__(cls,*a,**kw):
         raise TypeError("attempt to create instance of static class")

@@ -6,8 +6,10 @@ class ScrollingInterface(SimpleInterface):
         x=y=0
         if self.playerobj.pt:
             x,y=self.playerobj.pt
-        width=79
-        height=19
+        width,height=self.backend.get_dimensions()
+        if width<0: width=79
+        if height<0: height=23
+        height-=4
         offsetx=x-(width//2)
         roffsetx=offsetx+width
         offsety=y-(height//2)

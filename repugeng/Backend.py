@@ -78,6 +78,8 @@ class Backend(object):
         
         Implementations should call dump_messages() first."""
         raise NotImplementedError("should be implemented by subclass")
+    def get_dimensions(self):
+        return (-2,-2)
     def plot_tile(self,y,x,tile_id):
         """Plot a tile at a point."""
         raise NotImplementedError("should be implemented by subclass")
