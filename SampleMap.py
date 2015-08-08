@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """From my proposal: The first thing I did was to produce a very simple level with no aim so I could see if what I was developing actually worked and correct errors as I made them. This consists of relatively sophisticated logic including doors and raised platforms, but no cutscenes."""
 
 from repugeng.Level import Level

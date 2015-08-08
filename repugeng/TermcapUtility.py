@@ -26,9 +26,9 @@ class TermcapUtility(object):
             return os.system(command)
     @classmethod
     def _tput_get(cls,ticap,tccap):
-        response=cls._popen_read("tput "+ticap)
+        response=cls._popen_read("tput "+ticap).read()
         if not response:
-            response=cls._popen_read("tput "+tccap)
+            response=cls._popen_read("tput "+tccap).read()
         return response
     @classmethod
     def getnum(cls,ticap,tccap):
