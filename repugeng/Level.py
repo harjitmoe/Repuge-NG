@@ -140,11 +140,9 @@ class Level(object):
         (obj should be the object)."""
         import time
         for i in points[:-1]:
-            self.objgrid[i[0]][i[1]].append(obj)
+            obj.place(i[0],i[1],self)
             time.sleep(delay)
-            self.objgrid[i[0]][i[1]].remove(obj)
-        self.objgrid[points[-1][0]][points[-1][1]].append(obj)
-        obj.pt=points[-1]
+        obj.place(points[-1][0],points[-1][1],self)
     # move_user(self,pt) removed as obsolete, use PlayableObject.place
     #
     def handle_move(self,dest,playerobj):
