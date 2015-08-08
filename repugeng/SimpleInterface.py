@@ -80,8 +80,11 @@ class SimpleInterface(object):
     #Semantically protected
     def get_offsets(self):
         """Used for LOS optimisation if only part of map visible."""
-        width=79
-        height=19
+        self._w,self._h=width,height=self.backend.get_dimensions()
+        if width<0: width=80
+        if height<0: height=23
+        width-=1
+        height-=4
         offsetx=0
         roffsetx=width
         offsety=0

@@ -57,11 +57,14 @@ class ConsoleBackend(Backend):
         self._messages_visible.pop(0)
         old_point=self.point[:]
         returndat=None
+        _w,_h=self.get_dimensions()
+        if _w<0:_w=80
+        _w-=1
         if ask:
             self.goto_point(0,19)
             for i in self._messages_visible:
                 self._output_text(i+"\n")
-            self._output_text(" "*79+"\n")
+            self._output_text(" "*_w+"\n")
             self.goto_point(0,21)
             self._reset_terminal()
             if (not collect_input):
@@ -76,7 +79,7 @@ class ConsoleBackend(Backend):
                 returndat=raw_input(s)
                 s=s2
                 s=s+returndat
-        while len(s)<79:
+        while len(s)<_w:
             s+=" "
         self._messages_visible.append(s)
         self.goto_point(0,19)

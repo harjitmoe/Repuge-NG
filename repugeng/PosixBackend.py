@@ -35,7 +35,9 @@ class PosixBackend(ConsoleBackend):
         if s=="\x1b":
             s=self._getch()
             if s=="[":
-                s=self._getch()
+                s="0"
+                while s=="0":
+                    s=self._getch()
                 if s=="A":
                     s="up"
                 elif s=="B":
@@ -47,7 +49,7 @@ class PosixBackend(ConsoleBackend):
             #XXX else undefined behaviour (in practice just skipping the \x1b)
         return s
     def _plot_character(self,x,y,c):
-        if ((x,y) not in self._plotcache) or (self._plotcache[(x,y)]!=c):
+        if (((x,y) not in self._plotcache) and c!=" ") or (self._plotcache[(x,y)]!=c):
             sys.stderr.write("\x1B[?25l") #hide cursor, ? means extension, and that's a lowercase L
             sys.stderr.write("\x1B[%d;%dH%s"%(y+1,x+1,c))
             sys.stderr.write("\x1B[m") #reset colour

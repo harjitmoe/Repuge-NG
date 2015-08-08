@@ -7,8 +7,9 @@ class ScrollingInterface(SimpleInterface):
         if self.playerobj.pt:
             x,y=self.playerobj.pt
         width,height=self.backend.get_dimensions()
-        if width<0: width=79
+        if width<0: width=80
         if height<0: height=23
+        width-=1
         height-=4
         offsetx=x-(width//2)
         roffsetx=offsetx+width
@@ -48,4 +49,9 @@ class ScrollingInterface(SimpleInterface):
             colno+=1
         return coords,grid_subset,objgrid_subset
     def get_viewport_pt(self):
-        return 79//2,19//2
+        width,height=self.backend.get_dimensions()
+        if width<0: width=80
+        if height<0: height=23
+        width-=1
+        height-=4
+        return (width)//2,(height)//2
