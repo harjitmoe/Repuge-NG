@@ -2,6 +2,7 @@ from repugeng.GeneratedLevel import GeneratedLevel
 import random,math,sys
 
 class MazeLevel2(GeneratedLevel):
+    """A labyrinthine network of cubicles."""
     list_of_symbols={}
     coded_grid=""
     def _ligase_x(self,a,b):
@@ -51,8 +52,12 @@ class MazeLevel2(GeneratedLevel):
                     return self._gendungeon(width,height,1)
             newheight=random.randrange(2,height-1)
             return self._join_grids_y(self._gendungeon(width,newheight),self._gendungeon(width,height-newheight))
-    def genmap(self,w=30,h=30,split_affinity=10,door_affinity=1.2,room_affinity=20):
-        """w: width, h: height, split_affinity: tendency to split, door_affinity: tendency to add extra doors, room_affinity: tendency away from widthwise divides"""
+    def genmap(self,w=30,h=30,split_affinity=10,door_affinity=1.2,room_affinity=3):
+        """w: width, h: height
+        split_affinity: higher values result in smaller cubicles,
+        door_affinity: higher values result in more doors,
+        room_affinity: lower values result in less random selection of which way to consider
+                       splitting a room."""
         self.sa=split_affinity
         self.ra=(2**room_affinity)+1
         self.objgrid=self._gengrid(w,h)
