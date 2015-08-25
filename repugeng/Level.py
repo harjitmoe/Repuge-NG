@@ -10,16 +10,6 @@ from repugeng.SimpleInterface import SimpleInterface
 
 class Level(object):
     """Base class of a level.
-    
-    Notable attributes and methods (FIXME this is outdated):
-    - run() - normally the level entrypoint.  Takes no args but self.
-    - grid - list of lists of type-tuples for main level.
-      A type-tuple is a tuple (type, extra_data) where extra_data is
-      data internally used by the level code r.e. the status and 
-      identity of the feature.  (Whereas type is just the tile type).
-    - objgrid - list of lists of lists of stacked GridObject.
-    - starting_pt - sets the initial location of the user.
-    - pt - location of user at time of access.
     """
     WIDTH=100
     HEIGHT=100

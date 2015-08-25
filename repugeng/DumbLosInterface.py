@@ -42,6 +42,9 @@ class DumbLosInterface(SimpleInterface):
         if ret==-1 and y<offsety or y>roffsety:
             #Off the viewport
             ret=False
+        if ret==-1 and self.level.dm_grid[x][y]!=self.level.dm_grid2[x][y] and self._transparent(self.level.grid[x][y]):
+            #Walking distance to nearest player != flying distance
+            ret=False
         if ret==-1 and x==self.playerobj.pt[0] and y==self.playerobj.pt[1]:
             #Trace has reached the destination successfully
             ret=True
