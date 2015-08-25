@@ -43,7 +43,7 @@ class DijkstraMonster(PlayableObject):
             for x in range(_w):
                 h=len(self.level.grid[x])
                 for y in range(h):
-                    if not self.level.objgrid[x][y]:
+                    if not self.level.objgrid[x][y] and (self.level.grid[x][y][0].endswith("_open") or self.level.grid[x][y][0].startswith("floor")):
                         adjacents = ([(x-1,y-1)] if x>0 and y>0 else []) \
                                   + ([(x,y-1)] if y>0 else []) \
                                   + ([(x+1,y-1)] if x<(_w-1) and y>0 else []) \

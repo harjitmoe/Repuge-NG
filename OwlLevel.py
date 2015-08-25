@@ -2,12 +2,12 @@ import sys,random,time,math
 from repugeng.Level import Level
 from repugeng.MultilevelStorage import MultilevelStorage
 from repugeng.GridObject import GridObject
-from repugeng.DumbMonster import DumbMonster
+from repugeng.DijkstraMonster import DijkstraMonster
 from prelevula.RoomLevel import RoomLevel
 from prelevula.ExperimentalDungeonLevel import ExperimentalDungeonLevel
 from OwlObject import OwlObject
 
-class OwlLevel(RoomLevel):
+class OwlLevel(ExperimentalDungeonLevel):
     coded_grid=None #?
     title_window="Creature test"
 
@@ -44,7 +44,7 @@ class OwlLevel(RoomLevel):
         nxtstat=self.get_index_grid(*target)[0]
         if self.objgrid[target[0]][target[1]]:
             for obj in self.objgrid[target[0]][target[1]][:]:
-                if isinstance(obj,DumbMonster):
+                if isinstance(obj,DijkstraMonster):
                     if type(obj) in playerobj.known:
                         playerobj.myinterface.push_message("You hit the %s!"%obj.name)
                     else:
