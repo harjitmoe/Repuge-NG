@@ -169,6 +169,7 @@ class Level(object):
     # new multi-user persistent-levels paradigm
     #
     dm_grid=None
+    dm_grid2=None
     def grid_dimens(self):
         width=len(self.grid)
         height=0
@@ -179,30 +180,40 @@ class Level(object):
     def gen_dijkstra_map(self):
         """Calculate shortest distance to the nearest player for each grid cell.
         
-        Sets attribute dm_grid for use by monsters."""
+        Monsters should use dm_grid for pursuing the player.
+        
+        If dm_grid on a neighbouring cell equals dm_grid2 on that cell, then the
+        player is visible."""
         _w,_h=self.grid_dimens()
         self.dm_grid=[list(i) for i in ([65534]*_h,)*_w]
+        self.dm_grid2=[list(i) for i in ([65534]*_h,)*_w]
         for i in self.child_interfaces:
             if hasattr(i,"playerobj") and hasattr(i.playerobj,"pt") and i.playerobj.pt:
                 _x,_y=i.playerobj.pt
                 self.dm_grid[_x][_y]=0
+                self.dm_grid2[_x][_y]=0
         changed=1
         while changed==1:
             changed=0
             for x in range(_w):
                 h=len(self.grid[x])
                 for y in range(h):
-                    if not self.objgrid[x][y] and (self.grid[x][y][0].endswith("_open") or self.grid[x][y][0].startswith("floor")):
-                        adjacents = ([(x-1,y-1)] if x>0 and y>0 else []) \
-                                  + ([(x,y-1)] if y>0 else []) \
-                                  + ([(x+1,y-1)] if x<(_w-1) and y>0 else []) \
-                                  + ([(x+1,y)] if x<(_w-1) else []) \
-                                  + ([(x+1,y+1)] if x<(_w-1) and y<(h-1) else []) \
-                                  + ([(x,y+1)] if y<(h-1) else []) \
-                                  + ([(x-1,y+1)] if x>0 and y<(h-1) else []) \
-                                  + ([(x-1,y)] if x>0 else [])
-                        for _x,_y in adjacents:
+                    adjacents = ([(x-1,y-1)] if x>0 and y>0 else []) \
+                              + ([(x,y-1)] if y>0 else []) \
+                              + ([(x+1,y-1)] if x<(_w-1) and y>0 else []) \
+                              + ([(x+1,y)] if x<(_w-1) else []) \
+                              + ([(x+1,y+1)] if x<(_w-1) and y<(h-1) else []) \
+                              + ([(x,y+1)] if y<(h-1) else []) \
+                              + ([(x-1,y+1)] if x>0 and y<(h-1) else []) \
+                              + ([(x-1,y)] if x>0 else [])
+                    for _x,_y in adjacents:
+                        if not self.objgrid[x][y] and (self.grid[x][y][0].endswith("_open") or self.grid[x][y][0].startswith("floor")):
                             possible=self.dm_grid[_x][_y]+1
                             if possible<self.dm_grid[x][y]:
                                 changed=1
                                 self.dm_grid[x][y]=possible
+                        possible=self.dm_grid2[_x][_y]+1
+                        if possible<self.dm_grid2[x][y]:
+                            changed=1
+                            self.dm_grid2[x][y]=possible
+

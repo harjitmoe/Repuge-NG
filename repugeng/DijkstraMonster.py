@@ -40,9 +40,13 @@ class DijkstraMonster(PlayableObject):
         if dm_grid==None:
             return
         for _x,_y in adjacents:
+            if dm_grid[_x][_y]!=self.level.dm_grid2[_x][_y]:
+                continue # Player not visible
             if dm_grid[_x][_y]<target_height:
                 target=(_x,_y)
                 target_height=dm_grid[_x][_y]
+        if target==None:
+            return
         #
         for i in range(1):
             try: #XXX kludge/fragile/assumes
