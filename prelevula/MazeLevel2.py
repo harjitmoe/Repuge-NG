@@ -34,20 +34,27 @@ class MazeLevel2(GeneratedLevel):
         width-=1
         for i in range(width):
             yield [("hwall",None)]+(height-1)*[("floor1",None)]
-    def _gendungeon(self,width,height):
-        #Yes, 2 "not"s, i.e. "convert to bool" as no boolean xor so making do w/ bitwise
-        if (not not random.randrange(3)) ^ (height<width):
+    def _gendungeon(self,width,height,force_mode=0):
+        if (random.randrange(2) and force_mode!=-1) or force_mode==1:
             if width<4 or not random.randrange(2+int(abs(width-5)**self.sa)):
-                return list(self._genroom(width,height))
+                if force_mode==1 or random.randrange(self.ra):
+                    return list(self._genroom(width,height))
+                else:
+                    return self._gendungeon(width,height,-1)
             newwidth=random.randrange(2,width-1)
             return self._join_grids_x(self._gendungeon(newwidth,height),self._gendungeon(width-newwidth,height))
         else:
             if height<4 or not random.randrange(2+int(abs(height-5)**self.sa)):
-                return list(self._genroom(width,height))
+                if force_mode==-1 or random.randrange(self.ra):
+                    return list(self._genroom(width,height))
+                else:
+                    return self._gendungeon(width,height,1)
             newheight=random.randrange(2,height-1)
             return self._join_grids_y(self._gendungeon(width,newheight),self._gendungeon(width,height-newheight))
-    def genmap(self,w=30,h=30,split_affinity=100):
+    def genmap(self,w=30,h=30,split_affinity=10,door_affinity=1.2,room_affinity=20):
+        """w: width, h: height, split_affinity: tendency to split, door_affinity: tendency to add extra doors, room_affinity: tendency away from widthwise divides"""
         self.sa=split_affinity
+        self.ra=(2**room_affinity)+1
         self.objgrid=self._gengrid(w,h)
         self.grid=self._gendungeon(w-1,h-1)
         self.grid=self._join_grids_x(self.grid,[[("wall_corner_ne",None)]+((h-2)*[("vwall",None)])])
@@ -72,7 +79,7 @@ class MazeLevel2(GeneratedLevel):
             self.walzen.remove(sp)
             self.bwalls.append(sp)
             self.gamut.append(sp)
-        for i in range(int(0.5+random.normalvariate(((w*h)**1.2)/1000,w))):
+        for i in range(int(0.5+random.normalvariate(((w*h)**door_affinity)/1000,w))):
             #Add a few unneeded doors
             if self.nowalzen:
                 x,y=sp=random.choice(self.nowalzen)
