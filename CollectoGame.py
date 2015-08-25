@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from prelevula.MazeLevel import MazeLevel
 from CollectoInterface import CollectoInterface
 from repugeng.Game import Game
 import random

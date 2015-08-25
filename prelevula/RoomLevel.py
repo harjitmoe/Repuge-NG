@@ -6,14 +6,24 @@ class RoomLevel(GeneratedLevel):
     Useful for testing level logic before trying it on a more complicated 
     level generator.
     """
-    list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","/":"floor3","$":"floor4","#":"floor5","P":"hfeature","l":"hfeature","v":"wall_TeeJnc_dn","^":"wall_TeeJnc_up",">":"wall_TeeJnc_rt","<":"wall_TeeJnc_lt","+":"wall_cross",}
     
     def genmap(self,nsiz=15):
-        self.coded_grid="g"+("o"*nsiz)+"G\n"+("d"+("."*nsiz)+"d\n")*nsiz+"j"+("o"*nsiz)+"J"
-        self.readmap()
-        gamutx=range(1,nsiz)
-        gamuty=range(1,nsiz)
+        self.grid=self._gengrid(nsiz+2,nsiz+2)
+        self.objgrid=self._gengrid(nsiz+2,nsiz+2)
         self.gamut=[]
-        for x in gamutx:
-            for y in gamuty:
+        self.grid[0][0]=("wall_corner_nw",None)
+        for x in range(1,nsiz+1):
+            self.grid[x][0]=("hwall",None)
+        self.grid[-1][0]=("wall_corner_ne",None)
+        for y in range(1,nsiz+1):
+            self.grid[0][y]=("vwall",None)
+        self.grid[0][-1]=("wall_corner_sw",None)
+        for x in range(1,nsiz+1):
+            self.grid[x][-1]=("hwall",None)
+        self.grid[-1][-1]=("wall_corner_se",None)
+        for y in range(1,nsiz+1):
+            self.grid[-1][y]=("vwall",None)
+        for x in range(1,nsiz+1):
+            for y in range(1,nsiz+1):
+                self.grid[x][y]=("floor1",None)
                 self.gamut.append((x,y))

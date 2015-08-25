@@ -9,10 +9,6 @@ class CollectoObject(GridObject):
     name="collectone"
     appearance="floating spheroid"
     #
-    def initialise(self,noinit):
-        """Just been spawned.  Do what?"""
-        self.add_handler(1,self.onetick)
-    #
     def handle_contact(self,playerobj):
         self.level.redraw()
         self.game.bug_report[__name__]={}
