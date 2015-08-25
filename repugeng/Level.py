@@ -82,12 +82,6 @@ class Level(object):
                 self.grid[len(row)][rowno]=("space"," ")
                 row+=" "
             rowno+=1
-        ##I forget the point of this.
-        ##In any case, with the new standardisation measures on what is 
-        ##x and what is y, it cuts a swathe through the display and model.
-        ##So no.
-        #for i in range(19-len(self.coded_grid.split("\n"))):
-        #    self.grid[18-i]=[("space","")]*50
     def initmap(self):
         """Creates self.grid and self.objgrid.
 
@@ -183,9 +177,10 @@ class Level(object):
                 self.dm_grid[_x][_y]=0
                 self.dm_grid2[_x][_y]=0
         changed=1
+        _r=range(_w)
         while changed==1:
             changed=0
-            for x in range(_w):
+            for x in _r:
                 h=len(self.grid[x])
                 for y in range(h):
                     adjacents = ([(x-1,y-1)] if x>0 and y>0 else []) \
@@ -197,7 +192,7 @@ class Level(object):
                               + ([(x-1,y+1)] if x>0 and y<(h-1) else []) \
                               + ([(x-1,y)] if x>0 else [])
                     for _x,_y in adjacents:
-                        if not self.objgrid[x][y] and (self.grid[x][y][0].endswith("_open") or self.grid[x][y][0].startswith("floor")):
+                        if (self.grid[x][y][0].endswith("_open") or self.grid[x][y][0].startswith("floor")):
                             possible=self.dm_grid[_x][_y]+1
                             if possible<self.dm_grid[x][y]:
                                 changed=1
