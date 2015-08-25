@@ -4,10 +4,10 @@ from repugeng.MultilevelStorage import MultilevelStorage
 from repugeng.GridObject import GridObject
 from repugeng.DijkstraMonster import DijkstraMonster
 from prelevula.RoomLevel import RoomLevel
-from prelevula.ExperimentalDungeonLevel import ExperimentalDungeonLevel
+from prelevula.MazeLevel2 import MazeLevel2
 from OwlObject import OwlObject
 
-class OwlLevel(ExperimentalDungeonLevel):
+class OwlLevel(MazeLevel2):
     coded_grid=None #?
     title_window="Creature test"
 

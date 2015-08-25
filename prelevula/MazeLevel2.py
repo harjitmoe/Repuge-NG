@@ -1,7 +1,7 @@
 from repugeng.GeneratedLevel import GeneratedLevel
 import random,math,sys
 
-class ExperimentalDungeonLevel(GeneratedLevel):
+class MazeLevel2(GeneratedLevel):
     list_of_symbols={}
     coded_grid=""
     def _ligase_x(self,a,b):
@@ -35,17 +35,19 @@ class ExperimentalDungeonLevel(GeneratedLevel):
         for i in range(width):
             yield [("hwall",None)]+(height-1)*[("floor1",None)]
     def _gendungeon(self,width,height):
-        if random.randrange(2):
-            if width<4 or not random.randrange(2+int(abs(width-5)**1.5)):
+        #Yes, 2 "not"s, i.e. "convert to bool" as no boolean xor so making do w/ bitwise
+        if (not not random.randrange(3)) ^ (height<width):
+            if width<4 or not random.randrange(2+int(abs(width-5)**self.sa)):
                 return list(self._genroom(width,height))
             newwidth=random.randrange(2,width-1)
             return self._join_grids_x(self._gendungeon(newwidth,height),self._gendungeon(width-newwidth,height))
         else:
-            if height<4 or not random.randrange(2+int(abs(height-5)**1.5)):
+            if height<4 or not random.randrange(2+int(abs(height-5)**self.sa)):
                 return list(self._genroom(width,height))
             newheight=random.randrange(2,height-1)
             return self._join_grids_y(self._gendungeon(width,newheight),self._gendungeon(width,height-newheight))
-    def genmap(self,w=30,h=30):
+    def genmap(self,w=30,h=30,split_affinity=100):
+        self.sa=split_affinity
         self.objgrid=self._gengrid(w,h)
         self.grid=self._gendungeon(w-1,h-1)
         self.grid=self._join_grids_x(self.grid,[[("wall_corner_ne",None)]+((h-2)*[("vwall",None)])])
