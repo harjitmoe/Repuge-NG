@@ -7,7 +7,7 @@ from prelevula.RoomLevel import RoomLevel
 from prelevula.ExperimentalDungeonLevel import ExperimentalDungeonLevel
 from OwlObject import OwlObject
 
-class OwlLevel(ExperimentalDungeonLevel):
+class OwlLevel(RoomLevel):
     coded_grid=None #?
     title_window="Creature test"
 

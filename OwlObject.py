@@ -1,10 +1,10 @@
 from repugeng.GridObject import GridObject
-from repugeng.DumbMonster import DumbMonster
+from repugeng.DijkstraMonster import DijkstraMonster
 from OwlTiles import OwlTiles
 from OwlCorpse import OwlCorpse
 import random
 
-class OwlObject(DumbMonster):
+class OwlObject(DijkstraMonster):
     """An owl.
     """
     tile="owl"
