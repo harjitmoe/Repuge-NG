@@ -18,47 +18,14 @@ class DijkstraMonster(PlayableObject):
         self.inventory.insert(GridObject(self.level))
         self.inventory.insert(GridObject(self.level))
         self.add_handler(1,self.onetick)
-    def _grid_dimens(self):
-        width=len(self.level.grid)
-        height=0
-        for col in self.level.grid:
-            if len(col)>height:
-                height=len(col)
-        return width,height
     def onetick(self):
         if self.myinterface!=None:
             return
         if self.vitality<=0:
             self.die()
             return
-        _w,_h=self._grid_dimens()
-        dm_grid=[list(i) for i in ([65534]*_h,)*_w]
-        for i in self.level.child_interfaces:
-            if hasattr(i,"playerobj") and hasattr(i.playerobj,"pt") and i.playerobj.pt:
-                _x,_y=i.playerobj.pt
-                dm_grid[_x][_y]=0
-        changed=1
-        while changed==1:
-            changed=0
-            for x in range(_w):
-                h=len(self.level.grid[x])
-                for y in range(h):
-                    if not self.level.objgrid[x][y] and (self.level.grid[x][y][0].endswith("_open") or self.level.grid[x][y][0].startswith("floor")):
-                        adjacents = ([(x-1,y-1)] if x>0 and y>0 else []) \
-                                  + ([(x,y-1)] if y>0 else []) \
-                                  + ([(x+1,y-1)] if x<(_w-1) and y>0 else []) \
-                                  + ([(x+1,y)] if x<(_w-1) else []) \
-                                  + ([(x+1,y+1)] if x<(_w-1) and y<(h-1) else []) \
-                                  + ([(x,y+1)] if y<(h-1) else []) \
-                                  + ([(x-1,y+1)] if x>0 and y<(h-1) else []) \
-                                  + ([(x-1,y)] if x>0 else [])
-                        for _x,_y in adjacents:
-                            possible=dm_grid[_x][_y]+1
-                            if possible<dm_grid[x][y]:
-                                changed=1
-                                dm_grid[x][y]=possible
-                                #DO NOT break here
         x,y=self.pt
+        _w,_h=self.level.grid_dimens()
         adjacents = ([(x-1,y-1)] if x>0 and y>0 else []) \
                   + ([(x,y-1)] if y>0 else []) \
                   + ([(x+1,y-1)] if x<(_w-1) and y>0 else []) \
@@ -69,11 +36,13 @@ class DijkstraMonster(PlayableObject):
                   + ([(x-1,y)] if x>0 else [])
         target=None
         target_height=65535
+        self.dm_grid=dm_grid=self.level.dm_grid
+        if dm_grid==None:
+            return
         for _x,_y in adjacents:
             if dm_grid[_x][_y]<target_height:
                 target=(_x,_y)
                 target_height=dm_grid[_x][_y]
-        self.dm_grid=dm_grid
         #
         for i in range(1):
             try: #XXX kludge/fragile/assumes

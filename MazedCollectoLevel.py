@@ -1,4 +1,3 @@
-from prelevula.MazeLevel import MazeLevel
 from prelevula.MazeLevel2 import MazeLevel2
 from CollectoInterface import CollectoInterface
 from CollectoLevel import CollectoLevel
