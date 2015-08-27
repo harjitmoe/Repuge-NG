@@ -152,6 +152,7 @@ class Level(object):
     # initial_cutscene removed as fundamentally incompatible with the 
     # new multi-user persistent-levels paradigm
     #
+    use_dm=False
     dm_grid=None
     dm_grid2=None
     def grid_dimens(self):
@@ -164,10 +165,14 @@ class Level(object):
     def gen_dijkstra_map(self):
         """Calculate shortest distance to the nearest player for each grid cell.
         
+        If self.use_dm==False, do nothing.
+        
         Monsters should use dm_grid for pursuing the player.
         
         If dm_grid on a neighbouring cell equals dm_grid2 on that cell, then the
         player is visible."""
+        if not self.use_dm:
+            return
         _w,_h=self.grid_dimens()
         self.dm_grid=[list(i) for i in ([65534]*_h,)*_w]
         self.dm_grid2=[list(i) for i in ([65534]*_h,)*_w]

@@ -10,6 +10,7 @@ from OwlObject import OwlObject
 class OwlLevel(MazeLevel2):
     coded_grid=None #?
     title_window="Creature test"
+    use_dm=True
 
     def get_new_point(self):
         if hasattr(self,"pt"):
