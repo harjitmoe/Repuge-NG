@@ -30,12 +30,12 @@ class ConsoleTiles(object):
     wall_TeeJnc_lt = "|" #In true continuation of Rogue style
     wall_cross = "-" #In true continuation of Rogue style
     vfeature = ":"
-    hfeature = " = "
+    hfeature = "="
     vfeature_open = "-" #Use perpendicular wall chars, per ASCII NetHack
     hfeature_open = "|" #Use perpendicular wall chars, per ASCII NetHack
     #Levels of floor
     floor1 = "."
-    floor2 = ", "
+    floor2 = ","
     floor3 = "/"
     floor4 = "$"
     floor5 = "#"

@@ -16,7 +16,7 @@ class WindowsBackend(ConsoleBackend):
         self.dump_messages()
         return self._conio_getkey()
     def _plot_character(self, x, y, c):
-        if not hasattr(self, "_textcolor"):
+        if self._textcolor == None:
             self._textcolor = 0x7
         self._conio_puttext(x, y, x, y, bytes(c+chr(self._textcolor)))
     def plot_tile(self, x, y, tile_id):
