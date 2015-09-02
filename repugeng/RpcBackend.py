@@ -1,6 +1,6 @@
-from repugeng.Backend import Backend
+from repugeng.BaseBackend import BaseBackend
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
-class RpcBackend(Backend):
+class RpcBackend(BaseBackend):
     #pylint: disable = abstract-method, super-init-not-called
     _plot_cache = None
     _already = None

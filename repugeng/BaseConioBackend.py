@@ -1,11 +1,10 @@
-from repugeng.ConsoleBackend import ConsoleBackend
-from repugeng.WindowsTiles import WindowsTiles
+from repugeng.BaseConsoleBackend import BaseConsoleBackend
+from repugeng.ConioTiles import ConioTiles
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
-class WindowsBackend(ConsoleBackend):
+class BaseConioBackend(BaseConsoleBackend):
     """Partially implementing base class"""
-    _tiles_class = WindowsTiles
-    _textcolor = None
+    _tiles_class = ConioTiles
     def goto_point(self, x, y):
         del self.point[:]
         self.point.extend([x, y])
@@ -16,21 +15,12 @@ class WindowsBackend(ConsoleBackend):
         self.dump_messages()
         return self._conio_getkey()
     def _plot_character(self, x, y, c):
-        if self._textcolor == None:
-            self._textcolor = 0x7
-        self._conio_puttext(x, y, x, y, bytes(c+chr(self._textcolor)))
-    def plot_tile(self, x, y, tile_id):
-        if ("wall" in tile_id) or (tile_id in ("vfeature", "hfeature")):
-            self._textcolor = 0x4
-        elif "floor" in tile_id:
-            self._textcolor = 0x8
-        else:
-            self._textcolor = 0xF
-        super(WindowsBackend, self).plot_tile(x, y, tile_id)
+        self._conio_puttext(x, y, x, y, bytes(c))
     def _engage_message_formatting(self):
         self._conio_textcolor(0xF)
     #In subclasses, using e.g. WConio (binding to Windows port of conio)
-    #or else implementing conio with help of ctypes etc...
+    #or else implementing conio on Windows with help of ctypes
+    #or using a conio extension under DOS (unlikely) etc...
     def _conio_gotoxy(self, x, y):
         raise NotImplementedError
     def _conio_settitle(self, s):

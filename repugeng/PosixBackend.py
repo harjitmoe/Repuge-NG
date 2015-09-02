@@ -1,10 +1,10 @@
 import sys
-from repugeng.ConsoleBackend import ConsoleBackend
+from repugeng.BaseConsoleBackend import BaseConsoleBackend
 from repugeng.PosixTiles import PosixTiles
 from repugeng.TermcapUtility import TermcapUtility
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
-class PosixBackend(ConsoleBackend):
+class PosixBackend(BaseConsoleBackend):
     _tiles_class = PosixTiles
     def __init__(self, *a, **kw):
         self._plotcache = {}

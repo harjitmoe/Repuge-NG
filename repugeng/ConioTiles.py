@@ -1,6 +1,15 @@
 from repugeng.ConsoleTiles import ConsoleTiles
-class WindowsTiles(ConsoleTiles):
+class ConioTiles(ConsoleTiles):
     #STATIC CLASS.  NO INSTANCES.
+    @classmethod
+    def _decorate_wall(cls, bare):
+        return bare+"\x04"
+    @classmethod
+    def _decorate_floor(cls, bare):
+        return bare+"\x08"
+    @classmethod
+    def _decorate_regular(cls, bare):
+        return bare+"\x0f"
     vwall = "\xb3"
     hwall = "\xc4"
     wall_corner_nw = "\xda"

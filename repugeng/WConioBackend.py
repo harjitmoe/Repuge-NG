@@ -1,7 +1,7 @@
 #Stuff which might not be present on system is to be imported in methods.
-from repugeng.WindowsBackend import WindowsBackend
+from repugeng.BaseConioBackend import BaseConioBackend
 
-class WconioWindowsBackend(WindowsBackend):
+class WConioBackend(BaseConioBackend):
     @staticmethod
     def works_p():
         try:

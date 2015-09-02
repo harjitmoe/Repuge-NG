@@ -1,15 +1,15 @@
 import sys
-from repugeng.Backend import Backend
+from repugeng.BaseBackend import BaseBackend
 from repugeng.ConsoleTiles import ConsoleTiles
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
-class ConsoleBackend(Backend):
+class BaseConsoleBackend(BaseBackend):
     """Partially implementing base class"""
     _tiles_class = ConsoleTiles
     def __init__(self, *a, **kw):
         self._messages_visible = ["", "", ""]
         self.point = [0, 0]
-        super(ConsoleBackend, self).__init__(*a, **kw)
+        super(BaseConsoleBackend, self).__init__(*a, **kw)
     def _output_text(self, i):
         sys.stderr.write(i)
         sys.stderr.flush() #breaks on 3.1 on win32 otherwise

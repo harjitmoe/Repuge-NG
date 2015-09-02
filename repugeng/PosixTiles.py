@@ -2,11 +2,11 @@ from repugeng.ConsoleTiles import ConsoleTiles
 class PosixTiles(ConsoleTiles):
     #STATIC CLASS.  NO INSTANCES.
     @classmethod
-    def get_tile_character(cls, tile_id):
-        if ("wall" in tile_id) or (tile_id in ("vfeature", "hfeature")):
-            return "\x1b[1;31m"+ConsoleTiles.get_tile_character(tile_id)
-        elif "floor" in tile_id:
-            return "\x1b[1;30m"+ConsoleTiles.get_tile_character(tile_id)
-        else:
-            return "\x1b[22;37m"+ConsoleTiles.get_tile_character(tile_id)
-
+    def _decorate_wall(cls, bare):
+        return "\x1b[1;31m"+bare
+    @classmethod
+    def _decorate_floor(cls, bare):
+        return "\x1b[1;30m"+bare
+    @classmethod
+    def _decorate_regular(cls, bare):
+        return "\x1b[22;37m"+bare
