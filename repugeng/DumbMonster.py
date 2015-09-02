@@ -25,7 +25,7 @@ class DumbMonster(PlayableObject):
             self.die()
             return
         type_=random.randrange(9)
-        for i in range(1):
+        for i in range(1): #pylint: disable=unused-variable
             if type_==0: target=(self.pt[0],self.pt[1]+1)
             if type_==1: target=(self.pt[0]+1,self.pt[1])
             if type_==2: target=(self.pt[0],self.pt[1]-1)
@@ -41,19 +41,14 @@ class DumbMonster(PlayableObject):
                 floorlevel=1 #Needed or mazed subclass breaks
             nxtstat=self.level.get_index_grid(*target)[0]
             if self.level.objgrid[target[0]][target[1]]:
-                breakp=1
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if hasattr(obj,"myinterface") and obj.myinterface!=None:
-                        if type(self) in obj.known:
+                        if type(self) in obj.known: #pylint: disable=unidiomatic-typecheck
                             obj.myinterface.push_message("The %s hits!"%self.name)
                         else:
                             obj.myinterface.push_message("The %s hits!"%self.appearance)
                         obj.vitality-=1
                         return
-                else:
-                    breakp=0
-                if breakp:
-                    break
             elif nxtstat.startswith("floor"):
                 newlevel=type(0)(nxtstat[5:])
                 if (newlevel-floorlevel)<=1:

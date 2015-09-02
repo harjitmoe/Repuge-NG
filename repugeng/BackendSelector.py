@@ -5,7 +5,7 @@ from repugeng.RpcBackend import RpcBackend
 
 class BackendSelector(object):
     @staticmethod
-    def __new__(cls,*a,**kw):
+    def __new__(*isnt,**interested): #pylint: disable=unused-argument
         raise TypeError("attempt to create instance of static class")
     dispatcher={"nt":[WconioWindowsBackend,RpcBackend],"posix":[PosixBackend,RpcBackend]}
     @classmethod

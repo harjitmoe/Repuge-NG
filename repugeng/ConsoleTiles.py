@@ -1,6 +1,6 @@
 class ConsoleTiles(object):
     @staticmethod
-    def __new__(cls,*a,**kw):
+    def __new__(*isnt,**interested): #pylint: disable=unused-argument
         raise TypeError("attempt to create instance of static class")
     @classmethod
     def get_tile_character(cls,tile_id):

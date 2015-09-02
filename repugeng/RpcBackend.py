@@ -1,15 +1,16 @@
-import sys
 from repugeng.Backend import Backend
-from repugeng.compat3k import *
+from repugeng.compat3k import * #pylint: disable=redefined-builtin,wildcard-import,unused-wildcard-import
 class RpcBackend(Backend):
+    #pylint: disable=abstract-method,super-init-not-called
     _plot_cache=None
     _already=None
     _dimensions=None
     def __init__(self):
         try:
-            import xmlrpclib
+            import xmlrpclib #pylint: disable=import-error
         except ImportError:
-            import xmlrpc.client as xmlrpclib #3k
+            #3k
+            import xmlrpc.client as xmlrpclib #pylint: disable=import-error
         host=raw_input("Host of next remote (blank for localhost): ").strip() or "localhost"
         port=int(raw_input("Port used: "))
         self.backend=xmlrpclib.ServerProxy("http://%s:%d/"%(host,port),allow_none=True)
@@ -43,10 +44,11 @@ class RpcBackend(Backend):
     @staticmethod
     def works_p():
         try:
-            import xmlrpclib
-        except:
+            import xmlrpclib #pylint: disable=import-error,unused-variable
+        except ImportError:
             try:
-                import xmlrpc.client as xmlrpclib #3k
-            except:
+                #3k
+                import xmlrpc.client as xmlrpclib #pylint: disable=import-error,unused-variable
+            except ImportError:
                 return False
         return True

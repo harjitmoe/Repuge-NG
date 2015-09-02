@@ -16,6 +16,8 @@ class SimpleInterface(object):
             else:
                 self.backend=BackendSelector.get_backend(use_rpc)
     def redraw(self):
+        #Note: this function may be copyrighted by KSP.
+        #To be rewritten.
         """Draw the map (grid and objgrid).
         
         Presently this, by default, draws grid and (above it) objgrid at once

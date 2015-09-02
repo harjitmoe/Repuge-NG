@@ -1,16 +1,13 @@
 #3k compatibility measures
 try:
-    bytes=bytes
+    bytes=bytes #pylint: disable=redefined-builtin
 except NameError:
-    bytes=str
+    bytes=str #pylint: disable=redefined-builtin
 else:
-    def bytes(x): #avoid "string argument without encoding"
-        return x.encode("latin1")
+    bytes=lambda x: x.encode("latin1") #pylint: disable=redefined-builtin
 try:
-    raw_input=raw_input
+    raw_input=raw_input #pylint: disable=redefined-builtin
 except NameError:
-    def raw_input(x):
-        #2x raw_input() is ironically less raw than 3k input()
-        return input(x).rstrip("\r\n")
+    raw_input=lambda x: input(x).rstrip("\r\n") #pylint: disable=redefined-builtin,bad-builtin
 
 

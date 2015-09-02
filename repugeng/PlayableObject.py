@@ -12,7 +12,7 @@ class PlayableObject(GridObject):
     name="playable object"
     appearance="playable object"
     myinterface=None
-    def initialise(self,play):
+    def initialise(self,play=False):
         """Just been spawned.  Do what?
         
         Argument play is true if should attach new interface."""
@@ -35,6 +35,8 @@ class PlayableObject(GridObject):
         """Disconnect from player."""
         self.myinterface=None
     def conv_to_target(self,e):
+        #Note: this function may be copyrighted by KSP.
+        #To be rewritten.
         if e not in ("down","up","left","right","8","4","6","2","7","9","1","3","h","j","k","l","y","u","b","n"):
             return None
         if e in ("left", "4","h"): target=(self.pt[0]-1,self.pt[1])
@@ -88,7 +90,7 @@ class PlayableObject(GridObject):
                 elif name.startswith("#passthrough "):
                     self.game.handle_command(name.split(" ",1)[1],self)
                 elif name in ("#bugreport","#report","#gurumeditation","#guru"):
-                    self.game._dump_report()
+                    self.game.dump_report()
                 elif name in ("#testerror"):
                     raise RuntimeError("testing error handler")
                 elif name in ("#abort","#abrt","#kill"):

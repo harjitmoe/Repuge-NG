@@ -54,9 +54,8 @@ class GridObject(object):
         self.handlers.append((gap,boundmethod,[0]))
     def remove_handler(self,handlerbm):
         """Remove a tick handler."""
-        assert gap>0
-        for i,(every,handler,n) in enumerate(self.handlers[:]):
-            if boundmethod==handlerbm:
+        for i,(every,handler,n) in enumerate(self.handlers[:]): #pylint: disable=unused-variable
+            if handler==handlerbm:
                 del self.handlers[i]
     def place(self,destx,desty,newlevel=None):
         """Place on the specified point in the level, lifting from previous point."""
@@ -95,7 +94,6 @@ class GridObject(object):
             self.level.child_objects.remove(self)
             assert self not in self.level.child_objects
             self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
-            oldlevel=self.level
             self.level=None
             self.pt=None
         self.status="unplaced"

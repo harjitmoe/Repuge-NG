@@ -35,6 +35,7 @@ class TermcapUtility(object):
         try:
             #Use an API to access terminfo - preferred
             import curses
+            curses.setupterm()
             return curses.tigetnum(ticap)
         except ImportError:
             #No Curses.  Curses!
@@ -48,3 +49,4 @@ class TermcapUtility(object):
         width=cls.getnum("cols","co")
         height=cls.getnum("lines","li")
         return width,height
+

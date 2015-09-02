@@ -1,13 +1,13 @@
-import sys
 from repugeng.ConsoleBackend import ConsoleBackend
 from repugeng.WindowsTiles import WindowsTiles
-from repugeng.compat3k import *
+from repugeng.compat3k import * #pylint: disable=redefined-builtin,wildcard-import,unused-wildcard-import
 
 class WindowsBackend(ConsoleBackend):
     """Partially implementing base class"""
     _tiles_class=WindowsTiles
     def goto_point(self,x,y):
-        self.point[:]=x,y
+        del self.point[:]
+        self.point.extend([x,y])
         self._conio_gotoxy(x,y)
     def set_window_title(self,title):
         self._conio_settitle(bytes(title))

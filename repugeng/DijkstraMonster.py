@@ -1,7 +1,6 @@
 from repugeng.GridObject import GridObject
 from repugeng.PlayableObject import PlayableObject
 from repugeng.Container import Container
-import random
 
 class DijkstraMonster(PlayableObject):
     """An generic adversary which makes for the player.
@@ -11,6 +10,7 @@ class DijkstraMonster(PlayableObject):
     appearance="featureless monster"
     vitality=5
     maxhp=5
+    dm_grid=None
     def initialise_playable(self):
         """Just been spawned.  Do what?"""
         self.inventory=Container(self.level)
@@ -23,6 +23,8 @@ class DijkstraMonster(PlayableObject):
             return
         if self.vitality<=0:
             self.die()
+            return
+        if not self.pt:
             return
         x,y=self.pt
         _w,_h=self.level.grid_dimens()
@@ -48,26 +50,21 @@ class DijkstraMonster(PlayableObject):
         if target==None:
             return
         #
-        for i in range(1):
+        for i in range(1): #pylint: disable=unused-variable
             try: #XXX kludge/fragile/assumes
                 floorlevel=type(0)(self.level.get_index_grid(*self.pt)[0][5:])
             except ValueError:
                 floorlevel=1 #Needed or mazed subclass breaks
             nxtstat=self.level.get_index_grid(*target)[0]
             if self.level.objgrid[target[0]][target[1]]:
-                breakp=1
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if hasattr(obj,"myinterface") and obj.myinterface!=None:
-                        if type(self) in obj.known:
+                        if type(self) in obj.known: #pylint: disable=unidiomatic-typecheck
                             obj.myinterface.push_message("The %s hits!"%self.name)
                         else:
                             obj.myinterface.push_message("The %s hits!"%self.appearance)
                         obj.vitality-=1
                         return
-                else:
-                    breakp=0
-                if breakp:
-                    break
             elif nxtstat.startswith("floor"):
                 newlevel=type(0)(nxtstat[5:])
                 if (newlevel-floorlevel)<=1:

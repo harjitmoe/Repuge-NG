@@ -1,7 +1,7 @@
 import sys
 from repugeng.Backend import Backend
 from repugeng.ConsoleTiles import ConsoleTiles
-from repugeng.compat3k import *
+from repugeng.compat3k import * #pylint: disable=redefined-builtin,wildcard-import,unused-wildcard-import
 
 class ConsoleBackend(Backend):
     """Partially implementing base class"""
@@ -36,6 +36,8 @@ class ConsoleBackend(Backend):
     def _plot_character(self,x,y,c):
         raise NotImplementedError("should be implemented by subclass")
     def _put_to_message_area(self,s,ask,s2=None,collect_input=1):
+        #Note: this function may be partially copyrighted by KSP.
+        #To be possibly rewritten.
         """The backend behind all putting to the console message area, 
         for ask or say.
         
@@ -57,7 +59,7 @@ class ConsoleBackend(Backend):
         self._messages_visible.pop(0)
         old_point=self.point[:]
         returndat=None
-        _w,_h=self.get_dimensions()
+        _w=self.get_dimensions()[0]
         if _w<0:_w=80
         _w-=1
         if ask:

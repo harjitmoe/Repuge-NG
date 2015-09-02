@@ -1,9 +1,7 @@
 import time,sys,traceback
-from repugeng.GridObject import GridObject
 from repugeng.PlayableObject import PlayableObject
 from repugeng.SimpleInterface import SimpleInterface
-from repugeng.Level import Level
-from repugeng.compat3k import *
+from repugeng.compat3k import * #pylint: disable=redefined-builtin,wildcard-import,unused-wildcard-import
 
 class Game(object):
     #
@@ -19,7 +17,7 @@ class Game(object):
     title_window="Repuge-NG Application"
     use_rpc=False
     #
-    def __init__(self,start=1):
+    def __init__(self):
         self.bug_report[__name__]={}
         try:
             self.add_players()
@@ -28,26 +26,24 @@ class Game(object):
             raise
         except KeyboardInterrupt:
             raise
-        except:
+        except: #pylint: disable=bare-except
             exctype,exception,trace=sys.exc_info()
             try:
                 #Put the exception in: the program quits on exception and, 
                 #unless started from a shell such as cmd, the terminal 
                 #probably closes promptly leaving it inaccessible.
                 self.bug_report[__name__]["Exception"]=(exctype,exception,traceback.extract_tb(trace))
-                self.bug_report[__name__]["grid"]=self.grid
-                self.bug_report[__name__]["objgrid"]=self.objgrid
-                self._dump_report()
-            except:
-                pass #Silence the irrelevant exception
+                self.dump_report()
+            except: #Keep squealing, pylint, this one needs work
+                pass #Silence the irrelevant exception, making the above very hard to debug ;)
             if sys.hexversion<0x03000000:
                 #Only 2k way to keep original traceback here, exec'd as invalid 3k syntax
-                exec("raise exctype,exception,trace")
+                exec("raise exctype,exception,trace") #pylint: disable=exec-used
             else:
                 raise exception
     #
-    def _dump_report(self):
-        import pickle,time
+    def dump_report(self):
+        import pickle
         f=open("bugreport.%010d.txt"%time.time(),"w")
         pickle.dump(self.bug_report,f)
         f.close()
@@ -72,7 +68,7 @@ class Game(object):
             print ("Once you have done this, enter the hosts and ports here.")
         else:
             number=1
-        for i in range(number):
+        for i in range(number):  #pylint: disable=unused-variable
             players.append(self.PlayerClass(self,play=1))
         for playerobj in players:
             self.level_initiate(playerobj)

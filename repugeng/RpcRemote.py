@@ -1,7 +1,8 @@
 try:
-    from SimpleXMLRPCServer import SimpleXMLRPCServer
+    from SimpleXMLRPCServer import SimpleXMLRPCServer #pylint: disable=import-error
 except ImportError:
-    from xmlrpc.server import SimpleXMLRPCServer #3k
+    #3k
+    from xmlrpc.server import SimpleXMLRPCServer #pylint: disable=import-error
 from repugeng.BackendSelector import BackendSelector
 class RpcRemote(object):
     def __init__(self):

@@ -93,6 +93,8 @@ class DumbLosInterface(SimpleInterface):
                 self._fov_cache[self.playerobj.pt].append((x,y))
         return ret,typ
     def redraw(self):
+        #Note: this function may be partly copyrighted by KSP.
+        #To be rewritten.
         """Draw the map (grid and objgrid)."""
         if self.playerobj.pt:
             self.backend.goto_point(*self.get_viewport_pt())

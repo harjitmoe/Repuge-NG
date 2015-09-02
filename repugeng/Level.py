@@ -1,12 +1,10 @@
-import time,sys,traceback
+import time
 #The "threading" module over-complicates things imo
 try:
-    from thread import start_new_thread
+    from thread import start_new_thread #pylint: disable=import-error
 except ImportError:
-    from _thread import start_new_thread #3k
-from repugeng.GridObject import GridObject
-from repugeng.PlayableObject import PlayableObject
-from repugeng.SimpleInterface import SimpleInterface
+    #3k
+    from _thread import start_new_thread #pylint: disable=import-error
 
 class Level(object):
     """Base class of a level.
@@ -16,6 +14,11 @@ class Level(object):
     #
     child_objects=None
     child_interfaces=None
+    grid=None
+    objgrid=None
+    starting_pt=(0,0)
+    coded_grid=None
+    list_of_symbols=None
     def __init__(self,game):
         self.game=game
         self.child_objects=[]
@@ -23,7 +26,7 @@ class Level(object):
         self.initmap()
         self.initialise()
         start_new_thread(self.run,())
-    def bring_to_front(self, playerobj, whence="unspecified"):
+    def bring_to_front(self, playerobj, whence="unspecified"): #pylint: disable=unused-argument
         """To be called to make this level the active level for a 
         player, which may be anything from immediately after creation
         to never.
@@ -48,14 +51,18 @@ class Level(object):
         """
         playerobj.place(self.starting_pt[0],self.starting_pt[1],self)
     def _gengrid(self,x,y):
+        #Note: this function may be copyrighted by KSP.
+        #To be rewritten.
         grid=[]
-        for i in range(x):
-            file=[] #row (x), file (y), stack (z)
-            for j in range(y):
-                file.append([])
-            grid.append(file)
+        for i in range(x):  #pylint: disable=unused-variable
+            file_=[] #row (x), file (y), stack (z)
+            for j in range(y):  #pylint: disable=unused-variable
+                file_.append([])
+            grid.append(file_)
         return grid
     def readmap(self):
+        #Note: this function may be copyrighted by KSP.
+        #To be rewritten.
         """Generates self.grid from coded grid format.
 
         Whereas self.objgrid is generated empty.
@@ -121,23 +128,24 @@ class Level(object):
     #
     # followline_user removed as obsolete and incompatible
     def followline(self,delay,points,obj):
+        #Note: this function may be copyrighted by KSP.
+        #To be rewritten or removed.
         """Move a non-user object visibly down a list of points.
         (obj should be the object)."""
-        import time
         for i in points[:-1]:
             obj.place(i[0],i[1],self)
             time.sleep(delay)
         obj.place(points[-1][0],points[-1][1],self)
     # move_user(self,pt) removed as obsolete, use PlayableObject.place
     #
-    def handle_move(self,dest,playerobj):
+    def handle_move(self,dest,playerobj): #pylint: disable=unused-argument
         """Handle a move command by the user. --> True to go ahead or False 
         to block the move.
         
         Default allows no movement.  May be overridden by level subclass."""
         return 0
     #
-    def handle_command(self,key_event,playerobj):
+    def handle_command(self,key_event,playerobj): #pylint: disable=unused-argument
         r"""Handle a command by the user.  This is not called on move 
         commands by default.
         
