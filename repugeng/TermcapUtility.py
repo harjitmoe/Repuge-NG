@@ -1,10 +1,8 @@
-class TermcapUtility(object):
+from repugeng.StaticClass import StaticClass
+
+class TermcapUtility(StaticClass):
     """Rudimentary utility for reading integer (for now) terminal capabilities on POSIX."""
-    def __new__(cls, *isnt, **interested): #pylint: disable = unused-argument
-        raise TypeError("attempt to create instance of static class")
-    #
-    @staticmethod
-    def _popen_read(command):
+    def _popen_read(cls, command):
         try:
             #Newer API
             import subprocess
@@ -13,8 +11,7 @@ class TermcapUtility(object):
             #Older API
             import os
             return os.popen(command, "r")
-    @staticmethod
-    def _system(command):
+    def _system(cls, command):
         try:
             #Newer API
             import subprocess
@@ -23,13 +20,11 @@ class TermcapUtility(object):
             #Older API
             import os
             return os.system(command)
-    @classmethod
     def _tput_get(cls, ticap, tccap):
         response = cls._popen_read("tput "+ticap).read()
         if not response:
             response = cls._popen_read("tput "+tccap).read()
         return response
-    @classmethod
     def getnum(cls, ticap, tccap):
         try:
             #Use an API to access terminfo - preferred
@@ -43,7 +38,6 @@ class TermcapUtility(object):
                 return int(response)
             except ValueError:
                 return -2
-    @classmethod
     def dimensions(cls):
         width = cls.getnum("cols", "co")
         height = cls.getnum("lines", "li")

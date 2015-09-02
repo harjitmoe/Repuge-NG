@@ -2,12 +2,10 @@ import os
 from repugeng.PosixBackend import PosixBackend
 from repugeng.WConioBackend import WConioBackend
 from repugeng.RpcBackend import RpcBackend
+from repugeng.StaticClass import StaticClass
 
-class BackendSelector(object):
-    def __new__(cls, *isnt, **interested): #pylint: disable = unused-argument
-        raise TypeError("attempt to create instance of static class")
+class BackendSelector(StaticClass):
     dispatcher = {"nt": [WConioBackend, RpcBackend], "posix": [PosixBackend, RpcBackend]}
-    @classmethod
     def get_backend(cls, rpc=True):
         #rpc is True, False or -1
         #True: use it
