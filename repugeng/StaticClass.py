@@ -1,6 +1,6 @@
 class _StaticClassMetaclass(type): #How badass...
     """Static class: a class not intended to have instances.
-    
+
     Instance methods are automatically made into class methods."""
     def __new__(cls,name,bases,attrs):
         classify={}

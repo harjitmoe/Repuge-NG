@@ -2,5 +2,6 @@
 build/*
 dist/*
 *.zip
+*.7z
 setup_exe.py
 Copy of .git
