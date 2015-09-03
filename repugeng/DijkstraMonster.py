@@ -1,8 +1,7 @@
 from repugeng.GridObject import GridObject
-from repugeng.PlayableObject import PlayableObject
 from repugeng.Container import Container
 
-class DijkstraMonster(PlayableObject):
+class DijkstraMonster(GridObject):
     """An generic adversary which makes for the player.
     """
     tile = "adversary"
@@ -10,9 +9,7 @@ class DijkstraMonster(PlayableObject):
     appearance = "featureless monster"
     vitality = 5
     maxhp = 5
-    dm_grid = None
-    def initialise_playable(self):
-        """Just been spawned.  Do what?"""
+    def initialise(self):
         self.inventory = Container(self.level)
         self.inventory.insert(GridObject(self.level))
         self.inventory.insert(GridObject(self.level))
@@ -39,7 +36,7 @@ class DijkstraMonster(PlayableObject):
                   + ([(x-1, y)] if x > 0 else [])
         target = None
         target_height = 65535
-        self.dm_grid = dm_grid = self.level.dm_grid
+        dm_grid = self.level.dm_grid
         if dm_grid == None:
             return
         for _x, _y in adjacents:

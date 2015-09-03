@@ -1,6 +1,7 @@
 from repugeng.SimpleInterface import SimpleInterface
 
 class ScrollingInterface(SimpleInterface):
+    """A subclass of SimpleInterface adding simple panning."""
     def get_offsets(self):
         """Used for LOS optimisation and get_viewport_grids."""
         x = y = 0

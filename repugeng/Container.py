@@ -1,7 +1,7 @@
 from repugeng.GridObject import GridObject
 class Container(GridObject):
     contents = None
-    def initialise(self, play=None):
+    def initialise(self):
         self.contents = []
     def insert(self, obj):
         if obj.status == "placed":

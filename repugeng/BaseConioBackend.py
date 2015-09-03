@@ -3,31 +3,37 @@ from repugeng.ConioTiles import ConioTiles
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
 class BaseConioBackend(BaseConsoleBackend):
-    """Partially implementing base class"""
+    """A class implementing Backend in terms of a semantically
+    protected conio-style interface which it leaves abstract.
+    """
     _tiles_class = ConioTiles
-    def goto_point(self, x, y):
+    def goto_point(self, x_coord, y_coord):
         del self.point[:]
-        self.point.extend([x, y])
-        self._conio_gotoxy(x, y)
+        self.point.extend([x_coord, y_coord])
+        self._conio_gotoxy(x_coord, y_coord)
     def set_window_title(self, title):
         self._conio_settitle(bytes(title))
     def get_key_event(self):
         self.dump_messages()
         return self._conio_getkey()
-    def _plot_character(self, x, y, c):
-        self._conio_puttext(x, y, x, y, bytes(c))
+    def _plot_character(self, y_coord, x_coord, character):
+        self._conio_puttext(x_coord, y_coord, x_coord, y_coord, bytes(character))
     def _engage_message_formatting(self):
         self._conio_textcolor(0xF)
     #In subclasses, using e.g. WConio (binding to Windows port of conio)
     #or else implementing conio on Windows with help of ctypes
     #or using a conio extension under DOS (unlikely) etc...
-    def _conio_gotoxy(self, x, y):
+    def _conio_gotoxy(self, x_coord, y_coord):
+        """Move text input cursor to the coordinates (x_coord, y_coord)."""
         raise NotImplementedError
-    def _conio_settitle(self, s):
+    def _conio_settitle(self, title):
+        """Set window title (implementing optional)."""
         raise NotImplementedError
     def _conio_getkey(self):
+        """Read a keypress."""
         raise NotImplementedError
     def _conio_puttext(self, a, b, c, d, t):
         raise NotImplementedError
     def _conio_textcolor(self, colour):
+        """Change the active text colour."""
         raise NotImplementedError

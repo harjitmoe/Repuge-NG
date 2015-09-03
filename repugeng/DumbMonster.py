@@ -1,9 +1,8 @@
 from repugeng.GridObject import GridObject
-from repugeng.PlayableObject import PlayableObject
 from repugeng.Container import Container
 import random
 
-class DumbMonster(PlayableObject):
+class DumbMonster(GridObject):
     """An generic adversary, random in its movements.
     """
     tile = "adversary"
@@ -11,8 +10,7 @@ class DumbMonster(PlayableObject):
     appearance = "featureless monster"
     vitality = 5
     maxhp = 5
-    def initialise_playable(self):
-        """Just been spawned.  Do what?"""
+    def initialise(self):
         self.inventory = Container(self.level)
         self.inventory.insert(GridObject(self.level))
         self.inventory.insert(GridObject(self.level))

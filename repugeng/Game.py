@@ -1,9 +1,12 @@
 import time, sys, traceback
-from repugeng.PlayableObject import PlayableObject
+from repugeng.GridObject import GridObject
+from repugeng.PlayerObject import PlayerObject
 from repugeng.SimpleInterface import SimpleInterface
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
 class Game(object):
+    """ A game, comprising one or more levels.
+    """
     #
     #Debugging settings, nothing to see here
     debug = 0
@@ -13,7 +16,7 @@ class Game(object):
     #
     #For subclasses to override or not
     InterfaceClass = SimpleInterface
-    PlayerClass = PlayableObject
+    PlayerClass = PlayerObject
     title_window = "Repuge-NG Application"
     use_rpc = False
     #

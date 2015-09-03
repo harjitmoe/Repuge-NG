@@ -2,6 +2,7 @@
 from repugeng.BaseConioBackend import BaseConioBackend
 
 class WConioBackend(BaseConioBackend):
+    """Binding for Windows via the WConio extension for Python."""
     @staticmethod
     def works_p():
         try:

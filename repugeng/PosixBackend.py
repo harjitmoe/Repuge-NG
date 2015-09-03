@@ -5,11 +5,14 @@ from repugeng.TermcapUtility import TermcapUtility
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
 class PosixBackend(BaseConsoleBackend):
+    """Backend for POSIX (GNU, OSX et cetera) via ANSI escapes, termios and optionally
+    curses/termcap/terminfo."""
     _tiles_class = PosixTiles
     def __init__(self, *a, **kw):
         self._plotcache = {}
         super(PosixBackend, self).__init__(*a, **kw)
-        print("\x1b[2J") #Clear the screen
+        #Clear the screen
+        print("\x1b[2J") #pylint: disable = superfluous-parens
     @staticmethod
     def works_p():
         try:

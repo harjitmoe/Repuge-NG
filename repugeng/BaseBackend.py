@@ -63,8 +63,8 @@ class BaseBackend(object):
 
         Implementations should call dump_messages() first."""
         raise NotImplementedError("should be implemented by subclass")
-    def goto_point(self, x, y):
-        """Move the user cursor/focus to coords (x, y)."""
+    def goto_point(self, x_coord, y_coord):
+        """Move the user cursor/focus to coords (x_coord, y_coord)."""
         raise NotImplementedError("should be implemented by subclass")
     def set_window_title(self, title):
         """Sets the window title.  As you would expect.
@@ -80,11 +80,8 @@ class BaseBackend(object):
         raise NotImplementedError("should be implemented by subclass")
     def get_dimensions(self):
         return (-2, -2)
-    def plot_tile(self, y, x, tile_id):
+    def plot_tile(self, y_coord, x_coord, tile_id):
         """Plot a tile at a point."""
-        raise NotImplementedError("should be implemented by subclass")
-    def attach_expansion_pack(self, pack):
-        """Attach an expansion pack of tiles"""
         raise NotImplementedError("should be implemented by subclass")
     def flush_plots(self):
         """Flush any plot caching to the screen"""

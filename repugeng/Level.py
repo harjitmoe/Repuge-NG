@@ -33,7 +33,7 @@ class Level(object):
 
         The general idea is to take control of the player object, by
         placing it on the level via its place(...) method.  The
-        mechanics of PlayableObject will then take care of hooking up
+        mechanics of GridObject will then take care of hooking up
         that player's interface.
 
         The whence argument specifies how the level was entered.
@@ -136,7 +136,7 @@ class Level(object):
             obj.place(i[0], i[1], self)
             time.sleep(delay)
         obj.place(points[-1][0], points[-1][1], self)
-    # move_user(self, pt) removed as obsolete, use PlayableObject.place
+    # move_user(self, pt) removed as obsolete, use GridObject.place
     #
     def handle_move(self, dest, playerobj): #pylint: disable = unused-argument
         """Handle a move command by the user. --> True to go ahead or False

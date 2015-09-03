@@ -1,6 +1,8 @@
 from repugeng.BaseBackend import BaseBackend
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 class RpcBackend(BaseBackend):
+    """Exports the Backend API but, rather than implementing it (bar some
+    optimisation measures), sends queries via XMLRPC to a remote process."""
     #pylint: disable = abstract-method, super-init-not-called
     _plot_cache = None
     _already = None
@@ -20,18 +22,16 @@ class RpcBackend(BaseBackend):
     def __getattribute__(self, attr):
         if attr.startswith("__"):
             return object.__getattribute__(self, attr)
-        if attr in ("backend", "plot_tile", "flush_plots", "goto_point", "_plot_cache", 
+        if attr in ("backend", "plot_tile", "flush_plots", "goto_point", "_plot_cache",
                     "_already", "get_dimensions", "_dimensions"):
             return object.__getattribute__(self, attr)
         return getattr(self.backend, attr)
     def plot_tile(self, y, x, tile_id):
+        #Optimisations are at this end as it takes *much* longer to send a
+        #plot_tile request over XMLRPC than it does to execute it.
         if ((x, y) in self._already) and (self._already[(x, y)] == tile_id):
-            #This optimisation is at this end as it takes *much* longer to send a
-            #plot_tile request over XMLRPC than it does to execute it.
             return
         if ((x, y) not in self._already) and (tile_id == "space"):
-            #This optimisation is at this end as it takes *much* longer to send a
-            #plot_tile request over XMLRPC than it does to execute it.
             return
         self._already[(x, y)] = tile_id
         self._plot_cache.append({"methodName":"plot_tile", "params":(y, x, tile_id)})

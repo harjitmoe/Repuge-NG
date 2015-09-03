@@ -6,11 +6,16 @@ from repugeng.StaticClass import StaticClass
 
 class BackendSelector(StaticClass):
     dispatcher = {"nt": [WConioBackend, RpcBackend], "posix": [PosixBackend, RpcBackend]}
+    @classmethod #Keeps pylint happy
     def get_backend(cls, rpc=True):
-        #rpc is True, False or -1
-        #True: use it
-        #False: don't use it if possible
-        #-1: this *is* the remote, so definitely not!
+        """Obtain an instance implementing the Backend API.
+
+        rpc is True, False or -1:
+
+        * True: use it
+        * False: don't use it if possible
+        * -1: this *is* the remote, so definitely not!
+        """
         if rpc and (rpc > 0):
             return RpcBackend()
         for i in cls.dispatcher[os.name]:

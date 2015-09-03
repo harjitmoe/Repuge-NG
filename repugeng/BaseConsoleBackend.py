@@ -4,7 +4,9 @@ from repugeng.ConsoleTiles import ConsoleTiles
 from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
 class BaseConsoleBackend(BaseBackend):
-    """Partially implementing base class"""
+    """An base class implementing parts of the Backend API
+    in terms of an abstract terminal interface.
+    """
     _tiles_class = ConsoleTiles
     def __init__(self, *a, **kw):
         self._messages_visible = ["", "", ""]
@@ -25,15 +27,13 @@ class BaseConsoleBackend(BaseBackend):
                 line = self._message_queue.pop(0)
                 self._put_to_message_area(line+" -- More -- ", 1, line, 0)
             self._put_to_message_area(self._message_queue.pop(), 0)
-    def ask_question(self, s):
+    def ask_question(self, question):
         self.dump_messages()
-        return self._put_to_message_area(s, 1)
-    def plot_tile(self, x, y, tile_id):
-        return self._plot_character(x, y, self._tiles_class.get_tile_character(tile_id))
-    def attach_expansion_pack(self, pack):
-        self._tiles_class.attach_expansion_pack(pack)
+        return self._put_to_message_area(question, 1)
+    def plot_tile(self, y_coord, x_coord, tile_id):
+        return self._plot_character(x_coord, y_coord, self._tiles_class.get_tile(tile_id))
     #
-    def _plot_character(self, x, y, c):
+    def _plot_character(self, y_coord, x_coord, character):
         raise NotImplementedError("should be implemented by subclass")
     def _put_to_message_area(self, s, ask, s2=None, collect_input=1):
         #Note: this function may be partially copyrighted by KSP.
@@ -60,7 +60,8 @@ class BaseConsoleBackend(BaseBackend):
         old_point = self.point[:]
         returndat = None
         _w = self.get_dimensions()[0]
-        if _w < 0: _w = 80
+        if _w < 0:
+            _w = 80
         _w -= 1
         if ask:
             self.goto_point(0, 19)

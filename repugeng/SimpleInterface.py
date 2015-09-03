@@ -1,6 +1,16 @@
 import sys
 from repugeng.BackendSelector import BackendSelector
 class SimpleInterface(object):
+    """An interface with the user.
+
+    This is double-linked with the object which the user is inhabiting.
+
+    This is in responsible for drawing the level and seeking user input.
+    It probably, but doesn't necessarily, uses BackendSelector to get a
+    implementation (this is the default behaviour).
+
+    FOV/LOS and panning are absent by default but can be added by
+    subclasses."""
     generic_coords = []
     #Semantically public
     def __init__(self, playerobj, use_rpc=False, backend=None, debug_dummy=False):

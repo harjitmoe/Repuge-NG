@@ -5,6 +5,7 @@ except ImportError:
     from xmlrpc.server import SimpleXMLRPCServer #pylint: disable = import-error
 from repugeng.BackendSelector import BackendSelector
 class RpcRemote(object):
+    """An XMLRPC remote process at the service of an RpcBackend."""
     def __init__(self):
         self.backend = BackendSelector.get_backend(rpc=-1)
         port = int(self.backend.ask_question("Use port: "))
