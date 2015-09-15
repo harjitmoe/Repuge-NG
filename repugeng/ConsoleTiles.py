@@ -6,15 +6,15 @@ class ConsoleTiles(BaseTiles):
     space = " "
     vwall = "|"
     hwall = "-"
-    wall_corner_nw = "-" #In true Rogue style
-    wall_corner_ne = "-" #In true Rogue style
-    wall_corner_sw = "-" #In true Rogue style
-    wall_corner_se = "-" #In true Rogue style
-    wall_TeeJnc_up = "-" #In true continuation of Rogue style
-    wall_TeeJnc_dn = "-" #In true continuation of Rogue style
-    wall_TeeJnc_rt = "|" #In true continuation of Rogue style
-    wall_TeeJnc_lt = "|" #In true continuation of Rogue style
-    wall_cross = "-" #In true continuation of Rogue style
+    wall_corner_nw = "-"
+    wall_corner_ne = "-"
+    wall_corner_sw = "-"
+    wall_corner_se = "-"
+    wall_TeeJnc_up = "-"
+    wall_TeeJnc_dn = "-"
+    wall_TeeJnc_rt = "|"
+    wall_TeeJnc_lt = "|"
+    wall_cross = "-"
     vfeature = ":"
     hfeature = "="
     vfeature_open = "-" #Use perpendicular wall chars, per ASCII NetHack

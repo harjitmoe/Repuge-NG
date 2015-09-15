@@ -2,7 +2,7 @@ from repugeng.ConsoleTiles import ConsoleTiles
 
 class IbmTiles(ConsoleTiles):
     """ A static class, indirect subclass of BaseTiles,
-    defining OEM-US tiles.
+    defining OEM-US tiles ("IBMGraphics").
     """
     #STATIC CLASS.  NO INSTANCES.
     vwall = "\xb3"

@@ -5,11 +5,10 @@ class PosixTiles(ConsoleTiles):
     """
     #STATIC CLASS.  NO INSTANCES.
     @classmethod #Keeps pylint happy
-    def _decorate_wall(cls, bare):
-        return "\x1b[1;31m"+bare
-    @classmethod #Keeps pylint happy
-    def _decorate_floor(cls, bare):
-        return "\x1b[1;30m"+bare
-    @classmethod #Keeps pylint happy
-    def _decorate_regular(cls, bare):
-        return "\x1b[22;37m"+bare
+    def _decorate_type(cls, type, bare):
+        if type=="wall":
+            return "\x1b[1;31m"+bare
+        elif type=="floor":
+            return "\x1b[1;30m"+bare
+        else:
+            return "\x1b[22;37m"+bare
