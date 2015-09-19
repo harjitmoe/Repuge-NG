@@ -12,7 +12,9 @@ class Compat3k(StaticClass):
                 return str(s)
         except ValueError:
             pass #Not ASCII?  Not really a problem...
-        return s.encode("utf-8")
+        except TypeError:
+            pass #I didn't specify an encoding?  Oh, boo hoo...
+        return s.encode("latin1") #Not utf-8, m'kay...
     @classmethod
     def prompt_user(cls, s="", file=None):
         """Substitute of py2k's raw_input()."""
