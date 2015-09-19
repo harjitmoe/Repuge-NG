@@ -19,4 +19,5 @@ class Compat3k(StaticClass):
     def prompt_user(cls, s="", file=None):
         """Substitute of py2k's raw_input()."""
         (file or sys.stderr).write(s)
+        (file or sys.stderr).flush()
         return sys.stdin.readline().rstrip("\r\n")
