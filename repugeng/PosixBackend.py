@@ -2,7 +2,6 @@ import sys
 from repugeng.BaseConsoleBackend import BaseConsoleBackend
 from repugeng.PosixTiles import PosixTiles
 from repugeng.TermcapUtility import TermcapUtility
-from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
 
 class PosixBackend(BaseConsoleBackend):
     """Backend for POSIX (GNU, OSX et cetera) via ANSI escapes, termios and optionally

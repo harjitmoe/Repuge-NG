@@ -1,6 +1,6 @@
 from repugeng.BaseConsoleBackend import BaseConsoleBackend
 from repugeng.ConioTiles import ConioTiles
-from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
+from repugeng.Compat3k import Compat3k
 
 class BaseConioBackend(BaseConsoleBackend):
     """A class implementing Backend in terms of a semantically
@@ -12,12 +12,12 @@ class BaseConioBackend(BaseConsoleBackend):
         self.point.extend([x_coord, y_coord])
         self._conio_gotoxy(x_coord, y_coord)
     def set_window_title(self, title):
-        self._conio_settitle(bytes(title))
+        self._conio_settitle(Compat3k.str_to_bytes(title))
     def get_key_event(self):
         self.dump_messages()
         return self._conio_getkey()
     def _plot_character(self, y_coord, x_coord, character):
-        self._conio_puttext(x_coord, y_coord, x_coord, y_coord, bytes(character))
+        self._conio_puttext(x_coord, y_coord, x_coord, y_coord, Compat3k.str_to_bytes(character))
     def _engage_message_formatting(self):
         self._conio_textcolor(0xF)
     #In subclasses, using e.g. WConio (binding to Windows port of conio)

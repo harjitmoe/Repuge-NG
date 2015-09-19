@@ -1,5 +1,6 @@
 from repugeng.BaseBackend import BaseBackend
-from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
+from repugeng.Compat3k import Compat3k
+
 class RpcBackend(BaseBackend):
     """Exports the Backend API but, rather than implementing it (bar some
     optimisation measures), sends queries via XMLRPC to a remote process."""
@@ -13,8 +14,8 @@ class RpcBackend(BaseBackend):
         except ImportError:
             #3k
             import xmlrpc.client as xmlrpclib #pylint: disable = import-error
-        host = raw_input("Host of next remote (blank for localhost): ").strip() or "localhost"
-        port = int(raw_input("Port used: "))
+        host = Compat3k.prompt_user("Host of next remote (blank for localhost): ").strip() or "localhost"
+        port = int(Compat3k.prompt_user("Port used: "))
         self.backend = xmlrpclib.ServerProxy("http://%s:%d/"%(host, port), allow_none=True)
         self._plot_cache = []
         self._already = {}

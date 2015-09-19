@@ -1,7 +1,7 @@
 import sys
 from repugeng.BaseBackend import BaseBackend
 from repugeng.ConsoleTiles import ConsoleTiles
-from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
+from repugeng.Compat3k import Compat3k
 
 class BaseConsoleBackend(BaseBackend):
     """An base class implementing parts of the Backend API
@@ -79,7 +79,7 @@ class BaseConsoleBackend(BaseBackend):
                 self._message_queue = bkq+self._message_queue
                 s = s2
             else:
-                returndat = raw_input(s)
+                returndat = Compat3k.prompt_user(s)
                 s = s2
                 s = s+returndat
         while len(s) < _w:

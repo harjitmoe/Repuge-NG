@@ -2,7 +2,7 @@ import time, sys, traceback
 from repugeng.GridObject import GridObject
 from repugeng.PlayerObject import PlayerObject
 from repugeng.SimpleInterface import SimpleInterface
-from repugeng.compat3k import * #pylint: disable = redefined-builtin, wildcard-import, unused-wildcard-import
+from repugeng.Compat3k import Compat3k
 
 class Game(object):
     """ A game, comprising one or more levels.
@@ -67,7 +67,7 @@ class Game(object):
         self.loading_lock = 1
         self._p = players = []
         if self.use_rpc:
-            number = int(raw_input("How many players (+ve number in figures): "))
+            number = int(Compat3k.prompt_user("How many players (+ve number in figures): "))
             print ("Please start %d instance(s) " #pylint: disable = superfluous-parens
                    "of remote.py or remote.exe with unique ports."%number)
             print ("Once you have done this, " #pylint: disable = superfluous-parens
