@@ -1,4 +1,4 @@
-import time, sys, traceback
+import time
 from repugeng.PlayerObject import PlayerObject
 from repugeng.SimpleInterface import SimpleInterface
 from repugeng.Compat3k import Compat3k
@@ -9,7 +9,6 @@ class Game(object):
     #
     #Debugging settings, nothing to see here
     debug = 0
-    bug_report = {}
     debug_ghost = 0
     debug_fov_off = 0
     #
@@ -20,36 +19,8 @@ class Game(object):
     use_rpc = False
     #
     def __init__(self):
-        self.bug_report[__name__] = {}
-        try:
-            self.add_players()
-            self.run()
-        except SystemExit:
-            raise
-        except KeyboardInterrupt:
-            raise
-        except: #pylint: disable = bare-except
-            exctype, exception, trace = sys.exc_info()
-            try:
-                #Put the exception in: the program quits on exception and,
-                #unless started from a shell such as cmd, the terminal
-                #probably closes promptly leaving it inaccessible.
-                self.bug_report[__name__]["Exception"] = (exctype, exception,
-                                                          traceback.extract_tb(trace))
-                self.dump_report()
-            except: #Keep squealing, pylint, this one needs work
-                pass #Silence the irrelevant exception, making the above very hard to debug ;)
-            if sys.hexversion < 0x03000000:
-                #Only 2k way to keep original traceback here, exec'd as invalid 3k syntax
-                exec("raise exctype, exception, trace") #pylint: disable = exec-used
-            else:
-                raise exception
-    #
-    def dump_report(self):
-        import pickle
-        f = open("bugreport.%010d.txt"%time.time(), "w")
-        pickle.dump(self.bug_report, f)
-        f.close()
+        self.add_players()
+        self.run()
     #
     def run(self):
         if self.use_rpc:

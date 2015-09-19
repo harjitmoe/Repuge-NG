@@ -43,15 +43,11 @@ class SimpleDungeonLevel(GeneratedLevel):
         max_yoffset=max_height-height-1
         xoffset=xoffset_override or random.randint(1,max_xoffset)
         yoffset=yoffset_override or random.randint(1,max_yoffset)
-        if brid:
-            self.game.bug_report[__name__][brid]=[joint,joinr,joinb,joinl,room,iwidth,iheight,xoffset,yoffset]
         if room:
             topdoor=random.randrange(iwidth)+xoffset+1
             botdoor=random.randrange(iwidth)+xoffset+1
             leftdoor=random.randrange(iheight)+yoffset+1
             rightdoor=random.randrange(iheight)+yoffset+1
-            if brid:
-                self.game.bug_report[__name__][brid].extend((topdoor,botdoor,leftdoor,rightdoor))
             #
             block=""
             for j in range(max_height):
@@ -81,8 +77,6 @@ class SimpleDungeonLevel(GeneratedLevel):
             leftdoor=rightdoor=yoffset
             block=(" "*max_width+"\n")*max_height
         block=block.strip("\n")
-        if brid:
-            self.game.bug_report[__name__][brid].append(block)
         #
         block=[list(i) for i in block.split("\n")]
         if not room:
@@ -113,8 +107,6 @@ class SimpleDungeonLevel(GeneratedLevel):
                     else:
                         from_[0]-=(from_[0]-to[0])/abs(from_[0]-to[0])
         block="\n".join(["".join(i) for i in block])
-        if brid:
-            self.game.bug_report[__name__][brid].append(block)
         #
         self._ag=(xoffset+1,yoffset+1)
         gamut=[]
@@ -123,11 +115,8 @@ class SimpleDungeonLevel(GeneratedLevel):
         for x in gamutx:
             for y in gamuty:
                 gamut.append((x,y))
-        if brid:
-            self.game.bug_report[__name__][brid].append(tuple(gamut))
         return block,tuple(gamut)
     def genmap(self):
-        self.game.bug_report[__name__]={}
         roomyes=[True,True,True,True,True,True]
         for i in range(random.randrange(3)+1):
             roomyes[random.randrange(6)]=False

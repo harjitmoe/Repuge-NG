@@ -21,7 +21,6 @@ class SimpleInterface(object):
         self.game = playerobj.game
         #
         if not debug_dummy:
-            self.game.bug_report[__name__] = {}
             if backend:
                 self.backend = backend
             else:
