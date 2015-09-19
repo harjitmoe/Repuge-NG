@@ -20,6 +20,22 @@ class _StaticClassMetaclass(type): #How badass...
         """Raise an error if anyone erroneously tries to
         create an instance of this static class."""
         raise TypeError("attempt to create instance of static class")
+
+_StaticClass = _StaticClassMetaclass("StaticClass", (object,), {})
+
+# As for why I'm not using 2k __metaclass__ or 3k metaclass=, neither
+# supports the other's syntax, but both support the Don Beaudry hook,
+# (used above) which was made available for pure-Python (then classic)
+# classes back in Python 1.5, having been available earlier via C.
+# Accordingly, it was usable before new-style classes even existed,
+# and was perfectly usable for new-style classes from the get-go, and
+# still is entirely usable in  3k.
+
+# Define class methods here, not as instance methods on the metaclass,
+# to make pylint shut up.
+#
+class StaticClass(_StaticClass):
+    @classmethod
     def _cascade_method(cls, method, errors, *args, **kwargs):
         """Manage cascading inheritance of methods."""
         # Not one of Python's algorithms (see "What's New in Python 2.2"
@@ -34,5 +50,5 @@ class _StaticClassMetaclass(type): #How badass...
                     return r
         return errors[0]
 
-StaticClass = _StaticClassMetaclass("StaticClass", (object,), {})
+del _StaticClass
 del _StaticClassMetaclass

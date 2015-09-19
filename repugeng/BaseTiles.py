@@ -12,6 +12,7 @@ class BaseTiles(StaticClass):
         if r in cls._error_codes:
             return cls._error_codes[cls._error_code%len(cls._error_codes)]
         return r
+    @classmethod #Keeps pylint happy
     def _get_tile(cls, tile_id):
         """Return the tile with the given ID, or a 'huh?' tile if none,
         only for tiles defined here.
@@ -21,6 +22,7 @@ class BaseTiles(StaticClass):
             return cls._decorate_type(cls._cascade_method("_tile_type", (None,), tile_id), tilechar)
         return cls._error_codes[cls._error_code%len(cls._error_codes)]
     #
+    @classmethod #Keeps pylint happy
     def _tile_type(cls, tile_id):
         """Determine the tile type for decoration purposes."""
         if ("wall" in tile_id) or (tile_id in ("vfeature", "hfeature")):

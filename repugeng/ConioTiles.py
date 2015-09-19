@@ -5,10 +5,10 @@ class ConioTiles(IbmTiles):
     """
     #STATIC CLASS.  NO INSTANCES.
     @classmethod #Keeps pylint happy
-    def _decorate_type(cls, type, bare):
-        if type=="wall":
+    def _decorate_type(cls, typ, bare):
+        if typ=="wall":
             return bare+"\x04"
-        elif type=="floor":
+        elif typ=="floor":
             return bare+"\x08"
         else:
             return bare+"\x0f"

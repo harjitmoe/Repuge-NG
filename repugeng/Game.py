@@ -1,5 +1,4 @@
 import time, sys, traceback
-from repugeng.GridObject import GridObject
 from repugeng.PlayerObject import PlayerObject
 from repugeng.SimpleInterface import SimpleInterface
 from repugeng.Compat3k import Compat3k
