@@ -1,4 +1,5 @@
-from repugeng.IbmTiles import IbmTiles
+from consolation.IbmTiles import IbmTiles
+
 class ConioTiles(IbmTiles):
     """ A static class, subclass of IbmTiles,
     adding conio puttext colour information.

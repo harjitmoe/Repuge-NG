@@ -1,7 +1,7 @@
 import time
 from repugeng.PlayerObject import PlayerObject
 from repugeng.SimpleInterface import SimpleInterface
-from repugeng.Compat3k import Compat3k
+from consolation.Compat3k import Compat3k
 
 class Game(object):
     """ A game, comprising one or more levels.

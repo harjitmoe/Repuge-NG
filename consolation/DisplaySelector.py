@@ -1,14 +1,14 @@
 import os
-from repugeng.PosixBackend import PosixBackend
-from repugeng.WConioBackend import WConioBackend
-from repugeng.RpcBackend import RpcBackend
-from repugeng.StaticClass import StaticClass
+from consolation.PosixDisplay import PosixDisplay
+from consolation.WConioDisplay import WConioDisplay
+from consolation.RpcDisplay import RpcDisplay
+from consolation.StaticClass import StaticClass
 
-class BackendSelector(StaticClass):
-    dispatcher = {"nt": [WConioBackend, RpcBackend], "posix": [PosixBackend, RpcBackend]}
+class DisplaySelector(StaticClass):
+    dispatcher = {"nt": [WConioDisplay, RpcDisplay], "posix": [PosixDisplay, RpcDisplay]}
     @classmethod #Keeps pylint happy
-    def get_backend(cls, rpc=True):
-        """Obtain an instance implementing the Backend API.
+    def get_display(cls, rpc=True):
+        """Obtain an instance implementing the Display API.
 
         rpc is True, False or -1:
 
@@ -17,10 +17,10 @@ class BackendSelector(StaticClass):
         * -1: this *is* the remote, so definitely not!
         """
         if rpc and (rpc > 0):
-            return RpcBackend()
+            return RpcDisplay()
         for i in cls.dispatcher[os.name]:
-            if ((not rpc) or i != RpcBackend) and i.works_p():
-                if i == RpcBackend:
+            if ((not rpc) or i != RpcDisplay) and i.works_p():
+                if i == RpcDisplay:
                     print ("No supported local backend, " #pylint: disable = superfluous-parens
                            "falling back to RPC.")
                     print ("(On Windows, WConio is " #pylint: disable = superfluous-parens

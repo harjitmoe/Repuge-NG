@@ -1,4 +1,5 @@
-from repugeng.ConsoleTiles import ConsoleTiles
+from consolation.ConsoleTiles import ConsoleTiles
+
 class PosixTiles(ConsoleTiles):
     """ A static class, subclass of ConsoleTiles,
     adding ANSI-escape colouring.

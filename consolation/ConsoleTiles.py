@@ -1,4 +1,4 @@
-from repugeng.BaseTiles import BaseTiles
+from consolation.BaseTiles import BaseTiles
 
 class ConsoleTiles(BaseTiles):
     """ A static class, subclass of BaseTiles, defining ASCII tiles.

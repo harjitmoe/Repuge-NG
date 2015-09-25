@@ -1,4 +1,4 @@
-from repugeng.ConsoleTiles import ConsoleTiles
+from consolation.ConsoleTiles import ConsoleTiles
 
 class IbmTiles(ConsoleTiles):
     """ A static class, indirect subclass of BaseTiles,

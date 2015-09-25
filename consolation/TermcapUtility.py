@@ -1,4 +1,4 @@
-from repugeng.StaticClass import StaticClass
+from consolation.StaticClass import StaticClass
 
 class TermcapUtility(StaticClass):
     """Rudimentary utility for reading integer (for now) terminal capabilities on POSIX."""

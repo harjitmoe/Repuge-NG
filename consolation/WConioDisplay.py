@@ -1,7 +1,9 @@
 #Stuff which might not be present on system is to be imported in methods.
-from repugeng.BaseConioBackend import BaseConioBackend
+from consolation.BaseConioDisplay import BaseConioDisplay
 
-class WConioBackend(BaseConioBackend):
+f=open("log.txt","w")
+
+class WConioDisplay(BaseConioDisplay):
     """Binding for Windows via the WConio extension for Python."""
     @staticmethod
     def works_p():
@@ -23,6 +25,7 @@ class WConioBackend(BaseConioBackend):
         return WConio.getkey()
     def _conio_puttext(self, a, b, c, d, t):
         import WConio #pylint: disable = import-error
+        f.write("%d %d %d %d %s\n"%(a,b,c,d,t))
         WConio.puttext(a, b, c, d, t)
     def _conio_textcolor(self, colour):
         import WConio #pylint: disable = import-error

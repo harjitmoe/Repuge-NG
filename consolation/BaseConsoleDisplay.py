@@ -1,17 +1,22 @@
 import sys
-from repugeng.BaseBackend import BaseBackend
-from repugeng.ConsoleTiles import ConsoleTiles
-from repugeng.Compat3k import Compat3k
+from consolation.BaseDisplay import BaseDisplay
+from consolation.ConsoleTiles import ConsoleTiles
+from consolation.Compat3k import Compat3k
+try:
+    import thread
+except ImportError:
+    import _thread as thread
 
-class BaseConsoleBackend(BaseBackend):
-    """An base class implementing parts of the Backend API
+class BaseConsoleDisplay(BaseDisplay):
+    """An base class implementing parts of the Display API
     in terms of an abstract terminal interface.
     """
     _tiles_class = ConsoleTiles
     def __init__(self, *a, **kw):
         self._messages_visible = ["", "", ""]
         self.point = [0, 0]
-        super(BaseConsoleBackend, self).__init__(*a, **kw)
+        self.mylock=thread.allocate_lock()
+        super(BaseConsoleDisplay, self).__init__(*a, **kw)
     def _output_text(self, i):
         sys.stderr.write(i)
         sys.stderr.flush() #breaks on 3.1 on win32 otherwise
@@ -73,10 +78,11 @@ class BaseConsoleBackend(BaseBackend):
             if not collect_input:
                 self._output_text(s)
                 #Wait for key event without triggering recursion.
-                #XXX kluge, not thread safe.
+                self.mylock.acquire()
                 bkq, self._message_queue = self._message_queue, []
                 self.get_key_event()
                 self._message_queue = bkq+self._message_queue
+                self.mylock.release()
                 s = s2
             else:
                 returndat = Compat3k.prompt_user(s)

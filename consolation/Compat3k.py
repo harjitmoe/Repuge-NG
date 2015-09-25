@@ -1,4 +1,4 @@
-from repugeng.StaticClass import StaticClass
+from consolation.StaticClass import StaticClass
 import sys
 
 class Compat3k(StaticClass):

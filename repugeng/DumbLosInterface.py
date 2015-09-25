@@ -111,7 +111,7 @@ class DumbLosInterface(SimpleInterface):
         #To be rewritten.
         """Draw the map (grid and objgrid)."""
         if self.playerobj.pt:
-            self.backend.goto_point(*self.get_viewport_pt())
+            self.display.goto_point(*self.get_viewport_pt())
         colno = 0
         self._los_cache = {}
         if not self._atan_cache:
@@ -124,14 +124,14 @@ class DumbLosInterface(SimpleInterface):
                 #print colno, rowno, col
                 if self._fov_check(*coords)[0]:
                     if row2:
-                        self.backend.plot_tile(colno, rowno, row2[-1].tile)
+                        self.display.plot_tile(colno, rowno, row2[-1].tile)
                     elif row:
-                        self.backend.plot_tile(colno, rowno, row[0])
+                        self.display.plot_tile(colno, rowno, row[0])
                 else:
-                    self.backend.plot_tile(colno, rowno, "space")
+                    self.display.plot_tile(colno, rowno, "space")
                 rowno += 1
             colno += 1
-        self.backend.flush_plots()
+        self.display.flush_plots()
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
         self._fov_cache = {}

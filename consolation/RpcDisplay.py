@@ -1,8 +1,8 @@
-from repugeng.BaseBackend import BaseBackend
-from repugeng.Compat3k import Compat3k
+from consolation.BaseDisplay import BaseDisplay
+from consolation.Compat3k import Compat3k
 
-class RpcBackend(BaseBackend):
-    """Exports the Backend API but, rather than implementing it (bar some
+class RpcDisplay(BaseDisplay):
+    """Exports the Display API but, rather than implementing it (bar some
     optimisation measures), sends queries via XMLRPC to a remote process."""
     #pylint: disable = abstract-method, super-init-not-called
     _plot_cache = None

@@ -1,15 +1,15 @@
 import sys
-from repugeng.BaseConsoleBackend import BaseConsoleBackend
-from repugeng.PosixTiles import PosixTiles
-from repugeng.TermcapUtility import TermcapUtility
+from consolation.BaseConsoleDisplay import BaseConsoleDisplay
+from consolation.PosixTiles import PosixTiles
+from consolation.TermcapUtility import TermcapUtility
 
-class PosixBackend(BaseConsoleBackend):
-    """Backend for POSIX (GNU, OSX et cetera) via ANSI escapes, termios and optionally
+class PosixDisplay(BaseConsoleDisplay):
+    """Display for POSIX (GNU, OSX et cetera) via ANSI escapes, termios and optionally
     curses/termcap/terminfo."""
     _tiles_class = PosixTiles
     def __init__(self, *a, **kw):
         self._plotcache = {}
-        super(PosixBackend, self).__init__(*a, **kw)
+        super(PosixDisplay, self).__init__(*a, **kw)
         #Clear the screen
         print("\x1b[2J") #pylint: disable = superfluous-parens
     @staticmethod

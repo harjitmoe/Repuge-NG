@@ -1,4 +1,4 @@
-from repugeng.StaticClass import StaticClass
+from consolation.StaticClass import StaticClass
 
 class BaseTiles(StaticClass):
     """A static base class defining simple public and protected tileset API."""
@@ -8,19 +8,19 @@ class BaseTiles(StaticClass):
         
         Please override _get_tile() if you must, not this one.
         """
-        r=cls._cascade_method("_get_tile", cls._error_codes, tile_id)
-        if r in cls._error_codes:
-            return cls._error_codes[cls._error_code%len(cls._error_codes)]
+        r=cls._cascade_method("_get_tile", tile_id)
+        if r==None:
+            return cls._decorate_type("error", cls._error_codes[cls._error_code%len(cls._error_codes)])
         return r
     @classmethod #Keeps pylint happy
     def _get_tile(cls, tile_id):
-        """Return the tile with the given ID, or a 'huh?' tile if none,
+        """Return the tile with the given ID, or None if none,
         only for tiles defined here.
         """
         if hasattr(cls, tile_id):
             tilechar = getattr(cls, tile_id)
-            return cls._decorate_type(cls._cascade_method("_tile_type", (None,), tile_id), tilechar)
-        return cls._error_codes[cls._error_code%len(cls._error_codes)]
+            return cls._decorate_type(cls._cascade_method("_tile_type", tile_id), tilechar)
+        return None
     #
     @classmethod #Keeps pylint happy
     def _tile_type(cls, tile_id):

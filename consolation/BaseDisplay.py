@@ -1,20 +1,20 @@
 import textwrap
 
-class BaseBackend(object):
+class BaseDisplay(object):
     """The backend interface.  This is the core of Repuge-NG, and may
     sometimes be useful even if Level is not used.
 
     Do not create an instance directly.
 
-    Obtain an instance using BackendSelector.get_backend().  The class
+    Obtain an instance using DisplaySelector.get_backend().  The class
     itself is a portable interface which does not implement anything
     interface-dependant (accordingly it implements only the storage for the
     -- More -- system).  Actual functionality is obtained from platform- and
     interface-specific subclasses, a working one of which should be usable
-    by calling BackendSelector.get_backend() to get an instance.
+    by calling DisplaySelector.get_backend() to get an instance.
 
     There is not necessarily multiple-window support, so creating multiple
-    BaseBackend is not guaranteed to work.  In particular, all existing
+    BaseDisplay is not guaranteed to work.  In particular, all existing
     implementations do not support it."""
     def __init__(self):
         self._message_queue = []

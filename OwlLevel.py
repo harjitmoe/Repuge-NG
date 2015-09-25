@@ -28,7 +28,7 @@ class OwlLevel(MazeLevel2):
         self.score.initialise_property("myscore",0)
         self.score.initialise_property("mymoves",0)
         #Generate map
-        self.genmap()#10)
+        self.genmap(10,10)
         self.starting_pt=random.choice(self.gamut)
 
     def initialise(self):

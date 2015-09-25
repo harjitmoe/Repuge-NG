@@ -1,9 +1,9 @@
-from repugeng.BaseConsoleBackend import BaseConsoleBackend
-from repugeng.ConioTiles import ConioTiles
-from repugeng.Compat3k import Compat3k
+from consolation.BaseConsoleDisplay import BaseConsoleDisplay
+from consolation.ConioTiles import ConioTiles
+from consolation.Compat3k import Compat3k
 
-class BaseConioBackend(BaseConsoleBackend):
-    """A class implementing Backend in terms of a semantically
+class BaseConioDisplay(BaseConsoleDisplay):
+    """A class implementing Display in terms of a semantically
     protected conio-style interface which it leaves abstract.
     """
     _tiles_class = ConioTiles
