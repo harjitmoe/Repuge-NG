@@ -34,8 +34,7 @@ class StaticClass(_StaticClass):
     @classmethod
     def _cascade_method(cls, method, *args, **kwargs):
         """Manage cascading inheritance of methods."""
-        # Not one of Python's algorithms (see "What's New in Python 2.2"
-        # for those ones) but it will do.
+        # Simple MRO, will do.
         bases=[cls]
         while bases:
             cls2=bases.pop(0)

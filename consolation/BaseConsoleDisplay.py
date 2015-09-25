@@ -37,6 +37,8 @@ class BaseConsoleDisplay(BaseDisplay):
         return self._put_to_message_area(question, 1)
     def plot_tile(self, y_coord, x_coord, tile_id):
         return self._plot_character(x_coord, y_coord, self._tiles_class.get_tile(tile_id))
+    def plot_tile_ex(self, y_coord, x_coord, tile_id, tilechar):
+        return self._plot_character(x_coord, y_coord, tilechar)
     #
     def _plot_character(self, y_coord, x_coord, character):
         raise NotImplementedError("should be implemented by subclass")

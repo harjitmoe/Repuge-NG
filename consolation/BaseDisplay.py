@@ -83,6 +83,9 @@ class BaseDisplay(object):
     def plot_tile(self, y_coord, x_coord, tile_id):
         """Plot a tile at a point."""
         raise NotImplementedError("should be implemented by subclass")
+    def plot_tile_ex(self, y_coord, x_coord, tile_id, tilechar):
+        """Plot a tile at a point, suggesting a representative character."""
+        raise NotImplementedError("should be implemented by subclass")
     def flush_plots(self):
         """Flush any plot caching to the screen"""
         pass
