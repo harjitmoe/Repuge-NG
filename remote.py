@@ -1,3 +1,3 @@
-from repugeng.RpcRemote import RpcRemote
+from consolation.RpcRemote import RpcRemote
 
 RpcRemote()

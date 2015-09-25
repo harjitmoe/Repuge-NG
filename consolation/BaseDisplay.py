@@ -1,12 +1,11 @@
 import textwrap
 
 class BaseDisplay(object):
-    """The backend interface.  This is the core of Repuge-NG, and may
-    sometimes be useful even if Level is not used.
+    """The display interface.
 
     Do not create an instance directly.
 
-    Obtain an instance using DisplaySelector.get_backend().  The class
+    Obtain an instance using DisplaySelector.get_display().  The class
     itself is a portable interface which does not implement anything
     interface-dependant (accordingly it implements only the storage for the
     -- More -- system).  Actual functionality is obtained from platform- and
