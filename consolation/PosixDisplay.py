@@ -10,6 +10,7 @@ class PosixDisplay(BaseConsoleDisplay):
     def __init__(self, *a, **kw):
         self._plotcache = {}
         super(PosixDisplay, self).__init__(*a, **kw)
+        self._reset_to=None
         #Clear the screen
         print("\x1b[2J") #pylint: disable = superfluous-parens
     @staticmethod
@@ -60,26 +61,19 @@ class PosixDisplay(BaseConsoleDisplay):
         sys.stderr.write("\x1B%d;%dH%s\x1B%d;%dH\x1B[m" % (y+1, x+1, c, ry+1, rx+1))
         sys.stderr.flush()
     #
-    def _getch(self, reset_afterwards=0): #avoid misechoed keystrokes between checks
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
-        import termios  #pylint: disable = import-error
-        attrs = termios.tcgetattr(0)
-        termios.tcsetattr(0, termios.TCSADRAIN, \
-                          attrs[:3]+[attrs[3]&(~termios.ICANON)&(~termios.ECHO)]+attrs[4:])
-        termios.tcdrain(0)
+    def _getch(self, reset_afterwards=0):
+        import termios, tty  #pylint: disable = import-error
+        if not self._reset_to:
+            self._reset_to = termios.tcsetattr(0)
+        tty.setcbreak(0, termios.TCSANOW)
         char = sys.stdin.read(1)
         if reset_afterwards:
-            termios.tcsetattr(0, termios.TCSADRAIN, attrs)
+            self._reset_terminal()
         return char
     def _reset_terminal(self):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
         import termios  #pylint: disable = import-error
-        attrs = termios.tcgetattr(0)
-        termios.tcsetattr(0, termios.TCSADRAIN, \
-                          attrs[:3]+[attrs[3]|termios.ICANON|termios.ECHO]+attrs[4:])
-        termios.tcdrain(0)
+        if self._reset_to:
+            termios.tcsetattr(0, termios.TCSANOW, self._reset_to)
     def get_dimensions(self):
         return TermcapUtility.dimensions()
 
