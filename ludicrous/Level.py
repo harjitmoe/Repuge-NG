@@ -126,16 +126,6 @@ class Level(object):
     def set_index_grid(self, v, x, y):
         self.grid[x][y] = v
     #
-    # followline_user removed as obsolete and incompatible
-    def followline(self, delay, points, obj):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten or removed.
-        """Move a non-user object visibly down a list of points.
-        (obj should be the object)."""
-        for i in points[:-1]:
-            obj.place(i[0], i[1], self)
-            time.sleep(delay)
-        obj.place(points[-1][0], points[-1][1], self)
     # move_user(self, pt) removed as obsolete, use GridObject.place
     #
     def handle_move(self, dest, playerobj): #pylint: disable = unused-argument
