@@ -3,6 +3,11 @@ from consolation.BaseConsoleDisplay import BaseConsoleDisplay
 from consolation.PosixTiles import PosixTiles
 from consolation.TermcapUtility import TermcapUtility
 
+__copying__="""
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/."""
+
 class PosixDisplay(BaseConsoleDisplay):
     """Display for POSIX (GNU, OSX et cetera) via ANSI escapes, termios and optionally
     curses/termcap/terminfo."""

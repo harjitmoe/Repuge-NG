@@ -2,6 +2,11 @@ from consolation.BaseConsoleDisplay import BaseConsoleDisplay
 from consolation.ConioTiles import ConioTiles
 from consolation.Compat3k import Compat3k
 
+__copying__="""
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/."""
+
 class BaseConioDisplay(BaseConsoleDisplay):
     """A class implementing Display in terms of a semantically
     protected conio-style interface which it leaves abstract.

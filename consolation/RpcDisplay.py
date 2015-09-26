@@ -1,6 +1,11 @@
 from consolation.BaseDisplay import BaseDisplay
 from consolation.Compat3k import Compat3k
 
+__copying__="""
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/."""
+
 class RpcDisplay(BaseDisplay):
     """Exports the Display API but, rather than implementing it (bar some
     optimisation measures), sends queries via XMLRPC to a remote process."""

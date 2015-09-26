@@ -1,6 +1,11 @@
 #Stuff which might not be present on system is to be imported in methods.
 from consolation.BaseConioDisplay import BaseConioDisplay
 
+__copying__="""
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/."""
+
 class WConioDisplay(BaseConioDisplay):
     """Binding for Windows via the WConio extension for Python."""
     @staticmethod
