@@ -71,3 +71,4 @@ class BaseConsoleDisplay(BaseDisplay):
         self._end_message_formatting()
         self.goto_point(*save_point)
         return retu
+

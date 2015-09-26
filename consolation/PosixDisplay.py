@@ -22,6 +22,7 @@ class PosixDisplay(BaseConsoleDisplay):
             return 0
     def _engage_message_formatting(self):
         sys.stderr.write("\x1b[1;37m")
+        sys.stderr.flush()
     def _end_message_formatting(self):
         sys.stderr.write("\x1b[m")
         sys.stderr.flush()
@@ -30,8 +31,10 @@ class PosixDisplay(BaseConsoleDisplay):
         del self.point[:]
         self.point.extend([x, y])
         sys.stderr.write("\x1B[%d;%dH"%(y+1, x+1))
+        sys.stderr.flush()
     def set_window_title(self, title):
         sys.stderr.write("\x1b]0;"+title+"\x1b\\")
+        sys.stderr.flush()
     def get_key_event(self):
         self.dump_messages()
         s = self._getch()
