@@ -52,19 +52,19 @@ class PosixDisplay(BaseConsoleDisplay):
         elif s[-1] == "D":
             return "left"
         return s
-    def _plot_character(self, x, y, c):
+    def _plot_character(self, y, x, c):
         if (x, y) not in self._plotcache:
             self._plotcache[(x, y)] = " "
         if self._plotcache[(x, y)] == c:
             return
         rx, ry = self.point
-        sys.stderr.write("\x1B%d;%dH%s\x1B%d;%dH\x1B[m" % (y+1, x+1, c, ry+1, rx+1))
+        sys.stderr.write("\x1B[%d;%dH%s\x1B[%d;%dH\x1B[m" % (y+1, x+1, c, ry+1, rx+1))
         sys.stderr.flush()
     #
     def _getch(self, reset_afterwards=0):
         import termios, tty  #pylint: disable = import-error
         if not self._reset_to:
-            self._reset_to = termios.tcsetattr(0)
+            self._reset_to = termios.tcgetattr(0)
         tty.setcbreak(0, termios.TCSANOW)
         char = sys.stdin.read(1)
         if reset_afterwards:
