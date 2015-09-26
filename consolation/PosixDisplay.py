@@ -32,37 +32,33 @@ class PosixDisplay(BaseConsoleDisplay):
     def set_window_title(self, title):
         sys.stderr.write("\x1b]0;"+title+"\x1b\\")
     def get_key_event(self):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
         self.dump_messages()
         s = self._getch()
-        if s == "\x1b":
-            s = self._getch()
-            if s == "[":
-                s = "0"
-                while s == "0":
-                    s = self._getch()
-                if s == "A":
-                    s = "up"
-                elif s == "B":
-                    s = "down"
-                elif s == "C":
-                    s = "right"
-                elif s == "D":
-                    s = "left"
-            #XXX else undefined behaviour (in practice just skipping the \x1b)
+        if s != "\x1B":
+            return s
+        s += self._getch()
+        c = self._getch()
+        while ord(c) in list(range(32,48)):
+            s += c
+            c = self._getch()
+        s += c #Terminator character
+        if s[-1] == "A":
+            return "up"
+        elif s[-1] == "B":
+            return "down"
+        elif s[-1] == "C":
+            return "right"
+        elif s[-1] == "D":
+            return "left"
         return s
     def _plot_character(self, x, y, c):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
-        if (((x, y) not in self._plotcache) and c != " ") or (self._plotcache[(x, y)] != c):
-            sys.stderr.write("\x1B[?25l") #hide cursor, ? means extension, and that's a lowercase L
-            sys.stderr.write("\x1B[%d;%dH%s"%(y+1, x+1, c))
-            sys.stderr.write("\x1B[m") #reset colour
-            sys.stderr.write("\x1B[?25h") #show cursor, ? means extension
-            sys.stderr.flush()
-            self._plotcache[(x, y)] = c
-        self.goto_point(*self.point)
+        if (x, y) not in self._plotcache:
+            self._plotcache[(x, y)] = " "
+        if self._plotcache[(x, y)] == c:
+            return
+        rx, ry = self.point
+        sys.stderr.write("\x1B%d;%dH%s\x1B%d;%dH\x1B[m" % (y+1, x+1, c, ry+1, rx+1))
+        sys.stderr.flush()
     #
     def _getch(self, reset_afterwards=0): #avoid misechoed keystrokes between checks
         #Note: this function may be copyrighted by KSP.

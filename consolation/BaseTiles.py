@@ -3,13 +3,15 @@ from consolation.StaticClass import StaticClass
 class BaseTiles(StaticClass):
     """A static base class defining simple public and protected tileset API."""
     @classmethod #Keeps pylint happy
-    def get_tile(cls, tile_id):
+    def get_tile(cls, tile_id, default=None):
         """Return the tile with the given ID, or a 'huh?' tile if none.
         
         Please override _get_tile() if you must, not this one.
         """
-        r=cls._cascade_method("_get_tile", tile_id)
-        if r==None:
+        r = cls._cascade_method("_get_tile", tile_id)
+        if r == None:
+            if default != None:
+                return cls._decorate_type(cls._cascade_method("_tile_type", tile_id), default)
             return cls._decorate_type("error", cls._error_codes[cls._error_code%len(cls._error_codes)])
         return r
     @classmethod #Keeps pylint happy
