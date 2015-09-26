@@ -1,5 +1,5 @@
-from repugeng.GridObject import GridObject
-from repugeng.DumbMonster import DumbMonster
+from ludicrous.GridObject import GridObject
+from ludicrous.DumbMonster import DumbMonster
 import random
 
 class OwlCorpse(GridObject):

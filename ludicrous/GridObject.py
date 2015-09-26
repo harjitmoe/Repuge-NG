@@ -1,4 +1,4 @@
-#uses: repugeng.Container
+#uses: ludicrous.Container
 class GridObject(object):
     """An object (animate or otherwise) which may be present on objgrid.
 
@@ -60,7 +60,7 @@ class GridObject(object):
             #To avoid infinite inventories, given that inventories can themselves
             #be possessed and have inventories, only create inventory on moment of
             #first possession.
-            from repugeng.Container import Container
+            from ludicrous.Container import Container
             self.inventory = Container(self.level)
         if myinterface == None:
             myinterface = self.game.InterfaceClass(self, use_rpc=self.game.use_rpc)

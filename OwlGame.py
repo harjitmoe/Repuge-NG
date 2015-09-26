@@ -1,5 +1,5 @@
 import sys,random,time,math
-from repugeng.Game import Game
+from ludicrous.Game import Game
 from OwlLevel import OwlLevel
 from CollectoInterface import CollectoInterface
 

@@ -1,4 +1,4 @@
-from repugeng.SimpleInterface import SimpleInterface
+from ludicrous.SimpleInterface import SimpleInterface
 import math
 
 class DumbLosInterface(SimpleInterface):

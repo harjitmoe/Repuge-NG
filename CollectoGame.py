@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from CollectoInterface import CollectoInterface
-from repugeng.Game import Game
+from ludicrous.Game import Game
 import random
 
 class CollectoGame(Game):

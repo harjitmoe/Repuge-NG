@@ -1,4 +1,4 @@
-from repugeng.GridObject import GridObject
+from ludicrous.GridObject import GridObject
 class PlayerObject(GridObject):
     """ The default player object.
     """

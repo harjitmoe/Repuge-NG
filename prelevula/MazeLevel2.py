@@ -1,4 +1,4 @@
-from repugeng.GeneratedLevel import GeneratedLevel
+from ludicrous.GeneratedLevel import GeneratedLevel
 import random,math,sys
 
 class MazeLevel2(GeneratedLevel):

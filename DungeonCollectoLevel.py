@@ -5,7 +5,7 @@ from CollectoGame import CollectoGame
 
 class DungeonCollectoLevel(CollectoLevel,SimpleDungeonLevel):
     InterfaceClass=CollectoInterface
-    title_window="Repuge-NG Collecto: Dungeon"
+    title_window="Ludicrous Collecto: Dungeon"
 CollectoGame.register_leveltype(DungeonCollectoLevel)
 #
 if __name__=="__main__":

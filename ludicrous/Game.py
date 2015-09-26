@@ -1,6 +1,6 @@
 import time
-from repugeng.PlayerObject import PlayerObject
-from repugeng.SimpleInterface import SimpleInterface
+from ludicrous.PlayerObject import PlayerObject
+from ludicrous.SimpleInterface import SimpleInterface
 from consolation.Compat3k import Compat3k
 
 class Game(object):
@@ -15,7 +15,7 @@ class Game(object):
     #For subclasses to override or not
     InterfaceClass = SimpleInterface
     PlayerClass = PlayerObject
-    title_window = "Repuge-NG Application"
+    title_window = "Ludicrous Application"
     use_rpc = False
     #
     def __init__(self):

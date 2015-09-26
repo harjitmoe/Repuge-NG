@@ -1,5 +1,5 @@
-from repugeng.DumbLosInterface import DumbLosInterface
-from repugeng.ScrollingInterface import ScrollingInterface
+from ludicrous.DumbLosInterface import DumbLosInterface
+from ludicrous.ScrollingInterface import ScrollingInterface
 
 class CollectoInterface(DumbLosInterface,ScrollingInterface):
     pass

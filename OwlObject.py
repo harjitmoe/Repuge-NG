@@ -1,5 +1,5 @@
-from repugeng.GridObject import GridObject
-from repugeng.DijkstraMonster import DijkstraMonster
+from ludicrous.GridObject import GridObject
+from ludicrous.DijkstraMonster import DijkstraMonster
 from OwlCorpse import OwlCorpse
 import random
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from repugeng.Level import Level
-from repugeng.SimpleInterface import SimpleInterface
+from ludicrous.Level import Level
+from ludicrous.SimpleInterface import SimpleInterface
 
 class SampleMap(Level):
     WIDTH=25
@@ -15,7 +15,7 @@ jooooooooooooJ"""
     # can then be distinguished in the run code
     list_of_symbols={"g":"wall_corner_nw","G":"wall_corner_ne","j":"wall_corner_sw","J":"wall_corner_se","d":"vwall","o":"hwall",":":"vfeature","*":"vfeature"," ":"space",".":"floor1",",":"floor2","#":"floor3"}
     starting_pt=(1,1)
-    title_window="Basic Sample Repuge-NG Map"
+    title_window="Basic Sample Ludicrous Map"
 
     def handle_move(self,target,playerobj):
         floorlevel=type(0)(self.get_index_grid(*playerobj.pt)[0][5:]) #XXX kludge/fragile/assumes
@@ -50,7 +50,7 @@ jooooooooooooJ"""
             return 0
 
 if __name__=="__main__":
-    from repugeng.Game import Game
+    from ludicrous.Game import Game
     class SampleMapGame(Game):
         InterfaceClass=SimpleInterface
         def level_initiate(self,playerobj):

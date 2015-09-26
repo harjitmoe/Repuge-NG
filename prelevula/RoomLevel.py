@@ -1,4 +1,4 @@
-from repugeng.GeneratedLevel import GeneratedLevel
+from ludicrous.GeneratedLevel import GeneratedLevel
 
 class RoomLevel(GeneratedLevel):
     """A level generator creating a square room.

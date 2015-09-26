@@ -1,4 +1,4 @@
-from repugeng.GridObject import GridObject
+from ludicrous.GridObject import GridObject
 import random,time
 
 class CollectoObject(GridObject):

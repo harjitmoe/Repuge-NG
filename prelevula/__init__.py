@@ -1,1 +1,1 @@
-"""Prelevula: A package of level generators for Repuge-NG."""
+"""Prelevula: A package of level generators for Ludicrous."""

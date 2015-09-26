@@ -1,4 +1,4 @@
-from repugeng.Level import Level
+from ludicrous.Level import Level
 from CollectoInterface import CollectoInterface
 
 class TeddyMapU(Level):

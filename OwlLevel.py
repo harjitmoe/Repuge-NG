@@ -1,8 +1,8 @@
 import sys,random,time,math
-from repugeng.Level import Level
-from repugeng.MultilevelStorage import MultilevelStorage
-from repugeng.GridObject import GridObject
-from repugeng.DijkstraMonster import DijkstraMonster
+from ludicrous.Level import Level
+from ludicrous.MultilevelStorage import MultilevelStorage
+from ludicrous.GridObject import GridObject
+from ludicrous.DijkstraMonster import DijkstraMonster
 from prelevula.RoomLevel import RoomLevel
 from prelevula.MazeLevel2 import MazeLevel2
 from OwlObject import OwlObject

@@ -1,4 +1,4 @@
-from repugeng.Level import Level
+from ludicrous.Level import Level
 
 class GeneratedLevel(Level):
     """Base class for a generated (rather than predefined) level.

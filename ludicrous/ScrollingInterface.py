@@ -1,4 +1,4 @@
-from repugeng.SimpleInterface import SimpleInterface
+from ludicrous.SimpleInterface import SimpleInterface
 
 class ScrollingInterface(SimpleInterface):
     """A subclass of SimpleInterface adding simple panning."""

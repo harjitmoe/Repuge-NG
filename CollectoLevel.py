@@ -1,13 +1,13 @@
 import sys,random,math
-from repugeng.Level import Level
-from repugeng.MultilevelStorage import MultilevelStorage
-from repugeng.GridObject import GridObject
-from repugeng.SimpleInterface import SimpleInterface
+from ludicrous.Level import Level
+from ludicrous.MultilevelStorage import MultilevelStorage
+from ludicrous.GridObject import GridObject
+from ludicrous.SimpleInterface import SimpleInterface
 from CollectoObject import CollectoObject
 
 class CollectoLevel(Level):
     coded_grid=None
-    title_window="Repuge-NG Collecto"
+    title_window="Ludicrous Collecto"
 
     def get_new_point(self):
         return random.choice(self.gamut)
