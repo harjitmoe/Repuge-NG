@@ -126,8 +126,6 @@ class Level(object):
     def set_index_grid(self, v, x, y):
         self.grid[x][y] = v
     #
-    # move_user(self, pt) removed as obsolete, use GridObject.place
-    #
     def handle_move(self, dest, playerobj): #pylint: disable = unused-argument
         """Handle a move command by the user. --> True to go ahead or False
         to block the move.
@@ -146,9 +144,6 @@ class Level(object):
         backends.  Play safe: test key_event.lower() against ("return",
         "enter", "\r", "\n", "\r\n") for example."""
         return 0
-    #
-    # initial_cutscene removed as fundamentally incompatible with the
-    # new multi-user persistent-levels paradigm
     #
     use_dm = False
     dm_grid = None
@@ -205,4 +200,3 @@ class Level(object):
                         if possible < self.dm_grid2[x][y]:
                             changed = 1
                             self.dm_grid2[x][y] = possible
-
