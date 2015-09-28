@@ -95,8 +95,7 @@ class GridObject(object):
     #
     # Handling user input when applicable
     def conv_to_target(self, e):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
+        #Note: this function is old.
         if e not in ("down", "up", "left", "right", "8", "4", "6", "2", "7", "9",
                      "1", "3", "h", "j", "k", "l", "y", "u", "b", "n"):
             return None

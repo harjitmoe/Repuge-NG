@@ -27,8 +27,7 @@ class SimpleInterface(object):
             else:
                 self.display = DisplaySelector.get_display(use_rpc)
     def redraw(self):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
+        #Note: this function is old.
         """Draw the map (grid and objgrid).
 
         Presently this, by default, draws grid and (above it) objgrid at once

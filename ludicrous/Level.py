@@ -51,8 +51,7 @@ class Level(object):
         """
         playerobj.place(self.starting_pt[0], self.starting_pt[1], self)
     def _gengrid(self, x, y):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
+        #Note: this function is old.
         grid = []
         for i in range(x):  #pylint: disable = unused-variable
             file_ = [] #row (x), file (y), stack (z)
@@ -61,8 +60,7 @@ class Level(object):
             grid.append(file_)
         return grid
     def readmap(self):
-        #Note: this function may be copyrighted by KSP.
-        #To be rewritten.
+        #Note: this function is old.
         """Generates self.grid from coded grid format.
 
         Whereas self.objgrid is generated empty.
