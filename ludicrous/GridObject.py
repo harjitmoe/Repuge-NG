@@ -1,4 +1,11 @@
+#The "threading" module over-complicates things imo
+try:
+    from thread import interrupt_main #pylint: disable = import-error
+except ImportError:
+    #3k
+    from _thread import interrupt_main #pylint: disable = import-error
 #uses: ludicrous.Container
+
 class GridObject(object):
     """An object (animate or otherwise) which may be present on objgrid.
 
@@ -168,8 +175,7 @@ class GridObject(object):
                     import os
                     os.abort()
                 elif name in ("#quit",):
-                    from repugeng.Level import thread #XXX
-                    thread.interrupt_main()
+                    interrupt_main()
                 else:
                     self.level.handle_command(name, self)
             else:

@@ -1,4 +1,4 @@
-import time
+import sys, time
 from ludicrous.PlayerObject import PlayerObject
 from ludicrous.SimpleInterface import SimpleInterface
 from consolation.Compat3k import Compat3k
@@ -29,8 +29,13 @@ class Game(object):
             code.interact(banner="Entering leader debug prompt...", local=locals())
         else:
             while 1:
-                #Idle as subservient threads do the work
-                time.sleep(10000)
+                try:
+                    #Idle as subservient threads do the work
+                    time.sleep(5)
+                except KeyboardInterrupt:
+                    for player in self._p:
+                        player.myinterface.display.clean()
+                    sys.exit()
     #
     loading_lock = 0
     def add_players(self):

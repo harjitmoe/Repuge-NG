@@ -95,3 +95,6 @@ class BaseDisplay(object):
     def flush_plots(self):
         """Flush any plot caching to the screen"""
         pass
+    def clean(self):
+        """Clean before app closed."""
+        pass

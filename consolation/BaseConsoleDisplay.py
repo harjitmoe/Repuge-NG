@@ -28,6 +28,8 @@ class BaseConsoleDisplay(BaseDisplay):
         pass
     def _end_message_formatting(self):
         pass
+    def clean(self):
+        self._reset_terminal()
     def _reset_terminal(self):
         pass #Subclasses to only implement if actually needed
     def dump_messages(self):
