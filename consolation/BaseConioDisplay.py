@@ -35,7 +35,8 @@ class BaseConioDisplay(BaseConsoleDisplay):
         """Set window title (implementing optional)."""
         raise NotImplementedError
     def _conio_getkey(self):
-        """Read a keypress."""
+        """Read a keypress.  Return the entered key if it is a character, or one of the
+        special values of home, up, pgup, left, right, end, down, pgdn, ins, del."""
         raise NotImplementedError
     def _conio_puttext(self, a, b, c, d, t):
         raise NotImplementedError

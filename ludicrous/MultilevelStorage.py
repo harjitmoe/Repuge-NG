@@ -12,22 +12,23 @@ class MultilevelStorage(object):
     implementation details, it is not recommended to use a attribute
     by that name.
     """
-    existing = {}
+    #__dict__["42"] = {} set at end of file
     def __new__(cls, name):
-        if name in cls.existing:
-            return cls.existing[name]
+        if name in getattr(cls,"42"):
+            return getattr(cls,"42")[name]
         else:
             novus = object.__new__(cls)
-            cls.existing[name] = novus
-            novus.existing = None #Cannot del, but still break ref to keep mutable dict safer
+            getattr(cls,"42")[name] = novus
+            setattr(novus,"42",None) #Cannot del, but still break ref to keep mutable dict safer
             return novus
     def initialise_property(self, name, value):
         """Initialise an attribute to a value without overwriting
         any existing value.
 
-        Caveat: this does not work properly for any attribute
-        called "existing" due to implementation details, it is
-        not recommended to use a attribute by that name.
+        Behaviour in case of non-valid names is undefined and
+        may be influenced by implementation details.
         """
         if not hasattr(self, name):
             self.__dict__[name] = value
+#
+setattr(MultilevelStorage,"42",{})

@@ -3,10 +3,10 @@ from CollectoInterface import CollectoInterface
 from CollectoLevel import CollectoLevel
 from CollectoGame import CollectoGame
 
-class MazedCollectoLevel(CollectoLevel,MazeLevel2):
-    InterfaceClass=CollectoInterface
-    title_window="Ludicrous Collecto: Maze"
+class MazedCollectoLevel(CollectoLevel, MazeLevel2):
+    InterfaceClass = CollectoInterface
+    title_window = "Ludicrous Collecto: Maze"
 CollectoGame.register_leveltype(MazedCollectoLevel)
 #
-if __name__=="__main__":
+if __name__ == "__main__":
     CollectoGame()

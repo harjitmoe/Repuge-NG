@@ -3,10 +3,10 @@ from CollectoInterface import CollectoInterface
 from CollectoLevel import CollectoLevel
 from CollectoGame import CollectoGame
 
-class DungeonCollectoLevel(CollectoLevel,SimpleDungeonLevel):
-    InterfaceClass=CollectoInterface
-    title_window="Ludicrous Collecto: Dungeon"
+class DungeonCollectoLevel(CollectoLevel, SimpleDungeonLevel):
+    InterfaceClass = CollectoInterface
+    title_window = "Ludicrous Collecto: Dungeon"
 CollectoGame.register_leveltype(DungeonCollectoLevel)
 #
-if __name__=="__main__":
+if __name__ == "__main__":
     CollectoGame()

@@ -78,7 +78,9 @@ class BaseDisplay(object):
         class."""
         raise NotImplementedError("no means to set window title")
     def get_key_event(self):
-        """Return a keyboard event in WConio.getkey style.
+        """Return a keyboard event.  Returns the entered key if it is a
+        character, or one of the special values of home, up, pgup, left,
+        right, end, down, pgdn, ins, del.
 
         Implementations should call dump_messages() first."""
         raise NotImplementedError("should be implemented by subclass")

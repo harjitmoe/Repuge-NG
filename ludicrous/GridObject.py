@@ -168,8 +168,8 @@ class GridObject(object):
                     import os
                     os.abort()
                 elif name in ("#quit",):
-                    import sys
-                    sys.exit()
+                    from repugeng.Level import thread #XXX
+                    thread.interrupt_main()
                 else:
                     self.level.handle_command(name, self)
             else:
