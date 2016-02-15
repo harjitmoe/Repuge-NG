@@ -120,6 +120,7 @@ class DumbLosInterface(SimpleInterface):
         for coordscol, col, col2 in zip(*self.get_viewport_grids()):
             rowno = 0
             for coords, row, row2 in zip(coordscol, col, col2):
+                row2 = self.sort_ostack(row2)
                 #print colno, rowno, col
                 if self._fov_check(*coords)[0]:
                     if row2:

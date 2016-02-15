@@ -1,5 +1,4 @@
 from ludicrous.GridObject import GridObject
-from ludicrous.Container import Container
 import random
 
 class DumbMonster(GridObject):
@@ -11,10 +10,9 @@ class DumbMonster(GridObject):
     vitality = 5
     maxhp = 5
     def initialise(self):
-        self.inventory = Container(self.level)
-        self.inventory.insert(GridObject(self.level))
-        self.inventory.insert(GridObject(self.level))
-        self.inventory.insert(GridObject(self.level))
+        self.insert(GridObject(self.level))
+        self.insert(GridObject(self.level))
+        self.insert(GridObject(self.level))
         self.add_handler(1, self.onetick)
     def onetick(self):
         if self.myinterface != None:

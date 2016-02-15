@@ -34,6 +34,7 @@ class ConsoleTiles(BaseTiles):
     item = "'"
     staircase = ">"
     adversary = "&"
+    projectile = "*"
     #
     _error_codes = ("\xa8", "\xbf")
     _error_code = 1

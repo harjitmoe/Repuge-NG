@@ -4,7 +4,8 @@ try:
 except ImportError:
     #3k
     from _thread import interrupt_main #pylint: disable = import-error
-#uses: ludicrous.Container
+
+import time
 
 class GridObject(object):
     """An object (animate or otherwise) which may be present on objgrid.
@@ -31,9 +32,10 @@ class GridObject(object):
     status = "unplaced" #unplaced, placed, contained or defunct
     container = None #i.e. the one containing the object
     handlers = None
-    inventory = None #A Container instance or None
     known = None
     myinterface = None
+    priority = 0
+    contents = None
     #
     #
     # Initialisation
@@ -54,6 +56,7 @@ class GridObject(object):
         #Two underscores, mangles to _PlayableObject__playercheck
         self.add_handler(1, self.__playercheck)
         self.add_handler(self.init_hp_interval, self.up_hitpoint)
+        self.contents = []
         self.initialise()
     def initialise(self):
         """Just been spawned.  Do what?  Hook for subclasses."""
@@ -63,12 +66,6 @@ class GridObject(object):
     # Connecting interfaces (possession) and disconnecting interfaces
     def play(self, myinterface=None):
         """Connect to player."""
-        if self.inventory == None:
-            #To avoid infinite inventories, given that inventories can themselves
-            #be possessed and have inventories, only create inventory on moment of
-            #first possession.
-            from ludicrous.Container import Container
-            self.inventory = Container(self.level)
         if myinterface == None:
             myinterface = self.game.InterfaceClass(self, use_rpc=self.game.use_rpc)
         self.myinterface = myinterface
@@ -123,7 +120,7 @@ class GridObject(object):
         if e in ("3", "n"):
             target = (self.pt[0]+1, self.pt[1]+1)
         return target
-    def __playercheck(self): #Two underscores, mangles to _PlayableObject__playercheck
+    def __playercheck(self): #Two underscores, mangles to _GridObject__playercheck
         if self.myinterface == None:
             return
         if self.level == None:
@@ -193,6 +190,8 @@ class GridObject(object):
     # Moving, removing and changing
     def place(self, destx, desty, newlevel=None):
         """Place on the specified point in the level, lifting from previous point."""
+        if self.status == "contained":
+            self.container.remove(self)
         oldlevel = self.level
         if newlevel == None:
             newlevel = oldlevel
@@ -201,6 +200,7 @@ class GridObject(object):
                 self.lift()
         self.pt = (destx, desty)
         self.level_rebase(newlevel)
+        self.level.child_objects.append(self)
         if len(newlevel.objgrid[destx][desty]) \
            and hasattr(newlevel.objgrid[destx][desty][-1], "myinterface") \
            and newlevel.objgrid[destx][desty][-1].myinterface != None:
@@ -218,12 +218,13 @@ class GridObject(object):
         Subclasses may need to override this to take additional action here."""
         if self.status == "placed":
             self.lift()
+        # DO NOT REMOVE IT FROM ITS CONTAINER here
+        # This method is propagated from containers to their contents below.
         if self.level:
             assert self not in self.level.child_objects
         self.level = newlevel
-        self.level.child_objects.append(self)
-        if self.inventory != None:
-            self.inventory.level_rebase(newlevel)
+        for i in self.contents:
+            i.level_rebase(newlevel)
         if self.myinterface != None:
             self.myinterface.level_rebase(newlevel)
     def lift(self):
@@ -234,6 +235,8 @@ class GridObject(object):
             self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
             self.level = None
             self.pt = None
+        else:
+            assert self not in self.level.child_objects
         self.status = "unplaced"
     def leave_corpse_p(self):
         """--> True to leave a corpse or False not to.
@@ -248,30 +251,22 @@ class GridObject(object):
             if self.leave_corpse_p():
                 self.polymorph(self.corpse_type)
                 return
-        if self.inventory != None:
-            self.inventory.dump(self.pt)
-            self.inventory.die()
         self.lift()
         GridObject.all_objects.remove(self)
         self.level = None
         self.status = "defunct"
     def polymorph(self, otype):
-        """Note that this object becomes defunct and a new one is made.
+        """Note that this object becomes defunct and a new one is made/returned.
 
-        Obviously the new one must be a GridObject subtype."""
+        Obviously the type passed for the new one must be a GridObject subtype."""
         if not issubclass(otype, GridObject):
-            raise TypeError("you cannot play as that!")
+            raise TypeError("you cannot play as that! (not a GridObject subclass)")
         novus = otype(self.game, self.extra, play=0)
         #
         if self.myinterface != None:
             novus.play(self.myinterface)
         novus.known = self.known
-        if novus.inventory != None:
-            novus.inventory.die()
-            novus.inventory = self.inventory
-        else:
-            self.inventory.dump(self.pt)
-            self.inventory.die()
+        novus.contents = self.contents
         novus.vitality = (self.vitality if self.vitality > novus.maxhp else novus.maxhp)
         #
         if self.status == "contained":
@@ -286,6 +281,97 @@ class GridObject(object):
         self.level = None
         self.status = "defunct"
         return novus
+    def throw(self, direction, startpt, level):
+        self.place(startpt[0], startpt[1], level)
+        _w, _h = self.level.grid_dimens()
+        lp=0
+        while 1:
+            lp+=1
+            if lp>(_w*_h):
+                raise ValueError("infinite tightloop %s %s"%(startpt,self.pt))
+            #Given that it is not None, we gather that it is coords
+            x, y = self.pt #pylint: disable = unpacking-non-sequence
+            adjacents = ([(x-1, y-1)] if x > 0 and y > 0 else []) \
+                      + ([(x, y-1)] if y > 0 else []) \
+                      + ([(x+1, y-1)] if x < (_w-1) and y > 0 else []) \
+                      + ([(x+1, y)] if x < (_w-1) else []) \
+                      + ([(x+1, y+1)] if x < (_w-1) and y < (_h-1) else []) \
+                      + ([(x, y+1)] if y < (_h-1) else []) \
+                      + ([(x-1, y+1)] if x > 0 and y < (_h-1) else []) \
+                      + ([(x-1, y)] if x > 0 else [])
+            if direction=="NW":
+                target=(x-1,y-1)
+            elif direction=="N":
+                target=(x,y-1)
+            elif direction=="NE":
+                target=(x+1,y-1)
+            elif direction=="E":
+                target=(x+1,y)
+            elif direction=="SE":
+                target=(x+1,y+1)
+            elif direction=="S":
+                target=(x,y+1)
+            elif direction=="SW":
+                target=(x-1,y+1)
+            elif direction=="W":
+                target=(x-1,y)
+            if target not in adjacents:
+                break
+            #
+            try: #XXX kludge/fragile/assumes
+                floorlevel = type(0)(self.level.get_index_grid(*self.pt)[0][5:])
+            except ValueError:
+                floorlevel = 1 #Needed or mazed subclass breaks
+            nxtstat = self.level.get_index_grid(*target)[0]
+            if self.level.objgrid[target[0]][target[1]]:
+                for obj in self.level.objgrid[target[0]][target[1]][:]:
+                    if hasattr(obj, "myinterface") and obj.myinterface != None:
+                        if type(self) in obj.known: #pylint: disable = unidiomatic-typecheck
+                            obj.myinterface.push_message("The %s hits!"%self.name)
+                        else:
+                            obj.myinterface.push_message("The %s hits!"%self.appearance)
+                        obj.vitality -= 1
+                        self.place(*target)
+                        return
+            if nxtstat.startswith("floor"):
+                newlevel = type(0)(nxtstat[5:])
+                if (newlevel-floorlevel) <= 1:
+                    self.place(*target)
+                    self.level.redraw()
+                    time.sleep(0.05)
+            else:
+                break
+        self.level.redraw()
+    #
+    #
+    # Support for functioning as a container
+    def empty(self):
+        return not self.contents
+    def insert(self, obj):
+        if obj.status == "placed":
+            obj.lift()
+        elif obj.status == "contained":
+            obj.container.remove(obj)
+        elif obj.status != "unplaced":
+            raise ValueError("unheard-of obj status %r"%obj.status)
+        #
+        if obj in self.contents:
+            raise RuntimeError("unplaced obj in container's inventory")
+        self.contents.append(obj)
+        obj.status = "contained"
+        obj.container = self
+    def remove(self, obj):
+        self.contents.remove(obj)
+        obj.status = "unplaced"
+        obj.container = None
+    def drop(self, obj, pt):
+        self.remove(obj)
+        obj.place(*pt)
+    def dump(self, pt):
+        for obj in self.contents[:]:
+            self.drop(obj, pt)
+    def __iter__(self):
+        return iter(self.contents)
     #
     __safe_for_unpickling__ = True
     def __reduce__(self):

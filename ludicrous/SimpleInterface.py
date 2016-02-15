@@ -26,6 +26,11 @@ class SimpleInterface(object):
                 self.display = display
             else:
                 self.display = DisplaySelector.get_display(use_rpc)
+    def sort_ostack(self, ostack):
+        estack=ostack[:]
+        def ostack_key(oa):
+            return estack.index(oa)+(20*oa.priority)+(800*int(not (not oa.myinterface)))
+        return sorted(ostack, key=ostack_key)
     def redraw(self):
         #Note: this function is old.
         """Draw the map (grid and objgrid).
@@ -41,6 +46,7 @@ class SimpleInterface(object):
         for coordscol, col, col2 in zip(*self.get_viewport_grids()):
             rowno = 0
             for coords, row, row2 in zip(coordscol, col, col2):
+                row2 = self.sort_ostack(row2)
                 #print rowno, colno, col
                 if row2:
                     self.display.plot_tile(colno, rowno, row2[-1].tile)

@@ -95,7 +95,7 @@ class OwlLevel(MazeLevel2):
                     if ans in "ynq":
                         break
                 if ans=="y":
-                    playerobj.inventory.insert(obj)
+                    playerobj.insert(obj)
                 elif ans=="n":
                     pass
                 else: #ans=="q"

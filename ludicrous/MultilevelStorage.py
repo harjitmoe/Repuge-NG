@@ -7,10 +7,7 @@ class MultilevelStorage(object):
     with all changes made by any previous level.
 
     Use initialise_property(...) to initialise an attribute to a
-    value without overwriting any existing value.  Caveat: this does
-    not work properly for any attribute called "existing" due to
-    implementation details, it is not recommended to use a attribute
-    by that name.
+    value without overwriting any existing value.
     """
     #__dict__["42"] = {} set at end of file
     def __new__(cls, name):

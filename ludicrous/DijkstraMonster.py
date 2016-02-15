@@ -1,5 +1,4 @@
 from ludicrous.GridObject import GridObject
-from ludicrous.Container import Container
 
 class DijkstraMonster(GridObject):
     """An generic adversary which makes for the player.
@@ -9,12 +8,50 @@ class DijkstraMonster(GridObject):
     appearance = "featureless monster"
     vitality = 5
     maxhp = 5
+    projectiles = 0
     def initialise(self):
-        self.inventory = Container(self.level)
-        self.inventory.insert(GridObject(self.level))
-        self.inventory.insert(GridObject(self.level))
-        self.inventory.insert(GridObject(self.level))
         self.add_handler(1, self.onetick)
+    def can_throw(self, direction):
+        if (not self.pt) or (not self.level):
+            return 0
+        #Given that it is not None, we gather that it is coords
+        x, y = self.pt #pylint: disable = unpacking-non-sequence
+        _w, _h = self.level.grid_dimens()
+        while 1:
+            if self.level.objgrid[x][y]:
+                for obj in self.level.objgrid[x][y][:]:
+                    if hasattr(obj, "myinterface") and obj.myinterface != None:
+                        return 1
+            adjacents = ([(x-1, y-1)] if x > 0 and y > 0 else []) \
+                      + ([(x, y-1)] if y > 0 else []) \
+                      + ([(x+1, y-1)] if x < (_w-1) and y > 0 else []) \
+                      + ([(x+1, y)] if x < (_w-1) else []) \
+                      + ([(x+1, y+1)] if x < (_w-1) and y < (_h-1) else []) \
+                      + ([(x, y+1)] if y < (_h-1) else []) \
+                      + ([(x-1, y+1)] if x > 0 and y < (_h-1) else []) \
+                      + ([(x-1, y)] if x > 0 else [])
+            if direction=="NW":
+                target=(x-1,y-1)
+            elif direction=="N":
+                target=(x,y-1)
+            elif direction=="NE":
+                target=(x+1,y-1)
+            elif direction=="E":
+                target=(x+1,y)
+            elif direction=="SE":
+                target=(x+1,y+1)
+            elif direction=="S":
+                target=(x,y+1)
+            elif direction=="SW":
+                target=(x-1,y+1)
+            elif direction=="W":
+                target=(x-1,y)
+            if target not in adjacents:
+                break
+            #if not self.level.get_index_grid(*target)[0].startswith("floor"):
+            #    break
+            x, y = target
+        return 0
     def onetick(self):
         if self.myinterface != None:
             return
@@ -49,6 +86,11 @@ class DijkstraMonster(GridObject):
             return
         #
         for i in range(1): #pylint: disable = unused-variable
+            if self.projectiles and (not self.empty()):
+                for direction in ("NW","N","NE","E","SE","S","SW","W"):
+                    if self.can_throw(direction):
+                        self.contents[0].throw(direction, self.pt, self.level)
+                        return
             try: #XXX kludge/fragile/assumes
                 floorlevel = type(0)(self.level.get_index_grid(*self.pt)[0][5:])
             except ValueError:

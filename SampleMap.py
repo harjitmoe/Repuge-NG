@@ -58,6 +58,10 @@ if __name__ == "__main__":
         InterfaceClass = SimpleInterface
         def level_initiate(self, playerobj):
             SampleMap(self).bring_to_front(playerobj, "starting")
+        def level_advance(self, playerobj):
+            raise RuntimeError("advancement without a level stack")
+        def level_regress(self, playerobj):
+            raise RuntimeError("regression without a level stack")
     SampleMapGame()
 
 
