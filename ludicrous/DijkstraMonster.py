@@ -48,8 +48,8 @@ class DijkstraMonster(GridObject):
                 target=(x-1,y)
             if target not in adjacents:
                 break
-            #if not self.level.get_index_grid(*target)[0].startswith("floor"):
-            #    break
+            if not self.level.get_index_grid(*target)[0].startswith("floor"):
+                break
             x, y = target
         return 0
     def onetick(self):

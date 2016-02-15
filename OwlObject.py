@@ -14,6 +14,6 @@ class OwlObject(DijkstraMonster):
     priority=1
     def initialise(self):
         super(OwlObject,self).initialise()
-        self.insert(GridObject(self.level))
-        self.insert(GridObject(self.level))
-        self.insert(GridObject(self.level))
+        self.insert(GridObject(self.game))
+        self.insert(GridObject(self.game))
+        self.insert(GridObject(self.game))

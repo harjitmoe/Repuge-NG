@@ -27,14 +27,15 @@ class ConsoleTiles(BaseTiles):
     #Levels of floor
     floor1 = "."
     floor2 = ","
-    floor3 = "/"
-    floor4 = "$"
+    floor3 = "$"
+    floor4 = "%"
     floor5 = "#"
     user = "@"
     item = "'"
     staircase = ">"
     adversary = "&"
     projectile = "*"
+    wand = "/"
     #
     _error_codes = ("\xa8", "\xbf")
     _error_code = 1

@@ -326,11 +326,7 @@ class GridObject(object):
             if self.level.objgrid[target[0]][target[1]]:
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if hasattr(obj, "myinterface") and obj.myinterface != None:
-                        if type(self) in obj.known: #pylint: disable = unidiomatic-typecheck
-                            obj.myinterface.push_message("The %s hits!"%self.name)
-                        else:
-                            obj.myinterface.push_message("The %s hits!"%self.appearance)
-                        obj.vitality -= 1
+                        self.hit(obj)
                         self.place(*target)
                         return
             if nxtstat.startswith("floor"):
@@ -342,6 +338,12 @@ class GridObject(object):
             else:
                 break
         self.level.redraw()
+    def hit(self, obj):
+        if type(self) in obj.known: #pylint: disable = unidiomatic-typecheck
+            obj.myinterface.push_message("The %s hits!"%self.name)
+        else:
+            obj.myinterface.push_message("The %s hits!"%self.appearance)
+        obj.vitality -= 1
     #
     #
     # Support for functioning as a container

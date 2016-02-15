@@ -10,9 +10,9 @@ class DumbMonster(GridObject):
     vitality = 5
     maxhp = 5
     def initialise(self):
-        self.insert(GridObject(self.level))
-        self.insert(GridObject(self.level))
-        self.insert(GridObject(self.level))
+        self.insert(GridObject(self.game))
+        self.insert(GridObject(self.game))
+        self.insert(GridObject(self.game))
         self.add_handler(1, self.onetick)
     def onetick(self):
         if self.myinterface != None:
