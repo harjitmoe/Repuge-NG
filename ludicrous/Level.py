@@ -75,6 +75,13 @@ class Level(object):
         The code characters used are included in the grid as extra data.
         So multiple internally different e.g. vfeature can be coded with
         different characters and detected as different by the level code."""
+        if self.HEIGHT==type(self).HEIGHT: #Definitely must be newstyle class for this
+            self.HEIGHT=len(self.coded_grid.split("\n"))
+            _w = 0
+            for row in self.coded_grid.split("\n"):
+                if len(row) > _w:
+                    _w = len(row)
+            self.WIDTH=_w
         self.grid = self._gengrid(self.WIDTH, self.HEIGHT)
         self.objgrid = self._gengrid(self.WIDTH, self.HEIGHT)
         rowno = 0

@@ -1,9 +1,9 @@
 #The "threading" module over-complicates things imo
 try:
-    from thread import interrupt_main #pylint: disable = import-error
+    from thread import interrupt_main, allocate_lock #pylint: disable = import-error
 except ImportError:
     #3k
-    from _thread import interrupt_main #pylint: disable = import-error
+    from _thread import interrupt_main, allocate_lock #pylint: disable = import-error
 
 try:
     from httplib import HTTPException #pylint: disable = import-error
@@ -11,8 +11,7 @@ except ImportError:
     #3k
     from http.client import HTTPException #pylint: disable = import-error
 
-import time
-
+import time, sys
 class GridObject(object):
     """An object (animate or otherwise) which may be present on objgrid.
 
@@ -30,6 +29,7 @@ class GridObject(object):
     init_hp_interval = 0
     takes_damage = 0
     priority = 0
+    tangible = 1 #rather than a fleeting beam
     #
     #
     # Not overridable by subclasses:
@@ -58,6 +58,7 @@ class GridObject(object):
         GridObject.all_objects.append(self)
         self.handlers = []
         self.known = []
+        self._lock = allocate_lock()
         if play:
             self.play()
         #Two underscores, mangles to _PlayableObject__playercheck
@@ -161,17 +162,24 @@ class GridObject(object):
             return
         if len(self.level.child_interfaces) > 1:
             self.myinterface.push_message("Your turn.")
-        try:
-            e = self.myinterface.get_key_event()
-        except HTTPException:
-            return
+        self._lock.acquire()
+        while 1:
+            try:
+                e = self.myinterface.get_key_event()
+            except HTTPException:
+                #Obviously using RPC so just print
+                print ("HTTP Exception in __playercheck() %r"%(sys.exc_info(),))
+                time.sleep(1)
+            else:
+                break
+        self._lock.release()
         inexpensive = 0
-        if e in ("\x03", "\x04", "\x1a"): #ETX ^C, EOT ^D, and ^Z
+        if e in ("\x03", "\x04", "\x1a"): #ETX ^C, EOT ^D, and ^Z (on Windows).
             #Does not go through to Python otherwise, meaning that Linux main terminals
             #are rendered otherwise out of order until someone kills Collecto
             #from a different terminal or over SSH (or rlogin).
             #This is relevant if someone is running this on an RPi.
-            raise KeyboardInterrupt #^c, ^d or ^z pressed
+            self.myinterface.interrupt()
         elif e in ("down", "up", "left", "right", "8", "4", "6", "2", "7", "9",
                    "1", "3", "h", "j", "k", "l", "y", "u", "b", "n"):
             direction = self.conv_to_direction(e)
@@ -249,7 +257,17 @@ class GridObject(object):
         else:
             newlevel.objgrid[destx][desty].append(self)
         self.status = "placed"
-        newlevel.redraw()
+        self._lock.acquire()
+        while 1:
+            try:
+                newlevel.redraw()
+            except HTTPException:
+                #Obviously using RPC so just print
+                print ("HTTP Exception in place() %r"%(sys.exc_info(),))
+                time.sleep(1)
+            else:
+                break
+        self._lock.release()
     def level_rebase(self, newlevel):
         """Re-associate with a different level.
 
@@ -273,8 +291,6 @@ class GridObject(object):
             self.level.objgrid[self.pt[0]][self.pt[1]].remove(self)
             self.level = None
             self.pt = None
-        else:
-            assert self not in self.level.child_objects
         self.status = "unplaced"
     def leave_corpse_p(self):
         """--> True to leave a corpse or False not to.
@@ -339,6 +355,9 @@ class GridObject(object):
                       + ([(x-1, y)] if x > 0 else [])
             target=self.direction_to_target(direction, (x, y))
             if target not in adjacents:
+                if not self.tangible:
+                    self.die()
+                    return
                 break
             #
             try: #XXX kludge/fragile/assumes
@@ -350,7 +369,10 @@ class GridObject(object):
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if (hasattr(obj, "myinterface") and obj.myinterface != None) or obj.takes_damage:
                         self.hit(obj)
-                        self.place(*target)
+                        if self.tangible:
+                            self.place(*target)
+                        else:
+                            self.lift()
                         return
             if nxtstat.startswith("floor"):
                 newlevel = type(0)(nxtstat[5:])
@@ -359,6 +381,9 @@ class GridObject(object):
                     self.level.redraw()
                     time.sleep(0.05)
             else:
+                if not self.tangible:
+                    self.die()
+                    return
                 break
         self.level.redraw()
     zap = None #Can be defined as a method, same invocation as throw

@@ -1,4 +1,5 @@
 import textwrap
+from binascii import hexlify, unhexlify
 
 __copying__="""
 This Source Code Form is subject to the terms of the Mozilla Public
@@ -53,6 +54,12 @@ class BaseDisplay(object):
             self.push_message(prefix+i)
         self.dump_messages() #Hopefully not needed.
         return self.ask_question(prefix+wrap[-1]+trailer)
+    def interrupt(self):
+        """Raises KeyboardInterrupt, for RPC use."""
+        raise KeyboardInterrupt # ^c or similar pressed?
+    def close(self):
+        """Raises SystemExit, for RPC use."""
+        raise SystemExit
     #
     @staticmethod
     def works_p():
@@ -102,3 +109,17 @@ class BaseDisplay(object):
     def clean(self):
         """Clean before app closed."""
         pass
+    #
+    def hex_push_message(self, message):
+        self.push_message(unhexlify(message))
+    def hex_slow_push_message(self, message, prefix=""):
+        self.slow_push_message(unhexlify(message), unhexlity(prefix))
+    def hex_get_key_event(self):
+        return hexlify(self.get_key_event())
+    def hex_set_window_title(self, title):
+        return self.set_window_title(unhexlify(title))
+    def hex_ask_question(self, question):
+        return hexlify(self.ask_question(unhexlify(question)))
+    def hex_slow_ask_question(self, question, prefix=""):
+        return hexlify(self.slow_ask_question(unhexlify(question), unhexlity(prefix)))
+

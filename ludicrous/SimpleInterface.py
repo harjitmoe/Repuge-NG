@@ -1,5 +1,6 @@
 import sys
 from consolation.DisplaySelector import DisplaySelector
+from binascii import hexlify, unhexlify
 
 class SimpleInterface(object):
     """An interface with the user.
@@ -85,17 +86,21 @@ class SimpleInterface(object):
         """Bin any cached info about the current level FOV."""
         pass
     def close(self):
-        sys.exit()
+        self.display.close()
+    def interrupt(self):
+        self.display.interrupt()
     def push_message(self, s):
-        return self.display.push_message(s)
-    def dump_messages(self): #Should this really be bound here?
-        return self.display.dump_messages()
+        self.display.hex_push_message(hexlify(s))
+    def dump_messages(self, leave_hanging=0): #Should this really be bound here?
+        self.display.dump_messages(leave_hanging)
     def ask_question(self, s):
-        return self.display.ask_question(s)
+        return unhexlify(self.display.hex_ask_question(hexlify(s)))
     def slow_ask_question(self, s, p=""):
-        return self.display.slow_ask_question(s, p)
+        return unhexlify(self.display.hex_slow_ask_question(hexlify(s), hexlify(p)))
+    def slow_push_message(self, s, p=""):
+        return unhexlify(self.display.hex_slow_push_message(hexlify(s), hexlify(p)))
     def get_key_event(self):
-        return self.display.get_key_event()
+        return unhexlify(self.display.hex_get_key_event())
     #Semantically protected
     _w = _h = None
     def get_offsets(self):
