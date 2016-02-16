@@ -32,14 +32,19 @@ class BaseConsoleDisplay(BaseDisplay):
         self._reset_terminal()
     def _reset_terminal(self):
         pass #Subclasses to only implement if actually needed
-    def dump_messages(self):
-        if self._message_queue:
-            while self._message_queue[1:]:
+    def dump_messages(self, leave_hanging=0):
+        if not leave_hanging:
+            if self._message_queue:
+                while self._message_queue[1:]:
+                    line = self._message_queue.pop(0)
+                    self._put_to_message_area(line+" -- More -- ", 1)
+                self._put_to_message_area(self._message_queue.pop(), 0)
+        else:
+            while self._message_queue:
                 line = self._message_queue.pop(0)
                 self._put_to_message_area(line+" -- More -- ", 1)
-            self._put_to_message_area(self._message_queue.pop(), 0)
     def ask_question(self, question):
-        self.dump_messages()
+        self.dump_messages(1)
         return self._put_to_message_area(question, 1)
     def plot_tile(self, x_coord, y_coord, tile_id):
         return self._plot_character(y_coord, x_coord, self._tiles_class.get_tile(tile_id))

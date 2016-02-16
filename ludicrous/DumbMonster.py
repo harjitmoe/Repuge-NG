@@ -9,6 +9,7 @@ class DumbMonster(GridObject):
     appearance = "featureless monster"
     vitality = 5
     maxhp = 5
+    takes_damage = 1
     def initialise(self):
         self.insert(GridObject(self.game))
         self.insert(GridObject(self.game))

@@ -17,3 +17,4 @@ class OwlObject(DijkstraMonster):
         self.insert(GridObject(self.game))
         self.insert(GridObject(self.game))
         self.insert(GridObject(self.game))
+        self.insert(GridObject(self.game))

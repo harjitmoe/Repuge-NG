@@ -5,6 +5,12 @@ except ImportError:
     #3k
     from _thread import interrupt_main #pylint: disable = import-error
 
+try:
+    from httplib import HTTPException #pylint: disable = import-error
+except ImportError:
+    #3k
+    from http.client import HTTPException #pylint: disable = import-error
+
 import time
 
 class GridObject(object):
@@ -22,6 +28,8 @@ class GridObject(object):
     vitality = 0 #Hit-points, enchantment level... depending on object
     maxhp = 9999
     init_hp_interval = 0
+    takes_damage = 0
+    priority = 0
     #
     #
     # Not overridable by subclasses:
@@ -34,7 +42,6 @@ class GridObject(object):
     handlers = None
     known = None
     myinterface = None
-    priority = 0
     contents = None
     #
     #
@@ -98,27 +105,48 @@ class GridObject(object):
     #
     #
     # Handling user input when applicable
-    def conv_to_target(self, e):
-        #Note: this function is old.
+    def conv_to_direction(self, e):
         if e not in ("down", "up", "left", "right", "8", "4", "6", "2", "7", "9",
                      "1", "3", "h", "j", "k", "l", "y", "u", "b", "n"):
             return None
         if e in ("left", "4", "h"):
-            target = (self.pt[0]-1, self.pt[1])
-        if e in ("down", "2", "j"):
-            target = (self.pt[0], self.pt[1]+1)
-        if e in ("up", "8", "k"):
-            target = (self.pt[0], self.pt[1]-1)
-        if e in ("right", "6", "l"):
-            target = (self.pt[0]+1, self.pt[1])
-        if e in ("7", "y"):
-            target = (self.pt[0]-1, self.pt[1]-1)
-        if e in ("9", "u"):
-            target = (self.pt[0]+1, self.pt[1]-1)
-        if e in ("1", "b"):
-            target = (self.pt[0]-1, self.pt[1]+1)
-        if e in ("3", "n"):
-            target = (self.pt[0]+1, self.pt[1]+1)
+            return "W"
+        elif e in ("down", "2", "j"):
+            return "S"
+        elif e in ("up", "8", "k"):
+            return "N"
+        elif e in ("right", "6", "l"):
+            return "E"
+        elif e in ("7", "y"):
+            return "NW"
+        elif e in ("9", "u"):
+            return "NE"
+        elif e in ("1", "b"):
+            return "SW"
+        elif e in ("3", "n"):
+            return "SE"
+        return direction
+    def direction_to_target(self, e, pt=None):
+        if pt == None:
+            pt = self.pt
+        if e == "W":
+            return (pt[0]-1, pt[1])
+        elif e == "S":
+            return (self.pt[0], self.pt[1]+1)
+        elif e == "N":
+            return (self.pt[0], self.pt[1]-1)
+        elif e == "E":
+            return (self.pt[0]+1, self.pt[1])
+        elif e == "NW":
+            return (self.pt[0]-1, self.pt[1]-1)
+        elif e == "NE":
+            return (self.pt[0]+1, self.pt[1]-1)
+        elif e == "SW":
+            return (self.pt[0]-1, self.pt[1]+1)
+        elif e == "SE":
+            return (self.pt[0]+1, self.pt[1]+1)
+        else:
+            return None
         return target
     def __playercheck(self): #Two underscores, mangles to _GridObject__playercheck
         if self.myinterface == None:
@@ -133,7 +161,11 @@ class GridObject(object):
             return
         if len(self.level.child_interfaces) > 1:
             self.myinterface.push_message("Your turn.")
-        e = self.myinterface.get_key_event()
+        try:
+            e = self.myinterface.get_key_event()
+        except HTTPException:
+            return
+        inexpensive = 0
         if e in ("\x03", "\x04", "\x1a"): #ETX ^C, EOT ^D, and ^Z
             #Does not go through to Python otherwise, meaning that Linux main terminals
             #are rendered otherwise out of order until someone kills Collecto
@@ -142,7 +174,8 @@ class GridObject(object):
             raise KeyboardInterrupt #^c, ^d or ^z pressed
         elif e in ("down", "up", "left", "right", "8", "4", "6", "2", "7", "9",
                    "1", "3", "h", "j", "k", "l", "y", "u", "b", "n"):
-            target = self.conv_to_target(e)
+            direction = self.conv_to_direction(e)
+            target = self.direction_to_target(direction)
             if self.game.debug_ghost or self.level.handle_move(target, self):
                 self.place(*target)
         elif e == "#":
@@ -150,6 +183,7 @@ class GridObject(object):
             if name in ("#debug", "#debugon"):
                 self.game.debug = 1
             elif self.game.debug:
+                inexpensive = 1
                 if name in ("#debugoff",):
                     self.game.debug = 0
                 elif name in ("#ghost", "#ghoston"):
@@ -174,11 +208,15 @@ class GridObject(object):
                 elif name in ("#quit",):
                     interrupt_main()
                 else:
-                    self.level.handle_command(name, self)
+                    inexpensive = self.level.handle_command(name, self)
             else:
-                self.level.handle_command(name, self)
+                inexpensive = self.level.handle_command(name, self)
         else:
-            self.level.handle_command(e, self)
+            inexpensive = self.level.handle_command(e, self)
+        if inexpensive:
+            # Did not expend the players go - give them the go then.
+            self.__playercheck()
+            return
         if len(self.level.child_interfaces) > 1:
             self.myinterface.push_message("Turn over.")
             self.myinterface.dump_messages()
@@ -299,22 +337,7 @@ class GridObject(object):
                       + ([(x, y+1)] if y < (_h-1) else []) \
                       + ([(x-1, y+1)] if x > 0 and y < (_h-1) else []) \
                       + ([(x-1, y)] if x > 0 else [])
-            if direction=="NW":
-                target=(x-1,y-1)
-            elif direction=="N":
-                target=(x,y-1)
-            elif direction=="NE":
-                target=(x+1,y-1)
-            elif direction=="E":
-                target=(x+1,y)
-            elif direction=="SE":
-                target=(x+1,y+1)
-            elif direction=="S":
-                target=(x,y+1)
-            elif direction=="SW":
-                target=(x-1,y+1)
-            elif direction=="W":
-                target=(x-1,y)
+            target=self.direction_to_target(direction, (x, y))
             if target not in adjacents:
                 break
             #
@@ -325,7 +348,7 @@ class GridObject(object):
             nxtstat = self.level.get_index_grid(*target)[0]
             if self.level.objgrid[target[0]][target[1]]:
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
-                    if hasattr(obj, "myinterface") and obj.myinterface != None:
+                    if (hasattr(obj, "myinterface") and obj.myinterface != None) or obj.takes_damage:
                         self.hit(obj)
                         self.place(*target)
                         return
@@ -338,11 +361,27 @@ class GridObject(object):
             else:
                 break
         self.level.redraw()
+    zap = None #Can be defined as a method, same invocation as throw
     def hit(self, obj):
-        if type(self) in obj.known: #pylint: disable = unidiomatic-typecheck
-            obj.myinterface.push_message("The %s hits!"%self.name)
-        else:
-            obj.myinterface.push_message("The %s hits!"%self.appearance)
+        if hasattr(obj, "myinterface") and obj.myinterface != None:
+            # obj is the player
+            if type(self) in obj.known: #pylint: disable = unidiomatic-typecheck
+                obj.myinterface.push_message("The %s hits!"%self.name)
+            else:
+                obj.myinterface.push_message("The %s hits!"%self.appearance)
+        for aninterface in self.level.child_interfaces:
+            playerobj = aninterface.playerobj
+            if playerobj == obj:
+                continue #The victim was already notified
+            if type(self) in playerobj.known: #pylint: disable = unidiomatic-typecheck
+                myname=self.name
+            else:
+                myname=self.appearance
+            if type(obj) in playerobj.known: #pylint: disable = unidiomatic-typecheck
+                objname=obj.name
+            else:
+                objname=obj.appearance
+            aninterface.push_message("The %s hits the %s!"%(myname, objname))
         obj.vitality -= 1
     #
     #
@@ -374,6 +413,84 @@ class GridObject(object):
             self.drop(obj, pt)
     def __iter__(self):
         return iter(self.contents)
+    #
+    #
+    # Special user interface support
+    def report_inventory(self):
+        if self.empty():
+            self.myinterface.ask_question("You are not carrying anything. [press RETURN]")
+        else:
+            for n, obj in enumerate(self.contents[:-1]):
+                if type(obj) in self.known:
+                    self.myinterface.push_message("%02d - a %s"%(n,obj.name))
+                else:
+                    self.myinterface.push_message("%02d - a %s"%(n,obj.appearance))
+            obj, n = self.contents[-1], (len(self.contents)-1)
+            if type(obj) in self.known:
+                self.myinterface.ask_question("%02d - a %s [press RETURN]"%(n,obj.name))
+            else:
+                self.myinterface.ask_question("%02d - a %s [press RETURN]"%(n,obj.appearance))
+        return 1 #Inexpensive move
+    def ask_throw(self):
+        while 1:
+            objid=self.myinterface.ask_question("Object index (00-%02d or q)? "% \
+                                                (len(self.contents)-1))
+            if objid.lower()=="q":
+                return 1
+            try:
+                objid=int(objid,10)
+            except ValueError:
+                self.myinterface.push_message("Not a valid object index.")
+            else:
+                break
+        projectile=self.contents[objid]
+        self.myinterface.push_message("In what direction (yubn for diagonals)?")
+        e2=self.myinterface.get_key_event() #estraDiol (an oestrogen)
+        direction=self.conv_to_direction(e2)
+        if direction!=None:
+            projectile.throw(direction, self.pt, self.level)
+        return 0
+    def ask_zap(self):
+        while 1:
+            objid=self.myinterface.ask_question("Object index (00-%02d or q)? "% \
+                                                (len(self.contents)-1))
+            if objid.lower()=="q":
+                return 1
+            try:
+                objid=int(objid,10)
+            except ValueError:
+                self.myinterface.push_message("Not a valid object index.")
+            else:
+                if self.contents[objid].zap!=None:
+                    break
+                else:
+                    self.myinterface.push_message("You can't zap that!")
+        wand=self.contents[objid]
+        self.myinterface.push_message("In what direction (yubn for diagonals)?")
+        e2=self.myinterface.get_key_event() #estraDiol (an oestrogen)
+        direction=self.conv_to_direction(e2)
+        if direction!=None:
+            wand.zap(direction, self.pt, self.level)
+        return 0
+    def ask_pickup(self):
+        for obj in self.level.objgrid[self.pt[0]][self.pt[1]][:]:
+            if obj==self:
+                continue
+            while 1:
+                if type(obj) in self.known:
+                    ans=self.myinterface.ask_question("Pick up a %s [ynq]? "%obj.name)
+                else:
+                    ans=self.myinterface.ask_question("Pick up a %s [ynq]? "%obj.appearance)
+                ans=ans.lower().strip()
+                if ans in "ynq":
+                    break
+            if ans=="y":
+                self.insert(obj)
+            elif ans=="n":
+                pass
+            else: #ans=="q"
+                return 1
+        return 1
     #
     __safe_for_unpickling__ = True
     def __reduce__(self):

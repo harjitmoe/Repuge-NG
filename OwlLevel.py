@@ -11,25 +11,15 @@ class OwlLevel(MazeLevel2):
     coded_grid=None #?
     title_window="Creature test"
     use_dm=True
-
-    def get_new_point(self):
-        if hasattr(self,"pt"):
-            userloc=self.playerobj.pt
-        else:
-            userloc=self.starting_pt
-        while 1:
-            (x,y)=random.choice(self.gamut)
-            if (x,y) != userloc:
-                return (x,y)
-
     def initmap(self):
-        #Initialise scoring storage
-        self.score=MultilevelStorage("owl_score")
-        self.score.initialise_property("myscore",0)
-        self.score.initialise_property("mymoves",0)
-        #Generate map
         self.genmap(10,10)
         self.starting_pt=random.choice(self.gamut)
+
+    def get_new_point(self):
+        while 1:
+            (x,y)=random.choice(self.gamut)
+            if (x,y) != self.starting_pt:
+                return (x,y)
 
     def initialise(self):
         #Place owl
@@ -82,21 +72,10 @@ class OwlLevel(MazeLevel2):
             pass
         elif e=="o":
             playerobj.polymorph(OwlObject)
+        elif e=="i":
+            return playerobj.report_inventory()
+        elif e in ("t",):
+            return playerobj.ask_throw()
         elif e in (",","#pickup"):
-            for obj in self.objgrid[playerobj.pt[0]][playerobj.pt[1]][:]:
-                if obj==playerobj:
-                    continue
-                while 1:
-                    if type(obj) in playerobj.known:
-                        ans=playerobj.myinterface.ask_question("Pick up a %s [ynq]? "%obj.name)
-                    else:
-                        ans=playerobj.myinterface.ask_question("Pick up a %s [ynq]? "%obj.appearance)
-                    ans=ans.lower().strip()
-                    if ans in "ynq":
-                        break
-                if ans=="y":
-                    playerobj.insert(obj)
-                elif ans=="n":
-                    pass
-                else: #ans=="q"
-                    return
+            return playerobj.ask_pickup()
+        return 0

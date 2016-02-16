@@ -1,6 +1,13 @@
 from consolation.BaseDisplay import BaseDisplay
 from consolation.Compat3k import Compat3k
 
+#The "threading" module over-complicates things imo
+try:
+    from thread import allocate_lock #pylint: disable = import-error
+except ImportError:
+    #3k
+    from _thread import allocate_lock #pylint: disable = import-error
+
 __copying__="""
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,11 +32,12 @@ class RpcDisplay(BaseDisplay):
         self._plot_cache = []
         self._already = {}
         self._dimensions = self.backend.get_dimensions()
+        self._lock = allocate_lock()
     def __getattribute__(self, attr):
         if attr.startswith("__"):
             return object.__getattribute__(self, attr)
         if attr in ("backend", "plot_tile", "flush_plots", "goto_point", "_plot_cache",
-                    "_already", "get_dimensions", "_dimensions"):
+                    "_already", "get_dimensions", "_dimensions","_lock"):
             return object.__getattribute__(self, attr)
         return getattr(self.backend, attr)
     def plot_tile(self, y, x, tile_id):
@@ -44,8 +52,10 @@ class RpcDisplay(BaseDisplay):
     def goto_point(self, x, y):
         self._plot_cache.append({"methodName":"goto_point", "params":(x, y)})
     def flush_plots(self):
+        self._lock.acquire()
         self.system.multicall(self._plot_cache)
         self._plot_cache = []
+        self._lock.release()
     def get_dimensions(self):
         return self._dimensions
     @staticmethod

@@ -9,6 +9,7 @@ class DijkstraMonster(GridObject):
     vitality = 5
     maxhp = 5
     projectiles = 0
+    takes_damage = 1
     def initialise(self):
         self.add_handler(1, self.onetick)
     def can_throw(self, direction):

@@ -7,10 +7,5 @@ class TfGun(GridObject):
     tile = "wand"
     name = "TF gun"
     appearance = "flashy gun-shaped device"
-    def shoot(self, direction):
-        pt = self.pt
-        c = self.container
-        while c:
-            pt = c.pt
-            c = c.container
-        TfBeam(self.game).throw(direction, pt, self.level)
+    def zap(self, direction, pt, level):
+        TfBeam(self.game).throw(direction, pt, level)

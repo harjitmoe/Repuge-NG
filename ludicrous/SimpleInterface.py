@@ -88,7 +88,7 @@ class SimpleInterface(object):
         sys.exit()
     def push_message(self, s):
         return self.display.push_message(s)
-    def dump_messages(self):
+    def dump_messages(self): #Should this really be bound here?
         return self.display.dump_messages()
     def ask_question(self, s):
         return self.display.ask_question(s)

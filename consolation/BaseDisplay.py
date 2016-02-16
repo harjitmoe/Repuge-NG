@@ -58,14 +58,18 @@ class BaseDisplay(object):
     def works_p():
         """-->true if implementation works on this platform and environment"""
         raise NotImplementedError("should be implemented by subclass")
-    def dump_messages(self):
+    def dump_messages(self, leave_hanging=0):
         """Flush messages to screen.  Normally there should be no need to use
-        this as it is called automatically upon user interaction."""
+        this as it is called automatically upon user interaction.
+        
+        leave_hanging is boolean, and is whether a --More-- prompt will be
+        issued after the last output."""
         raise NotImplementedError("should be implemented by subclass")
     def ask_question(self, question):
         """Ask the user a question, preferably in the message area.
 
-        Implementations should call dump_messages() first."""
+        Implementations should call dump_messages() first, with 
+        leave_hanging as 1 or True."""
         raise NotImplementedError("should be implemented by subclass")
     def goto_point(self, x_coord, y_coord):
         """Move the user cursor/focus to coords (x_coord, y_coord)."""
