@@ -106,7 +106,7 @@ class DijkstraMonster(GridObject):
                             obj.myinterface.push_message("The %s hits!"%self.appearance)
                         obj.vitality -= 1
                         return
-            elif nxtstat.startswith("floor"):
+            elif nxtstat.startswith("floor") or (nxtstat in ("vfeature_open","hfeature_open")):
                 newlevel = type(0)(nxtstat[5:])
                 if (newlevel-floorlevel) <= 1:
                     break

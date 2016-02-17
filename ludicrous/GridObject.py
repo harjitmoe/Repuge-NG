@@ -24,6 +24,7 @@ class GridObject(object):
     name = "unspecified object"
     appearance = "featureless object"
     corpse_type = None
+    leave_corpse = 1 #Moot if no corpes type, can also be set at run-time
     vitality = 0 #Hit-points, enchantment level... depending on object
     maxhp = 9999
     init_hp_interval = 0
@@ -292,17 +293,12 @@ class GridObject(object):
             self.level = None
             self.pt = None
         self.status = "unplaced"
-    def leave_corpse_p(self):
-        """--> True to leave a corpse or False not to.
-
-        Default just returns True."""
-        return True
     def die(self):
         if self.myinterface != None:
             self.myinterface.ask_question("DYWYPI?")
             self.myinterface.close()
         if self.corpse_type:
-            if self.leave_corpse_p():
+            if self.leave_corpse:
                 self.polymorph(self.corpse_type)
                 return
         self.lift()
@@ -463,12 +459,11 @@ class GridObject(object):
             if objid.lower()=="q":
                 return 1
             try:
-                objid=int(objid,10)
-            except ValueError:
+                projectile=self.contents[int(objid,10)]
+            except:
                 self.myinterface.push_message("Not a valid object index.")
             else:
                 break
-        projectile=self.contents[objid]
         self.myinterface.push_message("In what direction (yubn for diagonals)?")
         e2=self.myinterface.get_key_event() #estraDiol (an oestrogen)
         direction=self.conv_to_direction(e2)
@@ -482,15 +477,14 @@ class GridObject(object):
             if objid.lower()=="q":
                 return 1
             try:
-                objid=int(objid,10)
-            except ValueError:
+                wand=self.contents[int(objid,10)]
+            except:
                 self.myinterface.push_message("Not a valid object index.")
             else:
-                if self.contents[objid].zap!=None:
+                if wand.zap!=None:
                     break
                 else:
                     self.myinterface.push_message("You can't zap that!")
-        wand=self.contents[objid]
         self.myinterface.push_message("In what direction (yubn for diagonals)?")
         e2=self.myinterface.get_key_event() #estraDiol (an oestrogen)
         direction=self.conv_to_direction(e2)

@@ -24,6 +24,7 @@ class TeddyMapU(TeddyMapBase):
 """
     starting_pt=(14,10)
     title_window="The Verres' House Upstairs"
+    use_dm=True
   
     def handle_staircase(self,playerobj):
         self.game.level_regress(playerobj)

@@ -11,14 +11,18 @@ class Level(object):
     """
     WIDTH = 100
     HEIGHT = 100
-    #
-    child_objects = None
-    child_interfaces = None
-    grid = None
-    objgrid = None
     starting_pt = (0, 0)
     coded_grid = None
     list_of_symbols = None
+    use_dm = False
+    #
+    grid = None
+    objgrid = None
+    child_objects = None
+    child_interfaces = None
+    dm_grid = None
+    dm_grid2 = None
+    #
     def __init__(self, game):
         self.game = game
         self.child_objects = []
@@ -150,9 +154,6 @@ class Level(object):
         "enter", "\r", "\n", "\r\n") for example."""
         return 0
     #
-    use_dm = False
-    dm_grid = None
-    dm_grid2 = None
     def grid_dimens(self):
         width = len(self.grid)
         height = 0
@@ -162,6 +163,8 @@ class Level(object):
         return width, height
     def gen_dijkstra_map(self):
         """Calculate shortest distance to the nearest player for each grid cell.
+        Called a Dijkstra map, despite not really being Dijkstra's Algorithm I 
+        don't think.
 
         If self.use_dm == False, do nothing.
 

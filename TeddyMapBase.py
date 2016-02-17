@@ -1,4 +1,5 @@
 from ludicrous.Level import Level
+from ludicrous.DijkstraMonster import DijkstraMonster
 
 import sys, random
 
@@ -31,7 +32,18 @@ class TeddyMapBase(Level):
             floorlevel=type(0)(self.get_index_grid(*playerobj.pt)[0][5:])
         else:
             floorlevel=None
-        if nxtstat.startswith("floor"):
+        if self.objgrid[target[0]][target[1]]:
+            for obj in self.objgrid[target[0]][target[1]][:]:
+                if isinstance(obj,DijkstraMonster):
+                    if type(obj) in playerobj.known:
+                        playerobj.myinterface.push_message("You hit the %s!"%obj.name)
+                    else:
+                        playerobj.myinterface.push_message("You hit the %s!"%obj.appearance)
+                    obj.vitality-=1
+                    return 0
+            playerobj.myinterface.push_message("There is something here.")
+            return 1
+        elif nxtstat.startswith("floor"):
             if floorlevel==None:
                 return 1
             newlevel=type(0)(nxtstat[5:])
