@@ -116,7 +116,7 @@ class BaseDisplay(object):
     def hex_push_message(self, message):
         self.push_message(Compat3k.unhexlify(message))
     def hex_slow_push_message(self, message, prefix=""):
-        self.slow_push_message(Compat3k.unhexlify(message), unhexlity(prefix))
+        self.slow_push_message(Compat3k.unhexlify(message), Compat3k.unhexlify(prefix))
     def hex_get_key_event(self):
         return Compat3k.hexlify(self.get_key_event())
     def hex_set_window_title(self, title):
@@ -124,5 +124,5 @@ class BaseDisplay(object):
     def hex_ask_question(self, question):
         return Compat3k.hexlify(self.ask_question(Compat3k.unhexlify(question)))
     def hex_slow_ask_question(self, question, prefix=""):
-        return Compat3k.hexlify(self.slow_ask_question(Compat3k.unhexlify(question), unhexlity(prefix)))
+        return Compat3k.hexlify(self.slow_ask_question(Compat3k.unhexlify(question), Compat3k.unhexlify(prefix)))
 
