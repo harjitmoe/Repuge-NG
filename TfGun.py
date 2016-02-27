@@ -8,4 +8,4 @@ class TfGun(GridObject):
     name = "TF gun"
     appearance = "flashy gun-shaped device"
     def zap(self, direction, pt, level):
-        TfBeam(self.game).throw(direction, pt, level)
+        TfBeam(self.game).throw(direction, pt, level, self)

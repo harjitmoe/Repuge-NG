@@ -338,7 +338,7 @@ class GridObject(object):
         self.level = None
         self.status = "defunct"
         return novus
-    def throw(self, direction, startpt, level):
+    def throw(self, direction, startpt, level, projector=None):
         self.place(startpt[0], startpt[1], level)
         _w, _h = self.level.grid_dimens()
         lp=0
@@ -371,7 +371,7 @@ class GridObject(object):
             if self.level.objgrid[target[0]][target[1]]:
                 for obj in self.level.objgrid[target[0]][target[1]][:]:
                     if (hasattr(obj, "myinterface") and obj.myinterface != None) or obj.takes_damage:
-                        self.hit(obj)
+                        self.hit(obj, projector)
                         if self.tangible:
                             self.place(*target)
                         else:
@@ -390,7 +390,7 @@ class GridObject(object):
                 break
         self.level.redraw()
     zap = None #Can be defined as a method, same invocation as throw
-    def hit(self, obj):
+    def hit(self, obj, projector=None):
         if hasattr(obj, "myinterface") and obj.myinterface != None:
             # obj is the player
             if type(self) in obj.known: #pylint: disable = unidiomatic-typecheck

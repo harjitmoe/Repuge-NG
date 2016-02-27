@@ -2,6 +2,13 @@ import sys
 from consolation.DisplaySelector import DisplaySelector
 from binascii import hexlify, unhexlify
 
+#The "threading" module over-complicates things imo
+try:
+    from thread import interrupt_main, allocate_lock #pylint: disable = import-error
+except ImportError:
+    #3k
+    from _thread import interrupt_main, allocate_lock #pylint: disable = import-error
+
 __copying__="""
 Written by Thomas Hori
 
@@ -23,6 +30,7 @@ class SimpleInterface(object):
     generic_coords = []
     #Semantically public
     def __init__(self, playerobj, use_rpc=False, display=None, debug_dummy=False):
+        self._lock = allocate_lock()
         self.playerobj = playerobj
         self.level = playerobj.level
         if self.level:
@@ -93,21 +101,41 @@ class SimpleInterface(object):
         """Bin any cached info about the current level FOV."""
         pass
     def close(self):
-        self.display.close()
+        self._lock.acquire()
+        self.display.close_display()
+        self._lock.release()
     def interrupt(self):
+        self._lock.acquire()
         self.display.interrupt()
+        self._lock.release()
     def push_message(self, s):
+        self._lock.acquire()
         self.display.hex_push_message(hexlify(s))
+        self._lock.release()
     def dump_messages(self, leave_hanging=0): #Should this really be bound here?
+        self._lock.acquire()
         self.display.dump_messages(leave_hanging)
+        self._lock.release()
     def ask_question(self, s):
-        return unhexlify(self.display.hex_ask_question(hexlify(s)))
+        self._lock.acquire()
+        r=unhexlify(self.display.hex_ask_question(hexlify(s)))
+        self._lock.release()
+        return r
     def slow_ask_question(self, s, p=""):
-        return unhexlify(self.display.hex_slow_ask_question(hexlify(s), hexlify(p)))
+        self._lock.acquire()
+        r=unhexlify(self.display.hex_slow_ask_question(hexlify(s), hexlify(p)))
+        self._lock.release()
+        return r
     def slow_push_message(self, s, p=""):
-        return unhexlify(self.display.hex_slow_push_message(hexlify(s), hexlify(p)))
+        self._lock.acquire()
+        r=unhexlify(self.display.hex_slow_push_message(hexlify(s), hexlify(p)))
+        self._lock.release()
+        return r
     def get_key_event(self):
-        return unhexlify(self.display.hex_get_key_event())
+        self._lock.acquire()
+        r=unhexlify(self.display.hex_get_key_event())
+        self._lock.release()
+        return r
     #Semantically protected
     _w = _h = None
     def get_offsets(self):

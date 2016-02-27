@@ -59,8 +59,9 @@ class BaseDisplay(object):
     def interrupt(self):
         """Raises KeyboardInterrupt, for RPC use."""
         raise KeyboardInterrupt # ^c or similar pressed?
-    def close(self):
+    def close_display(self): #close() seems to clash with XML-RPC library methods
         """Raises SystemExit, for RPC use."""
+        self.clean()
         raise SystemExit
     #
     @staticmethod
