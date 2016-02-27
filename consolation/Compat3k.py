@@ -34,8 +34,8 @@ class Compat3k(StaticClass):
     #XXXXXXXXXXX FIX THESE
     @classmethod
     def hexlify(cls, s):
-        return binascii.hexlify(s)
+        return binascii.hexlify(s.encode("latin1"))
     @classmethod
     def unhexlify(cls, s):
-        return binascii.unhexlify(s)
+        return binascii.unhexlify(s).decode("latin1")
     
