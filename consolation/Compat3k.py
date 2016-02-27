@@ -15,6 +15,8 @@ class Compat3k(StaticClass):
         """Convert a string of either width to a byte string."""
         try:
             try:
+                if type(s) == bytes: #pylint: disable = unidiomatic-typecheck
+                    return s
                 return bytes(s)
             except NameError:
                 return str(s)
@@ -29,10 +31,11 @@ class Compat3k(StaticClass):
         (file or sys.stderr).write(s)
         (file or sys.stderr).flush()
         return sys.stdin.readline().rstrip("\r\n")
+    #XXXXXXXXXXX FIX THESE
     @classmethod
     def hexlify(cls, s):
-        return str(binascii.hexlify(cls.str_to_bytes(s)))
+        return binascii.hexlify(s)
     @classmethod
     def unhexlify(cls, s):
-        return str(binascii.unhexlify(cls.str_to_bytes(str(s))))
+        return binascii.unhexlify(s)
     
