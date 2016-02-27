@@ -1,5 +1,5 @@
 import textwrap
-from binascii import hexlify, unhexlify
+from consolation.Compat3k import Compat3k
 
 __copying__="""
 Written by Thomas Hori
@@ -114,15 +114,15 @@ class BaseDisplay(object):
         pass
     #
     def hex_push_message(self, message):
-        self.push_message(unhexlify(message))
+        self.push_message(Compat3k.unhexlify(message))
     def hex_slow_push_message(self, message, prefix=""):
-        self.slow_push_message(unhexlify(message), unhexlity(prefix))
+        self.slow_push_message(Compat3k.unhexlify(message), unhexlity(prefix))
     def hex_get_key_event(self):
-        return hexlify(self.get_key_event())
+        return Compat3k.hexlify(self.get_key_event())
     def hex_set_window_title(self, title):
-        return self.set_window_title(unhexlify(title))
+        return self.set_window_title(Compat3k.unhexlify(title))
     def hex_ask_question(self, question):
-        return hexlify(self.ask_question(unhexlify(question)))
+        return Compat3k.hexlify(self.ask_question(Compat3k.unhexlify(question)))
     def hex_slow_ask_question(self, question, prefix=""):
-        return hexlify(self.slow_ask_question(unhexlify(question), unhexlity(prefix)))
+        return Compat3k.hexlify(self.slow_ask_question(Compat3k.unhexlify(question), unhexlity(prefix)))
 

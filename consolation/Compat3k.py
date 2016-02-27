@@ -1,5 +1,6 @@
 from consolation.StaticClass import StaticClass
 import sys
+import binascii
 
 __copying__="""
 Written by Thomas Hori
@@ -28,3 +29,10 @@ class Compat3k(StaticClass):
         (file or sys.stderr).write(s)
         (file or sys.stderr).flush()
         return sys.stdin.readline().rstrip("\r\n")
+    @classmethod
+    def hexlify(cls, s):
+        return str(binascii.hexlify(cls.str_to_bytes(s)))
+    @classmethod
+    def unhexlify(cls, s):
+        return str(binascii.unhexlify(cls.str_to_bytes(str(s))))
+    

@@ -1,6 +1,6 @@
 import sys
 from consolation.DisplaySelector import DisplaySelector
-from binascii import hexlify, unhexlify
+from consolation.Compat3k import Compat3k
 
 #The "threading" module over-complicates things imo
 try:
@@ -110,7 +110,7 @@ class SimpleInterface(object):
         self._lock.release()
     def push_message(self, s):
         self._lock.acquire()
-        self.display.hex_push_message(hexlify(s))
+        self.display.hex_push_message(Compat3k.hexlify(s))
         self._lock.release()
     def dump_messages(self, leave_hanging=0): #Should this really be bound here?
         self._lock.acquire()
@@ -118,22 +118,22 @@ class SimpleInterface(object):
         self._lock.release()
     def ask_question(self, s):
         self._lock.acquire()
-        r=unhexlify(self.display.hex_ask_question(hexlify(s)))
+        r=Compat3k.unhexlify(self.display.hex_ask_question(Compat3k.hexlify(s)))
         self._lock.release()
         return r
     def slow_ask_question(self, s, p=""):
         self._lock.acquire()
-        r=unhexlify(self.display.hex_slow_ask_question(hexlify(s), hexlify(p)))
+        r=Compat3k.unhexlify(self.display.hex_slow_ask_question(Compat3k.hexlify(s), Compat3k.hexlify(p)))
         self._lock.release()
         return r
     def slow_push_message(self, s, p=""):
         self._lock.acquire()
-        r=unhexlify(self.display.hex_slow_push_message(hexlify(s), hexlify(p)))
+        r=Compat3k.unhexlify(self.display.hex_slow_push_message(Compat3k.hexlify(s), Compat3k.hexlify(p)))
         self._lock.release()
         return r
     def get_key_event(self):
         self._lock.acquire()
-        r=unhexlify(self.display.hex_get_key_event())
+        r=Compat3k.unhexlify(self.display.hex_get_key_event())
         self._lock.release()
         return r
     #Semantically protected

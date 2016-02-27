@@ -28,9 +28,17 @@ class RpcDisplay(BaseDisplay):
         except ImportError:
             #3k
             import xmlrpc.client as xmlrpclib #pylint: disable = import-error
+        class ClassicTransport(xmlrpclib.Transport):
+            def make_connection(self, host):
+                self._extra_headers = []
+                self._connection = (None, None)
+                r=xmlrpclib.Transport.make_connection(self, host)
+                self._extra_headers = []
+                self._connection = (None, None)
+                return r
         host = Compat3k.prompt_user("Host of next remote (blank for localhost): ").strip() or "localhost"
         port = int(Compat3k.prompt_user("Port used: "))
-        self.backend = xmlrpclib.ServerProxy("http://%s:%d/"%(host, port), allow_none=True)
+        self.backend = xmlrpclib.ServerProxy("http://%s:%d/"%(host, port), allow_none=True, transport=ClassicTransport())
         self._plot_cache = []
         self._already = {}
         self._dimensions = self.backend.get_dimensions()
