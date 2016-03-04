@@ -11,9 +11,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/."""
 
 class Compat3k(StaticClass):
     try:
-        bytes = bytes
+        bytes_t = bytes
     except NameError:
-        bytes = str
+        bytes_t = str
     @classmethod
     def str_to_bytes(cls, s):
         """Convert a string of either width to a byte string."""
@@ -39,7 +39,7 @@ class Compat3k(StaticClass):
     #one of the types in question may be a subtype of the other.
     @classmethod
     def hexlify(cls, s):
-        if type(s)!=cls.bytes: #pylint: disable = unidiomatic-typecheck
+        if type(s)!=cls.bytes_t: #pylint: disable = unidiomatic-typecheck
             s=s.encode("latin1")
         r=binascii.hexlify(s)
         if type(r)!=str: #pylint: disable = unidiomatic-typecheck
@@ -47,7 +47,7 @@ class Compat3k(StaticClass):
         return r
     @classmethod
     def unhexlify(cls, s):
-        if type(s)!=cls.bytes: #pylint: disable = unidiomatic-typecheck
+        if type(s)!=cls.bytes_t: #pylint: disable = unidiomatic-typecheck
             s=s.encode("ascii")
         r=binascii.unhexlify(s)
         if type(r)!=str: #pylint: disable = unidiomatic-typecheck
