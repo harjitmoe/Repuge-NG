@@ -8,6 +8,8 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/."""
 
+halfpi = math.pi//2
+
 class DumbLosInterface(SimpleInterface):
     """Dumb line of site.  An interface class which adds field of view support.
 
@@ -15,12 +17,7 @@ class DumbLosInterface(SimpleInterface):
     """
     _los_cache = None
     _fov_cache = None
-    _atan_cache = None
     fov_status = 1
-    def _atan2(self, y, x):
-        if (y, x) not in self._atan_cache:
-            self._atan_cache[(y, x)] = math.atan2(y, x)
-        return self._atan_cache[(y, x)]
     def _transparent(self, cell):
         return cell[0].startswith("floor") or cell[0].endswith("_open")
     def _fov_check(self, x, y, passthrough_once=True):
@@ -59,24 +56,22 @@ class DumbLosInterface(SimpleInterface):
             #Blocking object has been encountered
             ret = False
         if ret == -1: #i.e. if below 'if's will be executed
-            vector_angle = self._atan2(abs(y-self.playerobj.pt[1]), abs(x-self.playerobj.pt[0]))
-            vector_angle *= 180
-            vector_angle /= math.pi
-            vector_angle = int(vector_angle+0.5)
+            ycomp = abs(y-self.playerobj.pt[1])
+            xcomp = abs(x-self.playerobj.pt[0])
         if ret == -1 and passthrough_once and self.level.grid[x][y] \
            and (not self._transparent(self.level.grid[x][y])):
             #From a wall: the actual path to the player obviously includes the floor, not more wall.
-            if ret == -1 and vector_angle > 0:
+            if ret == -1 and ycomp > 0:
                 n = self.level.grid[x][y-int((y-self.playerobj.pt[1])/abs(y-self.playerobj.pt[1]))]
                 if n and n[0].startswith("floor"):
                     ret, typ = self._fov_check(x, y-int((y-self.playerobj.pt[1]) \
                                                         /abs(y-self.playerobj.pt[1])), False)
-            if ret == -1 and vector_angle < 90:
+            if ret == -1 and ycomp < xcomp:
                 n = self.level.grid[x-int((x-self.playerobj.pt[0])/abs(x-self.playerobj.pt[0]))][y]
                 if n and n[0].startswith("floor"):
                     ret, typ = self._fov_check(x-int((x-self.playerobj.pt[0]) \
                                                      /abs(x-self.playerobj.pt[0])), y, False)
-            if ret == -1 and vector_angle > 0 and vector_angle < 90:
+            if ret == -1 and ycomp > 0 and ycomp < xcomp:
                 n = self.level.grid[x-int((x-self.playerobj.pt[0])/abs(x-self.playerobj.pt[0]))] \
                                    [y-int((y-self.playerobj.pt[1])/abs(y-self.playerobj.pt[1]))]
                 if n and n[0].startswith("floor"):
@@ -84,11 +79,11 @@ class DumbLosInterface(SimpleInterface):
                                                      /abs(x-self.playerobj.pt[0])),
                                                y-int((y-self.playerobj.pt[1]) \
                                                      /abs(y-self.playerobj.pt[1])), False)
-        if ret == -1 and vector_angle >= 75:
+        if ret == -1 and ycomp >= (3.73*xcomp): #tan of 75deg
             #Vertical is closest approximation for now
             ret, typ = self._fov_check(x, y-int((y-self.playerobj.pt[1]) \
                                                 /abs(y-self.playerobj.pt[1])), False)
-        if ret == -1 and vector_angle >= 15:
+        if ret == -1 and ycomp >= (0.27*xcomp): #tan of 15deg
             #45deg is closest approximation for now
             ret, typ = self._fov_check(x-int((x-self.playerobj.pt[0]) \
                                              /abs(x-self.playerobj.pt[0])),
@@ -120,8 +115,6 @@ class DumbLosInterface(SimpleInterface):
             self.display.goto_point(*self.get_viewport_pt())
         colno = 0
         self._los_cache = {}
-        if not self._atan_cache:
-            self._atan_cache = {}
         if not self._fov_cache:
             self._fov_cache = {}
         for coordscol, col, col2 in zip(*self.get_viewport_grids()):
