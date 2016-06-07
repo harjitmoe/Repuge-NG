@@ -15,9 +15,6 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/."""
 
-def RestoreLevel(*a): return Level(*a)
-RestoreLevel.__safe_for_unpickling__ = True
-
 class Level(object):
     """Base class of a level.
     """
@@ -53,9 +50,7 @@ class Level(object):
         start_new_thread(self.run, ())
     def __reduce__(self):
         """Implementation of the Pickle protocol."""
-        print "Reducing Level"
         return (self.__class__, (None, Saving.strip_methods(self.__dict__,("game","child_interfaces"))))
-        #return (self.RestoreFunc[0], (None, Saving.strip_methods(self.__dict__,("game",))))
     __safe_for_unpickling__=True
     def reown(self, game):
         """Restore cyclic references to the game after loading a save."""

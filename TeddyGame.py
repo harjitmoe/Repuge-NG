@@ -22,6 +22,12 @@ class TeddyGame(Game):
         playerobj.levindex=2
         level=self.leveltypes[playerobj.levindex]
         level.bring_to_front(playerobj,"starting")
+    def level_restore(self,playerobj):
+        for i in self.leveltypes:
+            if i and not i.game:
+                i.reown(self)
+        level=self.leveltypes[playerobj.levindex]
+        level.bring_to_front(playerobj,"starting")
     def level_advance(self,playerobj):
         playerobj.levindex+=1
         level=self.leveltypes[playerobj.levindex]

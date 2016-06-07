@@ -20,9 +20,6 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/."""
 
-def RestoreObject(*a): return GridObject(*a)
-RestoreObject.__safe_for_unpickling__ = True
-
 import time, sys
 class GridObject(object):
     """An object (animate or otherwise) which may be present on objgrid.
@@ -43,7 +40,6 @@ class GridObject(object):
     takes_damage = 0
     priority = 0
     tangible = 1 #rather than a fleeting beam
-    RestoreFunc = (RestoreObject,)
     #
     #
     # Not overridable by subclasses:
@@ -95,11 +91,7 @@ class GridObject(object):
         self.initialise()
     def __reduce__(self):
         """Implementation of the Pickle protocol."""
-        print "Reducing GridObject"
-        #print Saving.strip_methods(self.__dict__,("myinterface","_lock")).keys()
-        #print map(type,Saving.strip_methods(self.__dict__,("myinterface","_lock")).values())
         return (self.__class__, (None,None,None,None,Saving.strip_methods(self.__dict__,("myinterface","_lock","handlers","game","level"))))
-        #return (self.RestoreFunc[0], (None,None,None,None,Saving.strip_methods(self.__dict__,("myinterface","_lock","handlers","game","level"))))
     __safe_for_unpickling__ = True
     def initialise(self):
         """Just been spawned.  Do what?  Hook for subclasses."""

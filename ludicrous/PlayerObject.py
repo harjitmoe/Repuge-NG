@@ -7,9 +7,6 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/."""
 
-def RestorePlayer(*a): return PlayerObject(*a)
-RestorePlayer.__safe_for_unpickling__ = True
-
 class PlayerObject(GridObject):
     """ The default player object.
     """
@@ -20,4 +17,3 @@ class PlayerObject(GridObject):
     vitality = 10 #Hit-points, enchantment level... depending on object
     maxhp = 10
     init_hp_interval = 5
-    RestoreFunc = (RestorePlayer,)

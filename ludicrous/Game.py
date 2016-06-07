@@ -11,9 +11,6 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/."""
 
-def RestoreGame(*a): return Game(*a)
-RestoreGame.__safe_for_unpickling__ = True
-
 class Game(object):
     """ A game, comprising one or more levels.
     """
@@ -27,7 +24,6 @@ class Game(object):
     InterfaceClass = SimpleInterface
     PlayerClass = PlayerObject
     title_window = "Ludicrous Application"
-    RestoreFunc = (RestoreGame,)
     use_rpc = False
     #
     _restored=0
@@ -39,9 +35,7 @@ class Game(object):
         self.run()
     def __reduce__(self):
         """Implementation of the Pickle protocol."""
-        print "Reducing Game"
         return (self.__class__, (Saving.strip_methods(self.__dict__,("InterfaceClass","PlayerClass","_p")),))
-        #return (self.RestoreFunc[0], (Saving.strip_methods(self.__dict__,("InterfaceClass","PlayerClass","_p")),))
     __safe_for_unpickling__=True
     #
     def run(self):

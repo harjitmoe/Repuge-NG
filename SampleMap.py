@@ -68,6 +68,7 @@ if __name__ == "__main__":
             self._level=SampleMap(self)
             self._level.bring_to_front(playerobj, "starting")
         def level_restore(self, playerobj):
+            self._level.reown(self)
             self._level.bring_to_front(playerobj, "starting")
         def level_advance(self, playerobj):
             raise RuntimeError("advancement without a level stack")
