@@ -54,14 +54,28 @@ jooooooooooooJ"""
 
 if __name__ == "__main__":
     from ludicrous.Game import Game
+    import os, pickle
+    _pp=pickle.Pickler
+    class VerbosePickler(pickle.Pickler):
+        def save(self, obj):
+            print ("Pickling %s"%repr(obj)[:256])
+            return _pp.save(self, obj)
+    #pickle.Pickler=VerbosePickler
     class SampleMapGame(Game):
+        _level=None
         InterfaceClass = SimpleInterface
         def level_initiate(self, playerobj):
-            SampleMap(self).bring_to_front(playerobj, "starting")
+            self._level=SampleMap(self)
+            self._level.bring_to_front(playerobj, "starting")
+        def level_restore(self, playerobj):
+            self._level.bring_to_front(playerobj, "starting")
         def level_advance(self, playerobj):
             raise RuntimeError("advancement without a level stack")
         def level_regress(self, playerobj):
             raise RuntimeError("regression without a level stack")
-    SampleMapGame()
+    if os.path.exists("s"):
+        pickle.load(open("s","rU"))
+    else:
+        SampleMapGame()
 
 

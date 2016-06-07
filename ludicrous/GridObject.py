@@ -11,12 +11,17 @@ except ImportError:
     #3k
     from http.client import HTTPException #pylint: disable = import-error
 
+from ludicrous.Saving import Saving
+
 __copying__="""
 Written by Thomas Hori
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/."""
+
+def RestoreObject(*a): return GridObject(*a)
+RestoreObject.__safe_for_unpickling__ = True
 
 import time, sys
 class GridObject(object):
@@ -38,9 +43,11 @@ class GridObject(object):
     takes_damage = 0
     priority = 0
     tangible = 1 #rather than a fleeting beam
+    RestoreFunc = (RestoreObject,)
     #
     #
     # Not overridable by subclasses:
+    game = None
     level = None
     extra = None #Haven't the foggiest anymore...
     all_objects = [] #class attribute, as assigned to mutable here
@@ -54,11 +61,23 @@ class GridObject(object):
     #
     #
     # Initialisation
-    def __init__(self, game, extra=None, tile=-1, play=0):
+    def __init__(self, game, extra=None, tile=-1, play=0, is_restore=None):
         """Overriding is not recommended unless __reduce__ also
         overridden
 
         Argument play is true if should attach new interface."""
+        self.all_objects=None #class attribute, not for instances
+        if is_restore:
+            self.__dict__.update(is_restore)
+            self.handlers = []
+            self._lock = allocate_lock()
+            self.myinstance = None
+            GridObject.all_objects.append(self)
+            #Two underscores, mangles to _PlayableObject__playercheck
+            self.add_handler(1, self.__playercheck)
+            self.add_handler(self.init_hp_interval, self.up_hitpoint)
+            self.reinitialise()
+            return
         self.game = game
         self.extra = extra
         if tile != -1:
@@ -74,8 +93,19 @@ class GridObject(object):
         self.add_handler(self.init_hp_interval, self.up_hitpoint)
         self.contents = []
         self.initialise()
+    def __reduce__(self):
+        """Implementation of the Pickle protocol."""
+        print "Reducing GridObject"
+        #print Saving.strip_methods(self.__dict__,("myinterface","_lock")).keys()
+        #print map(type,Saving.strip_methods(self.__dict__,("myinterface","_lock")).values())
+        return (self.__class__, (None,None,None,None,Saving.strip_methods(self.__dict__,("myinterface","_lock","handlers","game","level"))))
+        #return (self.RestoreFunc[0], (None,None,None,None,Saving.strip_methods(self.__dict__,("myinterface","_lock","handlers","game","level"))))
+    __safe_for_unpickling__ = True
     def initialise(self):
         """Just been spawned.  Do what?  Hook for subclasses."""
+        pass
+    def reinitialise(self):
+        """Just been loaded from save.  Do what?  Hook for subclasses."""
         pass
     #
     #
@@ -162,6 +192,8 @@ class GridObject(object):
             return
         if self.level == None:
             return
+        if self.game == None:
+            return
         if self.vitality <= 0:
             self.die()
             return
@@ -216,6 +248,8 @@ class GridObject(object):
                     self.game.handle_command(name.split(" ", 1)[1], self)
                 elif name in ("#bugreport", "#report", "#gurumeditation", "#guru"):
                     self.game.dump_report()
+                elif name in ("#save","#s"):
+                    self.game.save(self.myinterface.ask_question("Save file: "))
                 elif name in ("#testerror",):
                     raise RuntimeError("testing error handler")
                 elif name in ("#abort", "#abrt", "#kill"):
@@ -518,7 +552,3 @@ class GridObject(object):
                 return 1
         return 1
     #
-    __safe_for_unpickling__ = True
-    def __reduce__(self):
-        """Implementation of the Pickle protocol."""
-        return (self.__class__, (None, self.extra, self.tile))

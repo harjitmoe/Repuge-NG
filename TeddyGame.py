@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from CollectoInterface import CollectoInterface
 from ludicrous.Game import Game
+#from ludicrous.ScrollingInterface import ScrollingInterface
 from TeddyMapB import TeddyMapB
 from TeddyMapG import TeddyMapG
 from TeddyMapU import TeddyMapU
@@ -8,6 +9,7 @@ import random
 
 class TeddyGame(Game):
     InterfaceClass=CollectoInterface
+    #InterfaceClass=ScrollingInterface
     use_rpc=True
     #
     leveltypes=None

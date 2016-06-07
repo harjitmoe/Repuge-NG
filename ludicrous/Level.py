@@ -6,12 +6,17 @@ except ImportError:
     #3k
     from _thread import start_new_thread #pylint: disable = import-error
 
+from ludicrous.Saving import Saving
+
 __copying__="""
 Written by Thomas Hori
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/."""
+
+def RestoreLevel(*a): return Level(*a)
+RestoreLevel.__safe_for_unpickling__ = True
 
 class Level(object):
     """Base class of a level.
@@ -22,7 +27,9 @@ class Level(object):
     coded_grid = None
     list_of_symbols = None
     use_dm = False
+    RestoreFunc = (RestoreLevel,)
     #
+    game = None
     grid = None
     objgrid = None
     child_objects = None
@@ -30,13 +37,33 @@ class Level(object):
     dm_grid = None
     dm_grid2 = None
     #
-    def __init__(self, game):
+    def __init__(self, game, restore=None):
+        if restore:
+            self.__dict__.update(restore)
+            self.child_interfaces = []
+            for obj in self.child_objects:
+                obj.level = self
+            start_new_thread(self.run, ())
+            return
         self.game = game
         self.child_objects = []
         self.child_interfaces = []
         self.initmap()
         self.initialise()
         start_new_thread(self.run, ())
+    def __reduce__(self):
+        """Implementation of the Pickle protocol."""
+        print "Reducing Level"
+        return (self.__class__, (None, Saving.strip_methods(self.__dict__,("game","child_interfaces"))))
+        #return (self.RestoreFunc[0], (None, Saving.strip_methods(self.__dict__,("game",))))
+    __safe_for_unpickling__=True
+    def reown(self, game):
+        """Restore cyclic references to the game after loading a save."""
+        self.game = game
+        for obj in self.child_objects:
+            obj.game = game
+        for obj in self.child_interfaces:
+            obj.game = game
     def bring_to_front(self, playerobj, whence="unspecified"): #pylint: disable = unused-argument
         """To be called to make this level the active level for a
         player, which may be anything from immediately after creation
@@ -126,15 +153,18 @@ class Level(object):
             i.push_message(m)
     def run(self):
         while 1:
-            self.gen_dijkstra_map()
-            #Each creature gets a move:
-            for obj in self.child_objects[:]:
-                while self.game.loading_lock:
-                    time.sleep(0.2)
-                obj.tick()
-            #Avoid inactive levels tightlooping and throttling
-            #the system:
-            if not self.child_objects:
+            if self.game!=None:
+                self.gen_dijkstra_map()
+                #Each creature gets a move:
+                for obj in self.child_objects[:]:
+                    while self.game.loading_lock:
+                        time.sleep(0.2)
+                    obj.tick()
+                #Avoid inactive levels tightlooping and throttling
+                #the system:
+                if not self.child_objects:
+                    time.sleep(0.6)
+            else:
                 time.sleep(0.6)
     #
     def get_index_grid(self, x, y):
