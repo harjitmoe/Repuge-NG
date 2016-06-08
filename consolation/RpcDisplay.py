@@ -43,11 +43,12 @@ class RpcDisplay(BaseDisplay):
         self._already = {}
         self._dimensions = self.backend.get_dimensions()
         self._lock = allocate_lock()
+        self.rpc_remote_address = (host, port)
     def __getattribute__(self, attr):
         if attr.startswith("__"):
             return object.__getattribute__(self, attr)
         if attr in ("backend", "plot_tile", "flush_plots", "goto_point", "_plot_cache",
-                    "_already", "get_dimensions", "_dimensions","_lock"):
+                    "_already", "get_dimensions", "_dimensions","_lock","rpc_remote_address"):
             return object.__getattribute__(self, attr)
         return getattr(self.backend, attr)
     def plot_tile(self, y, x, tile_id):

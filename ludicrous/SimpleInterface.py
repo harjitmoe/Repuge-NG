@@ -28,6 +28,7 @@ class SimpleInterface(object):
     FOV/LOS and panning are absent by default but can be added by
     subclasses."""
     generic_coords = []
+    rpc_remote_address = None
     #Semantically public
     def __init__(self, playerobj, use_rpc=False, display=None, debug_dummy=False):
         self._lock = allocate_lock()
@@ -42,6 +43,7 @@ class SimpleInterface(object):
                 self.display = display
             else:
                 self.display = DisplaySelector.get_display(use_rpc)
+            self.rpc_remote_address = self.display.rpc_remote_address #may be None
     def sort_ostack(self, ostack):
         estack=ostack[:]
         def ostack_key(oa):

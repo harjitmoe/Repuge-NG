@@ -16,7 +16,7 @@ class Game(object):
     """
     #
     #Debugging settings, nothing to see here
-    debug = 1
+    debug = 0
     debug_ghost = 0
     debug_fov_off = 0
     #
@@ -27,6 +27,7 @@ class Game(object):
     use_rpc = False
     #
     _restored=0
+    reserve=[]
     def __init__(self, restore=None):
         if restore:
             self.__dict__.update(restore)
@@ -49,33 +50,47 @@ class Game(object):
                     #Idle as subservient threads do the work
                     time.sleep(5)
                 except KeyboardInterrupt:
+                    print ("Quitting") #pylint: disable = superfluous-parens
                     for player in self._p:
                         player.myinterface.display.clean()
+                        try:
+                            player.myinterface.display.close_display()
+                        except SystemExit: #i.e. not remote
+                            pass
                     sys.exit()
     #
     loading_lock = 0
     def add_players(self):
         self.loading_lock = 1
         self._p = players = []
-        if self.use_rpc:
-            number = int(Compat3k.prompt_user("How many players (+ve number in figures): "))
-            print ("Please start %d instance(s) " #pylint: disable = superfluous-parens
-                   "of remote.py or remote.exe with unique ports."%number)
-            print ("Once you have done this, " #pylint: disable = superfluous-parens
-                   "enter the hosts and ports here.")
-            for i in range(number):  #pylint: disable = unused-variable
-                players.append(self.PlayerClass(self, play=1))
         if not self._restored:
-            if not self.use_rpc:
+            if self.use_rpc:
+                number = int(Compat3k.prompt_user("How many players (+ve number in figures): "))
+                print ("Please start %d instance(s) " #pylint: disable = superfluous-parens
+                       "of remote.py or remote.exe with unique ports."%number)
+                print ("Once you have done this, " #pylint: disable = superfluous-parens
+                       "enter the hosts and ports here.")
+                for i in range(number):  #pylint: disable = unused-variable
+                    players.append(self.PlayerClass(self, play=1))
+                self.reserve=players[:]
+            else:
                 players.append(self.PlayerClass(self, play=1))
-                self.reserve=players[0]
+                self.reserve=[players[0]]
             for playerobj in players:
                 self.level_initiate(playerobj)
         else:
             self.levels_reown()
-            if not self.use_rpc:
-                players.append(self.reserve)
-                self.reserve.play()
+            if self.use_rpc:
+                number = int(Compat3k.prompt_user("How many players (+ve number in figures): "))
+                print ("Please start %d instance(s) " #pylint: disable = superfluous-parens
+                       "of remote.py or remote.exe with unique ports."%number)
+                print ("Once you have done this, " #pylint: disable = superfluous-parens
+                       "enter the hosts and ports here.")
+                for i in range(number):  #pylint: disable = unused-variable
+                    players.append(self.PlayerClass(self, play=1))
+            else:
+                players.append(self.reserve[0])
+                self.reserve[0].play()
             for playerobj in players:
                 self.level_restore(playerobj)
         self.loading_lock = 0

@@ -54,6 +54,7 @@ class GridObject(object):
     known = None
     myinterface = None
     contents = None
+    rpc_remote_address = None
     #
     #
     # Initialisation
@@ -107,6 +108,7 @@ class GridObject(object):
         if myinterface == None:
             myinterface = self.game.InterfaceClass(self, use_rpc=self.game.use_rpc)
         self.myinterface = myinterface
+        self.rpc_remote_address = myinterface.rpc_remote_address #may be None
     def unplay(self):
         """Disconnect from player."""
         self.myinterface = None
@@ -245,19 +247,9 @@ class GridObject(object):
                 elif name in ("#testerror",):
                     raise RuntimeError("testing error handler")
                 elif name in ("#abort", "#abrt", "#kill"):
-                    if self.level:
-                        for obj in self.level.child_interfaces:
-                            obj.close()
-                    else:
-                        self.myinterface.close()
                     import os
                     os.abort()
                 elif name in ("#quit",):
-                    if self.level:
-                        for obj in self.level.child_interfaces:
-                            obj.close()
-                    else:
-                        self.myinterface.close()
                     interrupt_main()
                 else:
                     inexpensive = self.level.handle_command(name, self)
@@ -372,6 +364,10 @@ class GridObject(object):
         if self.myinterface != None:
             self.myinterface.playerobj = novus
         self.level = None
+        if self in self.game.reserve:
+            self.game.reserve.remove(self)
+            self.game.reserve.append(novus)
+        novus.rpc_remote_address = self.rpc_remote_address
         self.status = "defunct"
         return novus
     def throw(self, direction, startpt, level, projector=None):

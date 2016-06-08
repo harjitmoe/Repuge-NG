@@ -23,6 +23,7 @@ class BaseDisplay(object):
     There is not necessarily multiple-window support, so creating multiple
     BaseDisplay is not guaranteed to work.  In particular, all existing
     implementations do not support it."""
+    rpc_remote_address = None
     def __init__(self):
         self._message_queue = []
     def push_message(self, message):
