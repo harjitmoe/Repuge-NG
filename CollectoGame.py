@@ -14,6 +14,9 @@ class CollectoGame(Game):
     def level_initiate(self, playerobj):
         random.choice(CollectoGame.leveltypes)(self).bring_to_front(playerobj, "starting")
     #
+    def levels_reown(self):
+        pass
+    #
     def level_restore(self, playerobj):
         #Saving?  Never heard of it! (for now, saving only saves the levels, which
         #are completely transient anyway)

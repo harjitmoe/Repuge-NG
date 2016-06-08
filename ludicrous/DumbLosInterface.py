@@ -113,6 +113,9 @@ class DumbLosInterface(SimpleInterface):
         """Draw the map (grid and objgrid)."""
         if self.playerobj.pt:
             self.display.goto_point(*self.get_viewport_pt())
+        if not self.generic_coords:
+            #I.E. repossessed from a save.
+            self.regen_generic_coords()
         colno = 0
         self._los_cache = {}
         if not self._fov_cache:

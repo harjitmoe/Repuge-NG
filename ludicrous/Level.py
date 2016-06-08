@@ -24,7 +24,6 @@ class Level(object):
     coded_grid = None
     list_of_symbols = None
     use_dm = False
-    RestoreFunc = (RestoreLevel,)
     #
     game = None
     grid = None
@@ -75,6 +74,7 @@ class Level(object):
         - "starting"
         - "advancement"
         - "regression"
+        - "restoring"
         - "jumping"
         - "unspecified"
 
@@ -82,7 +82,10 @@ class Level(object):
         paramount that those levels which process this are
         compatible with the Game subclass with which they are used.
         """
-        playerobj.place(self.starting_pt[0], self.starting_pt[1], self)
+        if whence!="restoring":
+            playerobj.place(self.starting_pt[0], self.starting_pt[1], self)
+        else:
+            playerobj.place(playerobj.pt[0], playerobj.pt[1], self)
     def _gengrid(self, x, y):
         #Note: this function is old.
         grid = []

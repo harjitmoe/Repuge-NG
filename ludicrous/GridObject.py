@@ -208,9 +208,9 @@ class GridObject(object):
         inexpensive = 0
         if e in ("\x03", "\x04", "\x1a"): #ETX ^C, EOT ^D, and ^Z (on Windows).
             #Does not go through to Python otherwise, meaning that Linux main terminals
-            #are rendered otherwise out of order until someone kills Collecto
+            #may be rendered otherwise out of order until someone kills the game
             #from a different terminal or over SSH (or rlogin).
-            #This is relevant if someone is running this on an RPi.
+            #This is relevant if running this on an RPi (long ago the intent).
             self.myinterface.interrupt()
         elif e in ("down", "up", "left", "right", "8", "4", "6", "2", "7", "9",
                    "1", "3", "h", "j", "k", "l", "y", "u", "b", "n"):
@@ -245,9 +245,19 @@ class GridObject(object):
                 elif name in ("#testerror",):
                     raise RuntimeError("testing error handler")
                 elif name in ("#abort", "#abrt", "#kill"):
+                    if self.level:
+                        for obj in self.level.child_interfaces:
+                            obj.close()
+                    else:
+                        self.myinterface.close()
                     import os
                     os.abort()
                 elif name in ("#quit",):
+                    if self.level:
+                        for obj in self.level.child_interfaces:
+                            obj.close()
+                    else:
+                        self.myinterface.close()
                     interrupt_main()
                 else:
                     inexpensive = self.level.handle_command(name, self)

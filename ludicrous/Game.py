@@ -63,14 +63,20 @@ class Game(object):
                    "of remote.py or remote.exe with unique ports."%number)
             print ("Once you have done this, " #pylint: disable = superfluous-parens
                    "enter the hosts and ports here.")
-        else:
-            number = 1
-        for i in range(number):  #pylint: disable = unused-variable
-            players.append(self.PlayerClass(self, play=1))
-        for playerobj in players:
-            if not self._restored:
+            for i in range(number):  #pylint: disable = unused-variable
+                players.append(self.PlayerClass(self, play=1))
+        if not self._restored:
+            if not self.use_rpc:
+                players.append(self.PlayerClass(self, play=1))
+                self.reserve=players[0]
+            for playerobj in players:
                 self.level_initiate(playerobj)
-            else:
+        else:
+            self.levels_reown()
+            if not self.use_rpc:
+                players.append(self.reserve)
+                self.reserve.play()
+            for playerobj in players:
                 self.level_restore(playerobj)
         self.loading_lock = 0
     #
@@ -78,6 +84,9 @@ class Game(object):
         raise NotImplementedError
     #
     def level_restore(self, playerobj):
+        raise NotImplementedError
+    #
+    def levels_reown(self):
         raise NotImplementedError
     #
     def level_advance(self, playerobj):

@@ -58,6 +58,9 @@ class SimpleInterface(object):
         this."""
         if self.playerobj.pt:
             self.display.goto_point(*self.get_viewport_pt())
+        if not self.generic_coords:
+            #I.E. repossessed from a save.
+            self.regen_generic_coords()
         colno = 0
         for coordscol, col, col2 in zip(*self.get_viewport_grids()):
             rowno = 0
@@ -94,9 +97,11 @@ class SimpleInterface(object):
                 self.display.set_window_title(self.level.title_window)
             except NotImplementedError:
                 pass
-            self.generic_coords = [list(zip(*enumerate(h)))[0] for h in self.level.grid]
-            self.generic_coords = [[(x[0], y) for y in x[1]] \
-                                   for x in enumerate(self.generic_coords)]
+            self.regen_generic_coords()
+    def regen_generic_coords(self):
+        self.generic_coords = [list(zip(*enumerate(h)))[0] for h in self.level.grid]
+        self.generic_coords = [[(x[0], y) for y in x[1]] \
+                               for x in enumerate(self.generic_coords)]
     def flush_fov(self):
         """Bin any cached info about the current level FOV."""
         pass
